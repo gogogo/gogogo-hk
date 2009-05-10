@@ -1,0 +1,77 @@
+Tue 19 August 2008
+==================
+
+Support for versions of Django less than 1.0beta_1 has been removed. If you
+wish to continue using Django 0.96 you will need to stay with revision 53 of
+the Google App Engine Helper for Django.
+
+Wed 6 August 2008
+=================
+
+This is the last version of the Google App Engine Helper for Django that will
+support Django 0.96. Future development of the helper will be targetted for the
+upcoming 1.0 release of Django.
+
+* Improved SDK detection on Windows by looking at both the PATH variable that
+  may be set by the installer and using the win32api module (if available) to
+  look for the SDK in the default Program Files location.
+* Replaced the startapp command with a version that installs an App Engine
+  Compatible application skeleton. Patch contributed by Andi Albrecht.
+* Changed the default runserver port to 8000 to match standard Django
+  behaviour. Path contributed by Waldemar Kornewald.
+* Email server settings from the Django settings file are provided to the App
+  Engine Mail API. Patch contributed by Waldemar Kornewald.
+* Added support for the Django memcache cache backend. Patch contributed by
+  Jonca Rafal.
+* Added support for the Django session middle with db and cache backends for
+  Django 1.0alpha only. Patches contributed by Jonca Rafal and Waldemar
+  Kornewald.
+* Moved the Django compatible login_required decorator to the standard Django
+  location. Patch contributed by Andi Albrecht.
+* Replaced the Django ModelForm class with the App Engine ModelForm class.
+* Added a repr implementation for the BaseModel class.
+* Many minor improvements to increase robustness and avoid errors if portions
+  of Django are not present.
+
+Tue 20 May 2008
+===============
+
+* Added an App Engine compatible implementation of the Django authentication
+  framework. This only works for Users at the present time, Groups and
+  Permissions are not yet supported.
+
+  The patch for this functionality was supplied by Andi Albrecht.
+
+* Added equality and inequality comparision functions to BaseModel.
+
+  The patch for this functionality was supplied by Andi Albrecht.
+
+
+Fri 16 May 2008
+===============
+
+* Changed location of local SDK directory to '.google_appengine' instead of
+  'google_appengine' so that it is automatically ignored without neding to
+  modify skip_files in app.yaml. 'google_appengine' will continue to work for
+  the next few releases.
+
+* Major improvements to SDK location detection code. When running on Windows or
+  Mac OS with the SDK installed via the Google supplied installers the SDK will
+  be automatically detected and added to Python's path.
+
+* The helper now detects, warns and removes Context Processors that are not
+  compatible with Google App Engine.
+
+* The Django mail API is now monkey patched to allow email to be sent via the
+  App Engine Mail API using the standard Django mail functions. This code does
+  not yet support sending multipart / HTML emails.
+
+  The patch for this functionality was supplied by Ryan Gates.
+
+* Added 'update', 'rollback' and 'vacuum_indexes' from appcfg.py to the list of
+  commands available via manage.py when using Django 0.97. You will still have
+  to uses appcfg.py directly if you are using Django 0.96.
+
+* Improved the deserialization routines to deserialize parent references
+  without needing to instantiate the parent instance. This allows instances
+  with non-existant parents to be succesfully loaded.
