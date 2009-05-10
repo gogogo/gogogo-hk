@@ -1,0 +1,13 @@
+
+
+Files
+------
+django.zip - Django 1.0.2 Final 
+
+With directory of :
+
+django/__init__.py django/bin django/core \
+django/db django/dispatch django/forms \
+django/http django/middleware django/shortcuts \
+django/template django/templatetags \
+django/test django/utils django/views
