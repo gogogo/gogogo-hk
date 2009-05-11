@@ -1,12 +1,14 @@
-Files
-------
-django.zip - Django 1.0.2 Final 
+Installation
+--------------
 
-With the following directory removed: 
+Create settings_private.py
 
-django/bin
-django/contrib/admin
-django/contrib/auth
-django/contrib/databrowse
-django/test
+add the following line to it :
 
+KEY="aiChiep0Eohoo0Ohcho8aiwoh5Paigha3eish7pu"
+
+Alternative method:
+
+cat << EOF > settings_private.py
+KEY="`pwgen 40 `"
+EOF

@@ -233,7 +233,7 @@ def RADIUS (mode, d1):
 
 
 if __name__ == "__main__":
-	hk1980 = (824967,831571)
+	hk1980 = (838477.970,818097.267)
 	
 	wgs84 = hk1980_to_wgs84(*hk1980)
 	print "%s => %s"  % (hk1980 , wgs84)

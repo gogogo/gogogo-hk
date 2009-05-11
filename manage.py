@@ -1,30 +1,18 @@
 #!/usr/bin/env python
-# Copyright 2008 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+if __name__ == '__main__':
+    from common.appenginepatch.aecmd import setup_env
+    setup_env(manage_py_env=True)
 
+    # Recompile translation files
+    from mediautils.compilemessages import updatemessages
+    updatemessages()
 
-from appengine_django import InstallAppengineHelperForDjango
-InstallAppengineHelperForDjango()
-
-from django.core.management import execute_manager
-try:
-    import settings # Assumed to be in the same directory.
-except ImportError:
+    # Generate compressed media files for manage.py update
     import sys
-    sys.stderr.write("Error: Can't find the file 'settings.py' in the directory containing %r. It appears you've customized things.\nYou'll have to run django-admin.py, passing it your settings module.\n(If the file settings.py does indeed exist, it's causing an ImportError somehow.)\n" % __file__)
-    sys.exit(1)
+    from mediautils.generatemedia import updatemedia
+    if len(sys.argv) >= 2 and sys.argv[1] == 'update':
+        updatemedia(True)
 
-
-if __name__ == "__main__":
+    import settings
+    from django.core.management import execute_manager
     execute_manager(settings)
