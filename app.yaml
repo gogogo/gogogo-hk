@@ -1,5 +1,5 @@
-﻿application: aep-sample
-version: 1
+﻿application: benlaupedia
+version: 4
 runtime: python
 api_version: 1
 
@@ -11,3 +11,17 @@ handlers:
 
 - url: /.*
   script: common/appenginepatch/main.py
+
+skip_files:
+- ^(.*/)?app\.yaml
+- ^(.*/)?app\.yml
+- ^(.*/)?index\.yaml
+- ^(.*/)?index\.yml
+- ^(.*/)?#.*#
+- ^(.*/)?.*~
+- ^(.*/)?.*\.py[co]
+- ^(.*/)?.*/RCS/.*
+- ^(.*/)?\..*
+- ^(.*/)?.*\.bak$
+- ^\.git/.*
+

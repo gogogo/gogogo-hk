@@ -10,7 +10,7 @@ class Agency(db.Model):
 	
 	timezone = db.StringProperty()
 	
-	phone = db.StringProperty()
+	phone = db.PhoneNumberProperty()
 
 class Stops(db.Model):
 	# An ID that uniquely identifies a stop or station. Multiple routes may use the same stop. 

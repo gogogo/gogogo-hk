@@ -38,6 +38,7 @@ def download_file(request, key, name):
         content_type=guess_type(file.name)[0] or 'application/octet-stream')
 
 def create_admin_user(request):
+    return render_to_response(request, 'myapp/admin_created.html')
     user = User.get_by_key_name('admin')
     if not user or user.username != 'admin' or not (user.is_active and
             user.is_staff and user.is_superuser and

@@ -1,7 +1,7 @@
 Installation
 --------------
 
-Create settings_private.py
+1. Create settings_private.py
 
 add the following line to it :
 
@@ -12,3 +12,9 @@ Alternative method:
 cat << EOF > settings_private.py
 KEY="`pwgen 40 `"
 EOF
+
+2. Copy Google App Engine SDK to common/.google_appengine
+
+3. Start Dev server
+
+./manage runserver
