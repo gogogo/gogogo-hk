@@ -20,6 +20,8 @@ class AgencyAdmin(admin.ModelAdmin):
     
     list_display = ('name','url')	
     
+    search_fields = ('name',)
+    
     #form = AgencyAdminForm
 
 

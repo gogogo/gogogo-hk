@@ -22,10 +22,12 @@ USE_I18N = True
 LANGUAGE_CODE = 'en'
 
 #Restrict supported languages (and JS media generation)
-#LANGUAGES = (
+LANGUAGES = (
 #    ('de', 'German'),
-#    ('en', 'English'),
-#)
+    ('en', 'English'),
+    ('zh',u'繁體中文'),
+    ('zn',u'简体中文')
+)
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.auth',
