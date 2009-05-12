@@ -8,7 +8,7 @@ class AgencyAdminForm(forms.ModelForm):
 		model = Agency
 		
 	name = forms.CharField(max_length=100)
-		
+	
 
 class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -18,7 +18,9 @@ class AgencyAdmin(admin.ModelAdmin):
 
     )
     
-    form = AgencyAdminForm
+    list_display = ('name','url')	
+    
+    #form = AgencyAdminForm
 
 
 admin.site.register(Agency, AgencyAdmin)

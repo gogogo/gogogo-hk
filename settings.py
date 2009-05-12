@@ -39,10 +39,9 @@ MIDDLEWARE_CLASSES = (
     # Django authentication
 
     #'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'ragendja.auth.middleware.GoogleAuthenticationMiddleware',
 
     # Google authentication
-    #'ragendja.auth.middleware.GoogleAuthenticationMiddleware',
+    'ragendja.auth.middleware.GoogleAuthenticationMiddleware',
     # Hybrid Django/Google authentication
     #'ragendja.auth.middleware.HybridAuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -53,8 +52,8 @@ MIDDLEWARE_CLASSES = (
 )
 
 # Google authentication
-#AUTH_USER_MODULE = 'ragendja.auth.google_models'
-#AUTH_ADMIN_MODULE = 'ragendja.auth.google_admin'
+AUTH_USER_MODULE = 'ragendja.auth.google_models'
+AUTH_ADMIN_MODULE = 'ragendja.auth.google_admin'
 # Hybrid Django/Google authentication
 #AUTH_USER_MODULE = 'ragendja.auth.hybrid_models'
 
@@ -91,6 +90,3 @@ IGNORE_APP_SETTINGS = IGNORE_APP_URLSAUTO = (
 )
 
 from ragendja.settings_post import *
-
-AUTH_USER_MODULE = 'ragendja.auth.google_models'
-AUTH_ADMIN_MODULE = 'ragendja.auth.google_admin'
