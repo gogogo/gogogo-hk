@@ -29,6 +29,7 @@ class Agency(db.Model):
 	
 	phone = db.PhoneNumberProperty()
 	
+	#desc = MLStringProperty() - Later will implement a text input for multiple language handling
 
 class Stops(db.Model):
 	# An ID that uniquely identifies a stop or station. Multiple routes may use the same stop. 
@@ -38,9 +39,9 @@ class Stops(db.Model):
 	code = db.StringProperty()
 	
 	# name of the Stop (Multiple language)
-	name = db.StringListProperty()
+	name = MLStringProperty()
 	
-	desc = db.StringListProperty()
+	desc = MLStringProperty()
 
 	# latitude and longitude value, it won't use the indexing function from BigTable. Use geohash instead
 	latlng = db.GeoPtProperty()
