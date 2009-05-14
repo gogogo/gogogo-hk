@@ -4,13 +4,24 @@ from ragendja.dbutils import KeyListProperty
 from django import forms
 from django.utils.safestring import mark_safe
 from django.conf import settings
-from FixedStringListProperty import FixedStringListProperty
+from TitledStringListProperty import TitledStringListProperty
+
+class MLStringProperty(TitledStringListProperty):
+	"""
+		Multi-language string property
+	"""
+	def __init__ (self,*args,**kwargs):
+		fields = []
+		for f in settings.LANGUAGES:
+			fields.append(f[1])
+		
+		super(MLStringProperty,self).__init__(fields,*args,**kwargs)
 
 class Agency(db.Model):
 	"""
 		Public transportation agency
 	"""
-	name = FixedStringListProperty(["English", "Chinese"])
+	name = MLStringProperty()
 	
 	url = db.StringProperty()
 	

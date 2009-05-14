@@ -3,21 +3,21 @@ from google.appengine.ext import db
 from django import forms
 from django.utils.safestring import mark_safe
 
-class FixedStringListInput(forms.MultiWidget):	
+class TitledStringListInput(forms.MultiWidget):	
 
 	def __init__(self, fields, attrs=None):
 		self.widgets = []
 		for lang in fields:
 			self.widgets.append(forms.TextInput());
 			self.fixed_fields = fields
-		super(FixedStringListInput, self).__init__(self.widgets,attrs)	
+		super(TitledStringListInput, self).__init__(self.widgets,attrs)	
 		
 	def decompress(self,value):
 		new_value =  [None]
 		
 		if value:
-			if isinstance(value,unicode):
-				new_value = value.split(',')
+			if isinstance(value,unicode): #Why it is unicode?
+				new_value = value.split('\n')
 			else:
 				new_value = value
 		return new_value
@@ -33,7 +33,7 @@ class FixedStringListInput(forms.MultiWidget):
 		
 		return HTML
 
-class FixedStringListField(forms.MultiValueField):
+class TitledStringListField(forms.MultiValueField):
 
 	def __init__(self,  *args, **kwargs):
 		fields = []
@@ -43,14 +43,14 @@ class FixedStringListField(forms.MultiValueField):
 				fields.append(forms.CharField())
 			del kwargs["fixed_fields"]
 
-		kwargs.update( { 'widget' :FixedStringListInput(self.fixed_fields)  })
+		kwargs.update( { 'widget' :TitledStringListInput(self.fixed_fields)  })
 				
-		super(FixedStringListField, self).__init__(fields,*args, **kwargs)
+		super(TitledStringListField, self).__init__(fields,*args, **kwargs)
 
 	def compress(self,data_list):
 		return data_list
 	
-class FixedStringListProperty(db.StringListProperty):
+class TitledStringListProperty(db.StringListProperty):
 	
 	def __init__ (self, fields ,*args, **kwargs):
 		self.fixed_fields = fields
@@ -58,12 +58,12 @@ class FixedStringListProperty(db.StringListProperty):
 
 	def get_form_field(self, **kwargs):
 		attrs = {
-			'form_class': FixedStringListField,
+			'form_class': TitledStringListField,
 			'fixed_fields' : self.fixed_fields,
 			'required': False
         }
 		attrs.update(kwargs)
-		return super(FixedStringListProperty, self).get_form_field(**attrs)		
+		return super(TitledStringListProperty, self).get_form_field(**attrs)		
 		
 	def validate(self, value):
-		return super(FixedStringListProperty, self).validate(value)
+		return super(TitledStringListProperty, self).validate(value)
