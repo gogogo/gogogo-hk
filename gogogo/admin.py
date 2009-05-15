@@ -1,14 +1,7 @@
 from django.contrib import admin
 from django import forms
-
-from gogogo.models import Agency
-
-class AgencyAdminForm(forms.ModelForm):
-	class Meta:
-		model = Agency
-		
-	name = forms.CharField(max_length=100)
-	
+from ragendja.forms import *
+from gogogo.models import Agency , Stop
 
 class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -18,12 +11,18 @@ class AgencyAdmin(admin.ModelAdmin):
 
     )
     
-    list_display = ('name','url')	
+    list_display = ('Agency_Name','url')	
     
     search_fields = ('name',)
     
-    #form = AgencyAdminForm
-
+    def Agency_Name(self,obj):
+    	return u' | '.join(obj.name)
 
 admin.site.register(Agency, AgencyAdmin)
 
+class StopAdmin(admin.ModelAdmin):	
+	search_fields = ('name',)
+	
+	list_display = ('name',)
+
+admin.site.register(Stop, StopAdmin)

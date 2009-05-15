@@ -5,6 +5,7 @@ from django import forms
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from TitledStringListProperty import TitledStringListProperty
+from django.utils.translation import ugettext_lazy as _
 
 class MLStringProperty(TitledStringListProperty):
 	"""
@@ -16,7 +17,7 @@ class MLStringProperty(TitledStringListProperty):
 			fields.append(f[1])
 		
 		super(MLStringProperty,self).__init__(fields,*args,**kwargs)
-
+	
 class Agency(db.Model):
 	"""
 		Public transportation agency
@@ -31,7 +32,14 @@ class Agency(db.Model):
 	
 	#desc = MLStringProperty() - Later will implement a text input for multiple language handling
 
-class Stops(db.Model):
+	class Meta:
+		verbose_name = _('Transport Agency')
+		verbose_name_plural = _('Transport Agency')
+	
+	def __unicode__(self):
+		return u' | '.join(self.name)
+		
+class Stop(db.Model):
 	# An ID that uniquely identifies a stop or station. Multiple routes may use the same stop. 
 	sid = db.StringProperty()
 	
@@ -49,13 +57,18 @@ class Stops(db.Model):
 	geohash = db.StringProperty()
 	
 	# TRUE if the geo position data is accuracy enough 
-	accuracy = db.BooleanProperty()
+	inaccuracy = db.BooleanProperty()
 	
 	url = db.LinkProperty()
 	
 	location_type = db.IntegerProperty()
 	
 	parent_station = db.SelfReferenceProperty()
+	
+	agency = db.ReferenceProperty(Agency)	
+
+	def __unicode__(self):
+		return u' | '.join(self.name)
 	
 class Routes(db.Model):	
 	rid = db.StringProperty()
