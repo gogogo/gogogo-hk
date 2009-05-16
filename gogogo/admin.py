@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 from ragendja.forms import *
-from gogogo.models import Agency , Stop
+from gogogo.models import Agency , Stop , Route
 
 class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -26,3 +26,8 @@ class StopAdmin(admin.ModelAdmin):
 	list_display = ('name',)
 
 admin.site.register(Stop, StopAdmin)
+
+class RouteAdmin(admin.ModelAdmin):
+	pass
+	
+admin.site.register(Route, RouteAdmin)

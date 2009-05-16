@@ -60,7 +60,6 @@ class TitledStringListProperty(db.StringListProperty):
 		attrs = {
 			'form_class': TitledStringListField,
 			'fixed_fields' : self.fixed_fields,
-			'required': False
         }
 		attrs.update(kwargs)
 		return super(TitledStringListProperty, self).get_form_field(**attrs)		

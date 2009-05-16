@@ -18,3 +18,18 @@ EOF
 3. Start Dev server
 
 ./manage runserver
+
+Alternative method (which can preserve data):
+
+ ~/Applications/google_appengine/dev_appserver.py --datastore_path ../gogogo.bin .
+
+Upload Data
+-------------
+
+Example of agency data upload to local dev server:
+
+appcfg.py upload_data --config_file=gogogo/loader.py  \
+    --url http://localhost:8080/remote_api \
+    --kind=gogogo_agency
+	--filename=agency.csv \
+	.

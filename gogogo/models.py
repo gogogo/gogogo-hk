@@ -22,7 +22,7 @@ class Agency(db.Model):
 	"""
 		Public transportation agency
 	"""
-	name = MLStringProperty()
+	name = MLStringProperty(required=True)
 	
 	url = db.StringProperty()
 	
@@ -40,18 +40,25 @@ class Agency(db.Model):
 		return u' | '.join(self.name)
 		
 class Stop(db.Model):
+	class Meta:
+		verbose_name = _('Stops')
+		verbose_name_plural = _('Stops')
+
+	def __unicode__(self):
+		return u' | '.join(self.name)
+	
 	# An ID that uniquely identifies a stop or station. Multiple routes may use the same stop. 
 	sid = db.StringProperty()
 	
-	# Optional field
+	# Optional field. A human readable ID for passengers
 	code = db.StringProperty()
 	
 	# name of the Stop (Multiple language)
-	name = MLStringProperty()
+	name = MLStringProperty(required=True)
 	
 	desc = MLStringProperty()
 
-	# latitude and longitude value, it won't use the indexing function from BigTable. Use geohash instead
+	# Geo position of the stop. It is not indexed. Instead, it should use geohash
 	latlng = db.GeoPtProperty()
 	
 	geohash = db.StringProperty()
@@ -59,32 +66,64 @@ class Stop(db.Model):
 	# TRUE if the geo position data is accuracy enough 
 	inaccuracy = db.BooleanProperty()
 	
+	# URL for the STOP information
 	url = db.LinkProperty()
 	
-	location_type = db.IntegerProperty()
+	# 0  or blank - Stop. A location where passengers board or disembark from a transit vehicle. 
+	# 1 - Station. A physical structure or area that contains one or more stop. 
+	location_type = db.IntegerProperty(choices=set([0,1]))
 	
 	parent_station = db.SelfReferenceProperty()
 	
-	agency = db.ReferenceProperty(Agency)	
+	agency = db.ReferenceProperty(Agency,required=True)
+	
+	# Trips that use this STOP
+	# trips = 	
+	
+class Route(db.Model):	
+	class Meta:
+		verbose_name = _('Routes')
+		verbose_name_plural = _('Routes')
 
 	def __unicode__(self):
-		return u' | '.join(self.name)
+		return unicode(self.short_name)
+
+	# An ID assigned by public agency, which is used to identify record in data import
+	rid = db.StringProperty(required=True)
 	
-class Routes(db.Model):	
-	rid = db.StringProperty()
+	agency = db.ReferenceProperty(Agency,required=True)
 	
-	#agency = db.ReferenceProperty(agency)
+	short_name = db.StringProperty(required=True)
 	
-	short_name = db.StringListProperty()
+	long_name = MLStringProperty()
 	
-	long_name = db.StringListProperty()
+	desc = MLStringProperty()
 	
-	desc = db.StringListProperty()
-	
-	type = db.IntegerProperty()
+	type = db.IntegerProperty(choices=set(range(0,8)))
 	
 	url = db.LinkProperty()
 	
 	color = db.StringProperty()
 	
 	text_color = db.StringProperty()
+
+class Trip(db.Model):
+	class Meta:
+		verbose_name = _('Trips')
+		verbose_name_plural = _('Trips')
+
+	# ID of the trip. Used in data import
+	tid = db.StringProperty()
+	
+	route = db.ReferenceProperty(Route)
+	
+	#service = db.ReferenceProperty(Service)
+	
+	headsign = MLStringProperty()
+	
+	short_name = MLStringProperty()
+	
+	direction = db.IntegerProperty(choices=set(range(0,2)))
+	
+	
+	

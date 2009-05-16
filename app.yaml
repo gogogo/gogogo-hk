@@ -9,6 +9,10 @@ handlers:
 - url: /media
   static_dir: _generated_media
 
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
+
 - url: /.*
   script: common/appenginepatch/main.py
 
