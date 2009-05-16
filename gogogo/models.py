@@ -6,6 +6,7 @@ from django.utils.safestring import mark_safe
 from django.conf import settings
 from TitledStringListProperty import TitledStringListProperty
 from django.utils.translation import ugettext_lazy as _
+from ragendja.dbutils import get_object
 
 class MLStringProperty(TitledStringListProperty):
 	"""
@@ -22,6 +23,10 @@ class Agency(db.Model):
 	"""
 		Public transportation agency
 	"""
+	
+	# An unique ID used for data import
+	aid = db.StringProperty()
+	
 	name = MLStringProperty(required=True)
 	
 	url = db.StringProperty()
@@ -39,13 +44,33 @@ class Agency(db.Model):
 	def __unicode__(self):
 		return u' | '.join(self.name)
 		
+	def get_key(aid):
+		"""
+			Get key() from Agency ID
+		"""
+		#agency = db.GqlQuery("SELECT __key__ FROM gogogo_agency WHERE aid = :1",aid).get()		
+		#agency = get_object(Agency,'aid = ',aid)
+		agency = db.Query(Agency,keys_only=True).filter("aid = ",aid).get()
+		
+		key = ""
+		if agency:
+			key = agency.key()
+		return key
+	
+	get_key = staticmethod(get_key)
+		
 class Stop(db.Model):
+	"""
+		Stop data
+	"""
 	class Meta:
 		verbose_name = _('Stops')
 		verbose_name_plural = _('Stops')
 
 	def __unicode__(self):
 		return u' | '.join(self.name)
+
+	agency = db.ReferenceProperty(Agency,required=False)
 	
 	# An ID that uniquely identifies a stop or station. Multiple routes may use the same stop. 
 	sid = db.StringProperty()
@@ -74,8 +99,7 @@ class Stop(db.Model):
 	location_type = db.IntegerProperty(choices=set([0,1]))
 	
 	parent_station = db.SelfReferenceProperty()
-	
-	agency = db.ReferenceProperty(Agency,required=True)
+
 	
 	# Trips that use this STOP
 	# trips = 	

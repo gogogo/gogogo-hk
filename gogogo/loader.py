@@ -13,11 +13,22 @@ import gogogo.models
 class AgencyLoader(bulkloader.Loader):
 	def __init__(self):
 		bulkloader.Loader.__init__(self, 'gogogo_agency',
-                               [('name', lambda x: unicode(x,'utf-8').split(u'|') ),
+                               [
+                                ('aid',str),
+                                ('name', lambda x: unicode(x,'utf-8').split(u'|') ),
                                 ('url', str),
                                 ('phone', str),
                                 ('timzone',str),                                
                                ])
 
-loaders = [AgencyLoader]
+
+class StopLoader(bulkloader.Loader):
+	def __init__(self):
+		bulkloader.Loader.__init__(self, 'gogogo_stop',
+                               [
+                               ('agency', gogogo.models.Agency.get_key),
+                               ('name', lambda x: unicode(x,'utf-8').split(u'|') ),
+                               ])
+
+loaders = [AgencyLoader,StopLoader]
 

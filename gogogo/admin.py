@@ -6,17 +6,20 @@ from gogogo.models import Agency , Stop , Route
 class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('name', 'url', 'timezone', 'phone')
+            'fields': ('aid','name', 'url', 'timezone', 'phone')
         }),
 
     )
     
-    list_display = ('Agency_Name','url')	
+    list_display = ('Agency_ID','Agency_Name','url')	
     
     search_fields = ('name',)
     
     def Agency_Name(self,obj):
     	return u' | '.join(obj.name)
+    	
+    def Agency_ID(self,obj):
+    	return obj.aid
 
 admin.site.register(Agency, AgencyAdmin)
 
