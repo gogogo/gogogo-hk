@@ -17,8 +17,8 @@ class AgencyLoader(bulkloader.Loader):
                                 ('aid',str),
                                 ('name', lambda x: unicode(x,'utf-8').split(u'|') ),
                                 ('url', str),
+        						('timzone',str),                                
                                 ('phone', str),
-                                ('timzone',str),                                
                                ])
 
 
@@ -27,7 +27,16 @@ class StopLoader(bulkloader.Loader):
 		bulkloader.Loader.__init__(self, 'gogogo_stop',
                                [
                                ('agency', gogogo.models.Agency.get_key),
+                               ('sid',str),
+                               ('code',str),	
                                ('name', lambda x: unicode(x,'utf-8').split(u'|') ),
+                               ('desc', lambda x: unicode(x,'utf-8').split(u'|') ),
+                               ('lat',str),
+                               ('lng',str),
+                               ('url',str),
+                               ('location_type',int),
+                               ('parent_station',gogogo.models.Stop.get_key),
+                               ('inaccuray',bool),
                                ])
 
 loaders = [AgencyLoader,StopLoader]

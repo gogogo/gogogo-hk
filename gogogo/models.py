@@ -52,7 +52,7 @@ class Agency(db.Model):
 		#agency = get_object(Agency,'aid = ',aid)
 		agency = db.Query(Agency,keys_only=True).filter("aid = ",aid).get()
 		
-		key = ""
+		key = None
 		if agency:
 			key = agency.key()
 		return key
@@ -63,13 +63,6 @@ class Stop(db.Model):
 	"""
 		Stop data
 	"""
-	class Meta:
-		verbose_name = _('Stops')
-		verbose_name_plural = _('Stops')
-
-	def __unicode__(self):
-		return u' | '.join(self.name)
-
 	agency = db.ReferenceProperty(Agency,required=False)
 	
 	# An ID that uniquely identifies a stop or station. Multiple routes may use the same stop. 
@@ -92,7 +85,8 @@ class Stop(db.Model):
 	inaccuracy = db.BooleanProperty()
 	
 	# URL for the STOP information
-	url = db.LinkProperty()
+	# Link must not be empty. Therefore , we use String Property
+	url = db.StringProperty()
 	
 	# 0  or blank - Stop. A location where passengers board or disembark from a transit vehicle. 
 	# 1 - Station. A physical structure or area that contains one or more stop. 
@@ -100,9 +94,32 @@ class Stop(db.Model):
 	
 	parent_station = db.SelfReferenceProperty()
 
+	def __init__(self,*args , **kwargs):
+		super(Stop,self).__init__(*args,**kwargs)
+		
+		if "lat" in kwargs and "lng" in kwargs:
+			self.latlng = db.GeoPt(kwargs['lat'],kwargs['lng'])
 	
-	# Trips that use this STOP
-	# trips = 	
+	class Meta:
+		verbose_name = _('Stops')
+		verbose_name_plural = _('Stops')
+
+	def __unicode__(self):
+		return u' | '.join(self.name)
+		
+	def get_key(sid):
+		"""
+			Get key() from Stop ID
+		"""
+
+		stop = db.Query(Stop,keys_only=True).filter("sid = ",sid).get()
+		
+		key = None
+		if stop:
+			key = stop.key()
+		return key
+		
+	get_key = staticmethod(get_key)
 	
 class Route(db.Model):	
 	class Meta:
@@ -125,7 +142,8 @@ class Route(db.Model):
 	
 	type = db.IntegerProperty(choices=set(range(0,8)))
 	
-	url = db.LinkProperty()
+	#Link must not be empty. Therefore , we use String Property
+	url = db.StringProperty()
 	
 	color = db.StringProperty()
 	
