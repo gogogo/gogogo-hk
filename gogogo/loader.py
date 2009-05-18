@@ -18,6 +18,7 @@ class AgencyLoader(bulkloader.Loader):
                                 ('name', lambda x: unicode(x,'utf-8').split(u'|') ),
                                 ('url', str),
         						('timzone',str),                                
+        						('lang',str),
                                 ('phone', str),
                                ])
 

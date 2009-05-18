@@ -33,7 +33,8 @@ class Agency(db.Model):
 	
 	timezone = db.StringProperty()
 	
-	phone = db.PhoneNumberProperty()
+	# Don't use PhoneNumberProperty as we allow empty string in upload
+	phone = db.StringProperty()
 	
 	#desc = MLStringProperty() - Later will implement a text input for multiple language handling
 
