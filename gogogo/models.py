@@ -95,6 +95,9 @@ class Stop(db.Model):
 	
 	parent_station = db.SelfReferenceProperty()
 
+	# nearby stop list
+	#near = KeyListProperty(Stop)
+
 	def __init__(self,*args , **kwargs):
 		super(Stop,self).__init__(*args,**kwargs)
 		
@@ -121,7 +124,8 @@ class Stop(db.Model):
 		return key
 		
 	get_key = staticmethod(get_key)
-	
+
+
 class Route(db.Model):	
 	class Meta:
 		verbose_name = _('Routes')
@@ -149,18 +153,21 @@ class Route(db.Model):
 	color = db.StringProperty()
 	
 	text_color = db.StringProperty()
+	
+	# List of trips associated to this route
+	#trips = KeyListProperty(Trip)
 
 class Trip(db.Model):
 	class Meta:
 		verbose_name = _('Trips')
 		verbose_name_plural = _('Trips')
 
-	# ID of the trip. Used in data import
-	tid = db.StringProperty()
-	
 	route = db.ReferenceProperty(Route)
-	
+
 	#service = db.ReferenceProperty(Service)
+
+	# The trip_id field contains an ID that identifies a trip. The trip_id is dataset unique. 
+	tid = db.StringProperty()
 	
 	headsign = MLStringProperty()
 	
@@ -168,5 +175,52 @@ class Trip(db.Model):
 	
 	direction = db.IntegerProperty(choices=set(range(0,2)))
 	
+	#block - reserved
 	
+	#shape - reserved	
 	
+class StopTime(db.Model):
+	"""
+		Store StopTime information temporary. 
+	"""
+	
+	trip = db.ReferenceProperty(Trip)
+	
+	# arrival_time = db.TimeProperty()
+	
+	# departure_time
+	stop = db.ReferenceProperty(Stop)
+	
+	sequence = db.IntegerProperty()
+	
+	#headsign =  MLStringProperty()
+	
+	# pickup_type
+	
+	# drop_off_type
+	
+	# shape_dist_traveled
+	
+class Calendar(db.Model):
+	class Meta:
+		verbose_name = _('Service Calendar')
+		verbose_name_plural = _('Service Calendar')
+	
+	#Service ID
+	sid = db.StringProperty()
+	
+	monday = db.BooleanProperty()
+	
+	tuesday = db.BooleanProperty()
+	wednesday = db.BooleanProperty()
+	thursady = db.BooleanProperty()
+	
+	friday = db.BooleanProperty()
+	
+	saturday = db.BooleanProperty()
+
+	sunday = db.BooleanProperty()
+	
+	start_date = db.DateProperty()
+	
+	end_state = db.DateProperty()

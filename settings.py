@@ -8,7 +8,6 @@ import settings_private
 MEDIA_VERSION = 1
 
 # Make this unique, and don't share it with anybody.
-#SECRET_KEY = '123456'
 SECRET_KEY = settings_private.KEY
 
 #ENABLE_PROFILER = True
@@ -92,3 +91,7 @@ IGNORE_APP_SETTINGS = IGNORE_APP_URLSAUTO = (
 )
 
 from ragendja.settings_post import *
+
+# Gogogo
+
+GOOGLE_MAPS_KEY = settings_private.GOOGLE_MAPS_KEY

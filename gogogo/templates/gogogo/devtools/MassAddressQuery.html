@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Gogogo , trip planner building tools- Mass Address Query</title>
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAzr2EBOXUKnm_jVnk0OJI7xSosDVG8KKPE1-m51RBrvYughuyMxQ-i1QfUnH94QxWIa6N4U6MouMmBA"
+            type="text/javascript"></script>
+    <script type="text/javascript">
+	   
+	 var map = null; 
+	 var geocoder = null;
+	 /// No. of result returned
+    var  count = 0 ;
+	
+	/// Array of result
+	var result = [];
+	
+    function initialize() {
+      if (GBrowserIsCompatible()) {
+		 map = new GMap2(document.getElementById("map_canvas"));
+        map.setCenter(new GLatLng(22.421184710331854, 114.16168212890625), 10);
+		 map.enableDragging() ;
+   		 map.enableDoubleClickZoom(); 
+  		 map.enableGoogleBar();
+		 map.enableScrollWheelZoom() ;
+		
+		 map.addControl(new GMapTypeControl());	
+		 map.addControl(new GLargeMapControl())		 
+	     geocoder = new GClientGeocoder();
+        }
+      }	  
+	  
+	  function call_geocoder(address,index) {
+
+			result[index] = {
+				"address" : address,
+				"received" : false,
+			}
+
+		 	geocoder.getLocations(address, function(response){
+
+				result[index].received = true;
+				result[index].response = response
+				count ++;
+
+				if (count == result.length){
+//					alert(count);
+					map.clearOverlays();
+					var output = document.getElementById("output");
+					output.value = "";
+					
+					var polyline_points = [];
+	
+					for (var i = 0 ; i < result.length ; i++){
+						response = result[i].response;
+						address = result[i].address
+						 if (!response || response.Status.code != 200) {
+						   output.value += address + " [Unknown location]\n";
+						 } else {
+						 	if (response.Placemark.length > 1) {
+								output.value += address + " [(" + response.Placemark.length + ") result found]\n";
+							} else {
+								place = response.Placemark[0];
+								output.value += address + " [(" + place.Point.coordinates[1] + "," + place.Point.coordinates[0] + " )] \n";
+							   point = new GLatLng(place.Point.coordinates[1],
+							                       place.Point.coordinates[0]);
+							   marker = new GMarker(point);
+							   map.addOverlay(marker);
+							   polyline_points.push(point);
+							}
+						 }	  	
+						
+					}
+					
+					if (polyline_points.length > 1){
+						var polyline = new GPolyline(polyline_points, "#ff0000", 10);
+						map.addOverlay(polyline);
+					}
+					
+				}
+			
+			
+			});	  	
+		
+	  }
+	  
+	  function search(value) {
+		  if (geocoder) {
+		  		count = 0;
+				var arr = value.split("\n");
+				var output = document.getElementById("output");
+				output.value = ""
+				result = [];
+				
+				for (var i =  0 ; i < arr.length ;i++){
+					if (arr[i].length <= 1)
+						break;
+					call_geocoder(arr[i],i);
+				}
+		  }	  	
+	  }
+	  
+	  function multiple_search(address) {
+			 geocoder.getLocations(address, function(response){
+			 		
+						 map.clearOverlays();
+						 if (!response || response.Status.code != 200) {
+						   alert("Sorry, we were unable to geocode that address");
+						 } else {
+						 	for (i = 0 ; i< response.Placemark.length ; i++) {
+							   place = response.Placemark[i];
+							   point = new GLatLng(place.Point.coordinates[1],
+							                       place.Point.coordinates[0]);
+							   marker = new GMarker(point);
+							   map.addOverlay(marker);
+							   marker.openInfoWindowHtml(place.address + '<br>' +
+							     '<b>Country code:</b> ' + place.AddressDetails.Country.CountryNameCode);
+							 }
+						 }
+				}
+			 
+			 );	  	
+		
+	  }
+	  
+
+
+    </script>
+  </head>
+
+  <body onload="initialize()">
+    <div id="map_canvas" style="width: 800px; height: 300px"></div>
+	
+	<table>
+		<tr><td>
+			Copy and Paste route here<br>
+			<textarea id="input" rows="19" cols="40" ></textarea>
+		</td><td>
+			Result<br>
+			<textarea id="output" rows="19" cols="40" ></textarea>
+		</td></tr>
+
+		<tr><td>
+		<button onclick="search(document.getElementById('input').value);">Search</button>
+		</td><td>
+			
+	</td></tr>
+	
+
+	
+	</table>
+
+  </body>
+</html>

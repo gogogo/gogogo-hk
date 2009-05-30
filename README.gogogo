@@ -3,15 +3,14 @@ Installation
 
 1. Create settings_private.py
 
-add the following line to it :
-
-KEY="aiChiep0Eohoo0Ohcho8aiwoh5Paigha3eish7pu"
-
-Alternative method:
-
 cat << EOF > settings_private.py
 KEY="`pwgen 40 `"
+GOOGLE_MAPS_KEY="ABQIAAAAzr2EBOXUKnm_jVnk0OJI7xSosDVG8KKPE1-m51RBrvYughuyMxQ-i1QfUnH94QxWIa6N4U6MouMmBA"
 EOF
+
+Remark:
+
+For production, you must set your own google maps key
 
 2. Copy Google App Engine SDK to common/.google_appengine
 
