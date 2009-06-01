@@ -14,7 +14,7 @@ class AgencyLoader(bulkloader.Loader):
 	def __init__(self):
 		bulkloader.Loader.__init__(self, 'gogogo_agency',
                                [
-                                ('aid',str),
+                                ('key_name',str),
                                 ('name', lambda x: unicode(x,'utf-8').split(u'|') ),
                                 ('url', str),
         						('timezone',str),                                
@@ -28,7 +28,7 @@ class StopLoader(bulkloader.Loader):
 		bulkloader.Loader.__init__(self, 'gogogo_stop',
                                [
                                ('agency', gogogo.models.Agency.get_key),
-                               ('sid',str),
+                               ('key_name',str),
                                ('code',str),	
                                ('name', lambda x: unicode(x,'utf-8').split(u'|') ),
                                ('desc', lambda x: unicode(x,'utf-8').split(u'|') ),

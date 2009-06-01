@@ -6,7 +6,7 @@ from gogogo.models import Agency , Stop , Route
 class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('aid','name', 'url', 'timezone', 'phone')
+            'fields': ('name', 'url', 'timezone', 'phone')
         }),
 
     )
@@ -19,14 +19,15 @@ class AgencyAdmin(admin.ModelAdmin):
     	return u' | '.join(obj.name)
     	
     def Agency_ID(self,obj):
-    	return obj.aid
+    	#return obj.aid
+    	return obj.key().name()
 
 admin.site.register(Agency, AgencyAdmin)
 
 class StopAdmin(admin.ModelAdmin):	
 	fieldsets = (
         (None, {
-            'fields': ('sid',
+            'fields': (
             	'code', 
             	'name',
             	'desc',
@@ -44,7 +45,7 @@ class StopAdmin(admin.ModelAdmin):
 	list_display = ('Stop_ID','Stop_Name',)
 	
 	def Stop_ID(self,obj):
-		return obj.sid
+		return obj.key().name()
 	
 	def Stop_Name(self,obj):
 		return u' | '.join(obj.name)

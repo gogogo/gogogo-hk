@@ -24,9 +24,6 @@ class Agency(db.Model):
 		Public transportation agency
 	"""
 	
-	# An unique ID used for data import
-	aid = db.StringProperty()
-	
 	name = MLStringProperty(required=True)
 	
 	url = db.StringProperty()
@@ -59,15 +56,20 @@ class Agency(db.Model):
 		return key
 	
 	get_key = staticmethod(get_key)
+	
+	def get_object(aid):
+		"""
+			Get object by Agency ID
+		"""
+		return db.Query(Agency).filter("aid = ",aid).get()
+		
+	get_object = staticmethod(get_object)
 		
 class Stop(db.Model):
 	"""
 		Stop data
 	"""
-	agency = db.ReferenceProperty(Agency,required=False)
-	
-	# An ID that uniquely identifies a stop or station. Multiple routes may use the same stop. 
-	sid = db.StringProperty()
+	agency = db.ReferenceProperty(Agency,required=False)	
 	
 	# Optional field. A human readable ID for passengers
 	code = db.StringProperty()
