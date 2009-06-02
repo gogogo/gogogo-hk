@@ -93,7 +93,7 @@ class Stop(db.Model):
 		return u' | '.join(self.name)
 
 	def update_geohash(self):
-		self.geohash = str(Geohash( (self.latlng.lat , self.latlng.lon) ))
+		self.geohash = str(Geohash( (self.latlng.lon , self.latlng.lat) ))
 
 
 class Route(db.Model):	
