@@ -10,6 +10,14 @@ sys.path.insert(0 , os.path.abspath(os.path.dirname(__file__) + "/../"))
 import main
 import gogogo.models
 
+def convert_key_name_to_key(model,key_name):
+	ret = None
+	if key_name:
+		object = model.get_by_key_name(key_name)
+		if object:
+			ret = object.key()
+	return ret
+
 class AgencyLoader(bulkloader.Loader):
 	def __init__(self):
 		bulkloader.Loader.__init__(self, 'gogogo_agency',
@@ -27,7 +35,7 @@ class StopLoader(bulkloader.Loader):
 	def __init__(self):
 		bulkloader.Loader.__init__(self, 'gogogo_stop',
                                [
-                               ('agency', gogogo.models.Agency.get_key),
+#                               ('agency', db.Key),
                                ('key_name',str),
                                ('code',str),	
                                ('name', lambda x: unicode(x,'utf-8').split(u'|') ),
@@ -36,9 +44,9 @@ class StopLoader(bulkloader.Loader):
                                ('lng',str),
                                ('url',str),
                                ('location_type',int),
-                               ('parent_station',gogogo.models.Stop.get_key),
+                               ('parent_station',lambda x: convert_key_name_to_key(gogogo.models.Stop,x) ),
                                ('inaccuray',bool),
-                               ])
+                               ])                               
 
 loaders = [AgencyLoader,StopLoader]
 

@@ -7,6 +7,7 @@ from django.conf import settings
 from TitledStringListProperty import TitledStringListProperty
 from django.utils.translation import ugettext_lazy as _
 from ragendja.dbutils import get_object
+from geo.geohash import Geohash
 
 class MLStringProperty(TitledStringListProperty):
 	"""
@@ -41,29 +42,6 @@ class Agency(db.Model):
 	
 	def __unicode__(self):
 		return u' | '.join(self.name)
-		
-	def get_key(aid):
-		"""
-			Get key() from Agency ID
-		"""
-		#agency = db.GqlQuery("SELECT __key__ FROM gogogo_agency WHERE aid = :1",aid).get()		
-		#agency = get_object(Agency,'aid = ',aid)
-		agency = db.Query(Agency,keys_only=True).filter("aid = ",aid).get()
-		
-		key = None
-		if agency:
-			key = agency.key()
-		return key
-	
-	get_key = staticmethod(get_key)
-	
-	def get_object(aid):
-		"""
-			Get object by Agency ID
-		"""
-		return db.Query(Agency).filter("aid = ",aid).get()
-		
-	get_object = staticmethod(get_object)
 		
 class Stop(db.Model):
 	"""
@@ -105,6 +83,7 @@ class Stop(db.Model):
 		
 		if "lat" in kwargs and "lng" in kwargs:
 			self.latlng = db.GeoPt(kwargs['lat'],kwargs['lng'])
+			self.update_geohash()
 	
 	class Meta:
 		verbose_name = _('Stops')
@@ -112,20 +91,9 @@ class Stop(db.Model):
 
 	def __unicode__(self):
 		return u' | '.join(self.name)
-		
-	def get_key(sid):
-		"""
-			Get key() from Stop ID
-		"""
 
-		stop = db.Query(Stop,keys_only=True).filter("sid = ",sid).get()
-		
-		key = None
-		if stop:
-			key = stop.key()
-		return key
-		
-	get_key = staticmethod(get_key)
+	def update_geohash(self):
+		self.geohash = str(Geohash( (self.latlng.lat , self.latlng.lon) ))
 
 
 class Route(db.Model):	

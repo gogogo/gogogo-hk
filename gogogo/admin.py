@@ -32,6 +32,7 @@ class StopAdmin(admin.ModelAdmin):
             	'name',
             	'desc',
             	'latlng',
+            	'geohash',
             	'url',
             	'location_type',
             	'parent_station',
