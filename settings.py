@@ -92,6 +92,8 @@ IGNORE_APP_SETTINGS = IGNORE_APP_URLSAUTO = (
 
 from ragendja.settings_post import *
 
+DEFAULT_CHARSET="utf-8"
+
 # Gogogo
 
 GOOGLE_MAPS_KEY = settings_private.GOOGLE_MAPS_KEY

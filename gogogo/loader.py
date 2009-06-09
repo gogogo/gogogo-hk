@@ -42,10 +42,10 @@ class StopLoader(bulkloader.Loader):
                                ('desc', lambda x: unicode(x,'utf-8').split(u'|') ),
                                ('lat',str),
                                ('lng',str),
+                               ('zone_id',str),
                                ('url',str),
                                ('location_type',int),
                                ('parent_station',lambda x: convert_key_name_to_key(gogogo.models.Stop,x) ),
-                               ('inaccuray',bool),
                                ])                               
 
 loaders = [AgencyLoader,StopLoader]
