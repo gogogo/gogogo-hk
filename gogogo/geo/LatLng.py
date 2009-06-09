@@ -1,28 +1,18 @@
 import math
 
-
-"""
-
-
-
-"""
-
-
-
-
 class LatLng:
 	"""
-	Latitude and Longtitude pair
-	
+	LatLng is a point in geographical coordinates with latitude and longitude.
 	"""
 
+	# Radius of earth
 	R = 6371
 	
 	def __init__(self,lat=0,lng=0):
 		assert (lat >= -90 and lat <= 90 and lng >= -180 and lng <= 180)
 		self.lat = lat
 		self.lng = lng
-
+		
 	def distance(self,other):
 		"""
 			The distance between another point
@@ -88,7 +78,19 @@ class LatLng:
 	
 		return  math.atan2(y, x)
 	
-	def __str__(self):
+	def toString(self,precision):
+		"""
+		>>> LatLng(22.40866671626623,114.0500717256725).toString(2)
+		'(22.41,114.05)'
+
+		>>> LatLng(22.40866671626623,114.0500717256725).toString(6)		
+		'(22.408667,114.050072)'
+		"""		
+		
+		format = "(%%0.%df,%%0.%df)" %  (precision,precision)
+		return format % (self.lat,self.lng)
+	
+	def __str__(self):		
 		return "(%f,%f)" % (self.lat,self.lng)
 	
 	def __add__(self,other):
