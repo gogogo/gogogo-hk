@@ -4,20 +4,28 @@ from django.http import HttpResponse
 from django.http import Http404
 from django.template import Context, loader
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from models import *
 
 
-def agency(request):
+def agency_list(request):
 	"""
-		Handle query of agency information
+		List all agency
 	"""
-	q = Agency.all()
-	results = q.fetch(10)
+	query = Agency.all()
 	text = ""
-	for p in results:
-		text += p.name
-	return HttpResponse(text)
+	agency_list = []
+	for row in query:
+		agency_list.append(row)
+	
+	t = loader.get_template('gogogo/agency/list.html')
+	c = Context({
+        'page_title': _("Agency List"),
+        'agency_list' : agency_list
+    })
+    		
+	return HttpResponse(t.render(c))
 	
 def devtools(request,file):
 	"""
