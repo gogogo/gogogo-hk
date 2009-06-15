@@ -21,7 +21,7 @@ def agency(request):
 	
 def devtools(request,file):
 	"""
-		Handle the request to devtools
+		Handle the request to access devtools
 	"""
 		
 	tools = ["MassAddressQuery.html" , "StopMaps.html"]

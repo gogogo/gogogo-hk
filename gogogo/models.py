@@ -22,7 +22,7 @@ class MLStringProperty(TitledStringListProperty):
 	
 class Agency(db.Model):
 	"""
-		Public transportation agency
+		Public transportation agency data model
 	"""
 	
 	name = MLStringProperty(required=True)
@@ -45,7 +45,7 @@ class Agency(db.Model):
 		
 class Stop(db.Model):
 	"""
-		Stop data
+		Stop/Station data model
 	"""
 	agency = db.ReferenceProperty(Agency,required=False)	
 	
@@ -63,7 +63,7 @@ class Stop(db.Model):
 	geohash = db.StringProperty()
 	
 	# TRUE if the geo position data is accuracy enough 
-	inaccuracy = db.BooleanProperty()
+	inaccuracy = db.BooleanProperty(default=False)
 	
 	# URL for the STOP information
 	# Link must not be empty. Therefore , we use String Property
@@ -103,9 +103,6 @@ class Route(db.Model):
 
 	def __unicode__(self):
 		return unicode(self.short_name)
-
-	# An ID assigned by public agency, which is used to identify record in data import
-	rid = db.StringProperty(required=True)
 	
 	agency = db.ReferenceProperty(Agency,required=True)
 	
@@ -117,15 +114,52 @@ class Route(db.Model):
 	
 	type = db.IntegerProperty(choices=set(range(0,8)))
 	
-	#Link must not be empty. Therefore , we use String Property
+	#As Link must not be empty, it is replaced by String Property
 	url = db.StringProperty()
 	
 	color = db.StringProperty()
 	
 	text_color = db.StringProperty()
+
+class Shape(db.Model):
+	"""
+		Shape data model. The stored data can be a polyline or polygon
+		that represent a route, trip and zone etc.
+	"""
+
+	# A shape can be a polyline of  polygon
+	polygon = db.BooleanProperty(default=False)
+
+	# Color of the shape
+	color = db.StringProperty()
 	
-	# List of trips associated to this route
-	#trips = KeyListProperty(Trip)
+	# Points of the shape.
+	points = db.ListProperty(float)
+
+class Calendar(db.Model):
+	class Meta:
+		verbose_name = _('Service Calendar')
+		verbose_name_plural = _('Service Calendar')	
+	
+	monday = db.StringProperty()
+	
+	tuesday = db.StringProperty()
+	
+	wednesday = db.StringProperty()
+	
+	thursady = db.StringProperty()
+	
+	friday = db.StringProperty()
+	
+	saturday = db.StringProperty()
+
+	sunday = db.StringProperty()
+	
+	holiday = db.StringProperty()
+	
+	special = db.StringProperty()
+	
+	special_remark = MLStringProperty()
 
 class Trip(db.Model):
 	class Meta:
@@ -134,63 +168,58 @@ class Trip(db.Model):
 
 	route = db.ReferenceProperty(Route)
 
-	#service = db.ReferenceProperty(Service)
+	service = db.ReferenceProperty(Calendar)
 
-	# The trip_id field contains an ID that identifies a trip. The trip_id is dataset unique. 
-	tid = db.StringProperty()
-	
 	headsign = MLStringProperty()
 	
 	short_name = MLStringProperty()
 	
 	direction = db.IntegerProperty(choices=set(range(0,2)))
 	
-	#block - reserved
+	block = db.StringProperty()
 	
-	#shape - reserved	
+	shape = db.ReferenceProperty(Shape)
 	
-class StopTime(db.Model):
-	"""
-		Store StopTime information temporary. 
-	"""
+	sequence = KeyListProperty(Stop)
 	
-	trip = db.ReferenceProperty(Trip)
+class Cluster:
 	
-	# arrival_time = db.TimeProperty()
-	
-	# departure_time
-	stop = db.ReferenceProperty(Stop)
-	
-	sequence = db.IntegerProperty()
-	
-	#headsign =  MLStringProperty()
-	
-	# pickup_type
-	
-	# drop_off_type
-	
-	# shape_dist_traveled
-	
-class Calendar(db.Model):
 	class Meta:
-		verbose_name = _('Service Calendar')
-		verbose_name_plural = _('Service Calendar')
-	
-	#Service ID
-	sid = db.StringProperty()
-	
-	monday = db.BooleanProperty()
-	
-	tuesday = db.BooleanProperty()
-	wednesday = db.BooleanProperty()
-	thursady = db.BooleanProperty()
-	
-	friday = db.BooleanProperty()
-	
-	saturday = db.BooleanProperty()
+		verbose_name = _('Cluster')
+		verbose_name_plural = _('Cluster')
 
-	sunday = db.BooleanProperty()
+	center = db.GeoPtProperty()
 	
-	start_date = db.DateProperty()
+	geohash = db.StringProperty()
 	
-	end_state = db.DateProperty()
+	radius = db.FloatProperty()
+
+	shape = db.ReferenceProperty(Shape)
+		
+	members = KeyListProperty(Stop)
+	
+class Changeset(db.Model):
+	"""
+		Change log
+	"""
+	
+	# The committer. Anonymouse is not allowed
+	committer = db.UserProperty()
+	
+	# Date of submission
+	commit_date = db.DateTimeProperty()
+	
+	# Comment of the submission
+	comment = db.TextProperty()
+	
+	# Additional tag of the log
+	tag = db.TextProperty()
+	
+	# A reference to the modified record.
+	reference = db.ReferenceProperty()
+	
+	# Original data
+	old_rev = db.TextProperty()
+
+	# New version of data
+	new_rev = db.TextProperty()

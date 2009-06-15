@@ -20,10 +20,12 @@ def default(o):
 
 	if isinstance(o,db.GeoPt):
 		return (o.lat,o.lon)
+	elif isinstance(o,db.Key):
+		return o.name()
 	else:
 		raise TypeError("%r is not JSON serializable" % (o,))
 
-class ApiResponse:	
+class ApiResponse(HttpResponse):	
 	"""
 		Standard response of Gogogo API 
 	"""
@@ -36,6 +38,9 @@ class ApiResponse:
 			
 		self.data = data
 		self.error = error
+		text = self.to_json()
+		
+		HttpResponse.__init__(self,text)
 	
 	def to_json(self):
 		text = StringIO()
@@ -64,6 +69,9 @@ def create_entity(model):
 	return entity
 
 def agency_list(request):
+	"""
+	Handle api/agency/list
+	"""
 	query = Agency.all()
 	text = StringIO()
 	
@@ -71,11 +79,11 @@ def agency_list(request):
 	for agency in query:
 		result.append(create_entity(agency))
 	
-	return HttpResponse(ApiResponse(data=result).to_json())	
+	return ApiResponse(data=result)
 
 def stop_search(request,lat0,lng0,lat1,lng1):
 	"""
-		Search stop
+		Search stop (api/stop/search)
 	"""
 	lat0 = float(lat0)
 	lng0 = float(lng0)
@@ -107,4 +115,4 @@ def stop_search(request,lat0,lng0,lat1,lng1):
 		#TODO: Check again for real lat/lng value
 		result.append(create_entity(stop))
 	
-	return HttpResponse(ApiResponse(data=result).to_json())
+	return ApiResponse(data=result)
