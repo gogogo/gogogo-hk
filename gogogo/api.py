@@ -50,7 +50,7 @@ class ApiResponse(HttpResponse):
 		else:
 			fields = {'stat' : self.stat , 'error' : self.error }
 		
-		simplejson.dump(fields,text,default=default)
+		simplejson.dump(fields,text,default=default,ensure_ascii=False)
 		
 		return text.getvalue()
 
