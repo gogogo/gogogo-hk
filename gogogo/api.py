@@ -54,19 +54,6 @@ class ApiResponse(HttpResponse):
 		
 		return text.getvalue()
 
-		
-def create_entity(model):
-	""" Create entity from model. (based on Models._to_entity(self, entity) )
-
-	"""
-	entity = {}
-	
-	for prop in model.properties().values():
-		datastore_value = prop.get_value_for_datastore(model)
-		if not datastore_value == []:
-			entity[prop.name] = datastore_value
-
-	return entity
 
 def agency_list(request):
 	"""
@@ -77,7 +64,7 @@ def agency_list(request):
 	
 	result = []
 	for agency in query:
-		result.append(create_entity(agency))
+		result.append(create_entity(agency,request))
 	
 	return ApiResponse(data=result)
 
@@ -113,6 +100,6 @@ def stop_search(request,lat0,lng0,lat1,lng1):
 	
 	for stop in query:
 		#TODO: Check again for real lat/lng value
-		result.append(create_entity(stop))
+		result.append(create_entity(stop,request))
 	
 	return ApiResponse(data=result)

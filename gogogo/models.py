@@ -9,6 +9,8 @@ from django.utils.translation import ugettext_lazy as _
 from ragendja.dbutils import get_object
 from geo.geohash import Geohash
 
+# Utilities
+
 class MLStringProperty(TitledStringListProperty):
 	"""
 		Multi-language string property
@@ -19,6 +21,47 @@ class MLStringProperty(TitledStringListProperty):
 			fields.append(f[1])
 		
 		super(MLStringProperty,self).__init__(fields,*args,**kwargs)
+
+	def trans(value,index=0):
+		"""
+			Translate a MLTextProperty value to a string for specific language.
+			If no such translate existed , it will return the default language
+			(The first lanage)
+		"""
+		try:
+			ret = value[index]
+		except IndexError:
+			ret = value[0]
+		
+		return ret
+		
+	trans = staticmethod(trans)
+		
+def create_entity(model,request = None):
+	""" Create entity from model with MLString translated. (based on Models._to_entity(self, entity) )
+
+	"""
+	entity = {}
+	code_index = -1
+	
+	for prop in model.properties().values():
+		datastore_value = prop.get_value_for_datastore(model)
+		if not datastore_value == []:
+			entity[prop.name] = datastore_value
+			
+			if request and isinstance(prop,MLStringProperty):
+				if code_index < 0 and request != None:
+					for (i,lang) in enumerate(settings.LANGUAGES):
+						if lang[0] == request.LANGUAGE_CODE:
+							code_index = i
+							break
+				
+				entity[prop.name] = MLStringProperty.trans(datastore_value,code_index)
+				#entity[prop.name] = datastore_value[0]
+
+	return entity
+
+# Database Model
 	
 class Agency(db.Model):
 	"""
