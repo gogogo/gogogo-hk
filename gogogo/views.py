@@ -2,7 +2,7 @@
 
 from django.http import HttpResponse
 from django.http import Http404
-from django.template import Context, loader
+from django.template import Context, loader , RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
@@ -20,7 +20,9 @@ def agency_list(request):
 		agency_list.append(row)
 	
 	t = loader.get_template('gogogo/agency/list.html')
-	c = Context({
+	c = RequestContext(
+		request,
+	{
         'page_title': _("Agency List"),
         'agency_list' : agency_list
     })

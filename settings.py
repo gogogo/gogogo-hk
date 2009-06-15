@@ -24,8 +24,8 @@ LANGUAGE_CODE = 'en'
 LANGUAGES = (
 #    ('de', 'German'),
     ('en', 'English'),
-    ('zh',u'繁體中文'),
-    ('zn',u'简体中文')
+    ('zh-tw',u'繁體中文'),
+    ('zh-cn',u'简体中文')
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

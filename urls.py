@@ -10,6 +10,7 @@ admin.autodiscover()
 handler500 = 'ragendja.views.server_error'
 
 urlpatterns = auth_patterns + patterns('',
+	(r'^i18n/', include('django.conf.urls.i18n')),
 	('^gogogo/' ,include('gogogo.urls') ),
     ('^admin/(.*)', admin.site.root),
     (r'^$', 'django.views.generic.simple.direct_to_template',

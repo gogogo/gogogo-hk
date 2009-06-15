@@ -36,6 +36,18 @@
             <a href="{% url django.contrib.auth.views.login %}">Login</a>
             <a href="{% url registration.views.register %}">Register</a>
           {% endif %}
+          {{LANGUAGE_CODE}}
+			<form action="/i18n/setlang/" method="post">
+			<input name="next" type="hidden" value="/" />
+			<select name="language">
+			{% for lang in LANGUAGES %}
+			<option value="{{ lang.0 }}">{{ lang.1 }}</option>
+			{% endfor %}
+			</select>
+			<input type="submit" value="Go" />
+			</form>
+          
+          
         </div>
       </div>
     {% endblock %}
