@@ -26,6 +26,14 @@ class ConvexHull:
 		True
 		>>> ConvexHull.ccw(LatLng(0,0) , LatLng(5,5),LatLng(10,20)) > 0
 		False
+		
+		#Turn right
+		>>> ConvexHull.ccw(LatLng( 22.347605,114.060032) , LatLng(22.350513,114.059545),LatLng(22.350044,114.061069)) < 0
+		True
+		
+		#Turn Left
+		>>> ConvexHull.ccw(LatLng(22.350513,114.059545),LatLng(22.350044,114.061069), LatLng(22.353305,114.062523)) > 0
+		True
 
 		"""
 		return (p2.lng - p1.lng)*(p3.lat - p1.lat) - (p2.lat - p1.lat)*(p3.lng - p1.lng)
@@ -44,7 +52,7 @@ class ConvexHull:
 		#Normal data
 		>>> group = LatLngGroup([(1,1),(1,10),(10,1),(10,10),(5,5),(6,6),(14,13)])
 		>>> LatLngGroup(ConvexHull(group).polygon).toString(0)
-		'(1,1),(10,1),(14,13),(10,10),(1,10)'
+		'(1,1),(10,1),(14,13),(1,10)'
 		
 		#Empty data
 		>>> group = LatLngGroup([])
@@ -64,7 +72,10 @@ class ConvexHull:
 		>>> LatLngGroup(ConvexHull(group).polygon).toString(0)
 		'(3,3),(10,10),(5,5)'
 
-		
+
+		>>> group = LatLngGroup([(22.347605,114.060032),(22.350044,114.061069),(22.350513,114.059545),(22.350648,114.059321),(22.351858,114.058679),(22.351858,114.058767),(22.352455,114.059727),(22.353222,114.059484),(22.353305,114.062523),(22.353557,114.060241)])
+		>>> LatLngGroup(ConvexHull(group).polygon).toString(6)
+		'(22.351858,114.058679),(22.353222,114.059484),(22.353557,114.060241),(22.353305,114.062523),(22.347605,114.060032)'
 		"""
 
 		pts = self._sort()
@@ -75,13 +86,15 @@ class ConvexHull:
 		else:		
 			for i in range(0,2):
 					self.polygon.append(pts[i])	
+			
 			m = 1
 			for i in range(2,len(pts)):
-				if ConvexHull.ccw( self.polygon[m-1],self.polygon[m] , pts[i] ) >= 0 : #Turn left
-					self.polygon[m] = pts[i]
-				else:
-					self.polygon.append(pts[i])
-					m+=1
+				while ConvexHull.ccw( self.polygon[m-1],self.polygon[m] , pts[i] ) >= 0 : #Turn left
+					self.polygon = self.polygon[0:-1] #Remove the middle point
+					m-=1
+				
+				self.polygon.append(pts[i])
+				m+=1
 				
 		
 	def _find_start(self):
