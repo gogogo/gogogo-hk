@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 from ragendja.forms import *
-from gogogo.models import Agency , Stop , Route
+from gogogo.models import Agency , Stop , Route,Trip
 
 class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -57,3 +57,11 @@ class RouteAdmin(admin.ModelAdmin):
 	pass
 	
 admin.site.register(Route, RouteAdmin)
+
+class TripAdmin(admin.ModelAdmin):
+	list_display = ('Trip_ID',)	
+	
+	def Trip_ID(self,obj):
+		return obj.key().name()
+	
+admin.site.register(Trip, TripAdmin)	

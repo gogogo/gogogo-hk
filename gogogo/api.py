@@ -96,10 +96,20 @@ def stop_search(request,lat0,lng0,lat1,lng1):
 	hash1 = str(Geohash( (maxlng,maxlat) ))
 
 	result = []
+	
+	lang = MLStringProperty.get_current_lang(request)	
+	
 	query = Stop.all().filter("geohash >=" , hash0).filter("geohash <=" , hash1)
 	
 	for stop in query:
 		#TODO: Check again for real lat/lng value
-		result.append(create_entity(stop,request))
+		entity = {
+			"id" : stop.key().name(),
+			"name" : MLStringProperty.trans(stop.name,lang),
+			"url" : stop.url,
+			"latlang" : stop.latlng,
+			"agency" : stop.agency,
+		}
+		result.append(entity)
 	
 	return ApiResponse(data=result)

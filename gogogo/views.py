@@ -17,7 +17,7 @@ def agency_list(request):
 	text = ""
 	agency_list = []
 	for row in query:
-		agency_list.append(row)
+		agency_list.append(create_entity(row,request))
 	
 	t = loader.get_template('gogogo/agency/list.html')
 	c = RequestContext(

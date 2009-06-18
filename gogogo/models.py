@@ -22,20 +22,34 @@ class MLStringProperty(TitledStringListProperty):
 		
 		super(MLStringProperty,self).__init__(fields,*args,**kwargs)
 
-	def trans(value,index=0):
+	def trans(value,lang=0):
 		"""
 			Translate a MLTextProperty value to a string for specific language.
-			If no such translate existed , it will return the default language
-			(The first lanage)
+			If no such translation existed , it will return the default language
+			(The first language)
 		"""
+		
 		try:
-			ret = value[index]
+			ret = value[lang]
 		except IndexError:
 			ret = value[0]
 		
 		return ret
 		
 	trans = staticmethod(trans)
+	
+	def get_current_lang(request):
+		"""
+		Get the current language 
+		"""
+		ret = 0
+		for (i,lang) in enumerate(settings.LANGUAGES):
+			if lang[0] == request.LANGUAGE_CODE:
+				ret = i
+				break
+		return ret
+		
+	get_current_lang = staticmethod(get_current_lang)
 		
 def create_entity(model,request = None):
 	""" Create entity from model with MLString translated. (based on Models._to_entity(self, entity) )
@@ -223,7 +237,9 @@ class Trip(db.Model):
 	
 	shape = db.ReferenceProperty(Shape)
 	
-	sequence = KeyListProperty(Stop)
+	stop_list = KeyListProperty(Stop)
+	
+	arrival_time_list = db.ListProperty(int)
 	
 class Cluster:
 	

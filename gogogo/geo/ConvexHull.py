@@ -3,7 +3,7 @@ from LatLngGroup import LatLngGroup
 
 class ConvexHull:
 	"""
-		Complete the convex hull from a LatLngGroup using Graham Scan
+		Compute the convex hull from a LatLngGroup using Graham Scan
 	"""
 	
 	def __init__ (self,group):
@@ -34,7 +34,7 @@ class ConvexHull:
 	
 	def _grahamScan(self):
 		"""
-			Preform Graham Scan
+		Preform Graham Scan. The result will be stored to ConvexHull.polygon
 		
 		#Collinear data	
 		>>> group = LatLngGroup([(1,1),(5,5),(20,8),(9,9),(10,10)])
