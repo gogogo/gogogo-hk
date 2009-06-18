@@ -88,6 +88,7 @@ class ShapeLoader(bulkloader.Loader):
                                [
                                ('key_name',str),
                                ('color',str),
+                               ('type',int),
                                ('points' , lambda x: convert_to_list(x,u',',float)  ),
                                ])
 

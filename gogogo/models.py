@@ -184,8 +184,8 @@ class Shape(db.Model):
 		that represent a route, trip and zone etc.
 	"""
 
-	# A shape can be a polyline of  polygon
-	polygon = db.BooleanProperty(default=False)
+	# Type of shape. 0: Polyline , 1 : Polygon
+	type = db.IntegerProperty()
 
 	# Color of the shape
 	color = db.StringProperty()

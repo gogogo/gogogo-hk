@@ -113,3 +113,13 @@ def stop_search(request,lat0,lng0,lat1,lng1):
 		result.append(entity)
 	
 	return ApiResponse(data=result)
+
+def shape_get(request,id):
+	key = db.Key.from_path(Shape.kind(),id)
+	
+	object = db.get(key)
+	
+	if object:
+		return ApiResponse(data=create_entity(object,request))
+	else:
+		return ApiResponse(error="Shape not found")
