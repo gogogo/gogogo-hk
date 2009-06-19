@@ -5,9 +5,12 @@ from django.http import Http404
 from django.template import Context, loader , RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django import forms
+from django.forms import ModelForm
 
+from ragendja.auth.decorators import staff_only
+from ragendja.template import render_to_response
 from models import *
-
 
 def agency_list(request):
 	"""
@@ -46,7 +49,7 @@ def agency_browse(request,id):
 		raise Http404
 		
 	agency = create_entity(record,request)
-	
+	agency['key_name'] = record.key().name()
 	t = loader.get_template('gogogo/agency/browse.html')
 	c = RequestContext(
 		request,
@@ -56,7 +59,49 @@ def agency_browse(request,id):
     })
     		
 	return HttpResponse(t.render(c))
+
+class AgencyForm(ModelForm):
+	class Meta:
+		model = Agency
+		fields = ['name','phone','url','icon']
+
+@staff_only
+def agency_edit(request,id):
+	"""
+	Edit agency information (staff only)
+	"""
+
+	try:
+		key = db.Key.from_path(Agency.kind(),id)
 	
+		record = db.get(key)
+	except (db.BadArgumentError,db.BadValueError):
+		raise Http404
+	
+	if record == None:
+		raise Http404
+	
+	message = ""
+	
+	if request.method == 'POST':
+		form = AgencyForm(request.POST,instance=record)
+		if form.is_valid():
+			form.save()
+			message = "The form is successfully saved"
+
+	else:
+		form = AgencyForm(instance=record)
+
+	agency = create_entity(record,request)
+	agency['key_name'] = record.key().name()
+	
+	return render_to_response( 
+		request,
+		'gogogo/agency/edit.html'
+		,{ "form" : form , 
+		   "agency" : agency,
+		   "message" : message
+		   })		
 	
 def devtools(request,file):
 	"""

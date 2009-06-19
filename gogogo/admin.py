@@ -6,7 +6,11 @@ from gogogo.models import Agency , Stop , Route,Trip , Shape
 class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('name', 'url', 'timezone', 'phone')
+            'fields': ('name', 'url', 'timezone', 
+            'phone',
+            'icon'
+            
+            )
         }),
 
     )

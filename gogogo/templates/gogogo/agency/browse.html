@@ -25,4 +25,8 @@
     
 </table>
 
+
+{% if user.is_staff %}
+<a href="../edit/{{agency.key_name}}">Edit</a>
+{% endif %}
 {% endblock %}

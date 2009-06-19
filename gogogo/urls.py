@@ -7,6 +7,7 @@ urlpatterns = patterns(
 	'',
     (r'^agency/list$', 'gogogo.views.agency_list'),
 	(r'^agency/browse/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.agency_browse'),
+	(r'^agency/edit/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.agency_edit'),
     
     (r'^devtools/(?P<file>.*)$', 'gogogo.views.devtools'),
     (r'^js/(?P<path>.*)$', 'django.views.static.serve',

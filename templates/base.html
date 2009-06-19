@@ -38,7 +38,7 @@
           {% endif %}
           {{LANGUAGE_CODE}}
 			<form action="/i18n/setlang/" method="post">
-			<input name="next" type="hidden" value="/" />
+			<input name="next" type="hidden" value="{{ request.get_full_path|urlencode }}" />
 			<select name="language">
 			{% for lang in LANGUAGES %}
 			<option value="{{ lang.0 }}">{{ lang.1 }}</option>
