@@ -6,19 +6,22 @@
 <p></p><p></p>
 <table>
     <tr>
-    	<td></td>
-        <td>Name</td><td>URL</td><td>Phone</td>
+        <td>Name: </td>
+        <td>{{agency.name}}</td>
     </tr>
-    
-    {% for agency in agency_list %}
+    <tr>
+    	<td>Icon: </td>
+    	<td><img src='{{MEDIA_URL}}{{agency.icon|default:"global/agency/icons/bus.png" }}'></td>
+    </tr>
+	<tr>
+		<td>URL:</td>
+    	<td> {{agency.url}}</td>  
+	</tr>
     
     <tr>
-    	<td><img src='{{MEDIA_URL}}{{agency.icon|default:"global/agency/icons/bus.png" }}'></td>
-    	<td> <a href="browse/{{agency.key_name}}">{{agency.name}}</a> </td>
-    	<td> {{agency.url}} </td>  
-    	<td> {{agency.phone}} </td>    		
+    	<td>Phone:</td>
+    	<td> {{agency.phone}}</td>
     </tr>
-    {% endfor %}
     
 </table>
 

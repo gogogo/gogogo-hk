@@ -6,6 +6,7 @@ import gogogo.api
 urlpatterns = patterns(
 	'',
     (r'^agency/list$', 'gogogo.views.agency_list'),
+	(r'^agency/browse/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.agency_browse'),
     
     (r'^devtools/(?P<file>.*)$', 'gogogo.views.devtools'),
     (r'^js/(?P<path>.*)$', 'django.views.static.serve',
@@ -14,6 +15,7 @@ urlpatterns = patterns(
     # API     
          
 	(r'^api/agency/list$' ,'gogogo.api.agency_list'),
+
 	
 	(r'^api/stop/search/(?P<lat0>[0-9]*\.[0-9]*),(?P<lng0>[0-9]*\.[0-9]*),(?P<lat1>[0-9]*\.[0-9]*),(?P<lng1>[0-9]*\.[0-9]*)$' 
 		,'gogogo.api.stop_search'),

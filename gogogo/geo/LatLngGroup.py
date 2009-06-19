@@ -24,6 +24,9 @@ class LatLngGroup:
 	
 	def get_centroid(self):	
 		"""
+		
+		@return A LatLng object of centroid
+		
 		>>> str(LatLngGroup([LatLng(0,0) , LatLng(10,0),LatLng(0,10),LatLng(10,10)]).get_centroid())
 		'(5.000000,5.000000)'
 

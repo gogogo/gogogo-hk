@@ -47,6 +47,7 @@ class AgencyLoader(bulkloader.Loader):
         						('timezone',str),                                
         						('lang',str),
                                 ('phone', str),
+                                ('icon',str)
                                ])
 
 

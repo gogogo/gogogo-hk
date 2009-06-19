@@ -11,13 +11,15 @@ from models import *
 
 def agency_list(request):
 	"""
-		List all agency
+	List all agency
 	"""
 	query = Agency.all()
 	text = ""
 	agency_list = []
 	for row in query:
-		agency_list.append(create_entity(row,request))
+		entity = create_entity(row,request)
+		entity['key_name'] = row.key().name()
+		agency_list.append(entity)
 	
 	t = loader.get_template('gogogo/agency/list.html')
 	c = RequestContext(
@@ -28,6 +30,31 @@ def agency_list(request):
     })
     		
 	return HttpResponse(t.render(c))
+
+def agency_browse(request,id):
+	"""
+	Browse the information of an agency
+	"""
+	
+	key = db.Key.from_path(Agency.kind(),id)
+	
+	record = db.get(key)
+	
+	if record == None:
+		raise Http404
+		
+	agency = create_entity(record,request)
+	
+	t = loader.get_template('gogogo/agency/browse.html')
+	c = RequestContext(
+		request,
+	{
+        'page_title': agency['name'] ,
+        'agency' : agency
+    })
+    		
+	return HttpResponse(t.render(c))
+	
 	
 def devtools(request,file):
 	"""

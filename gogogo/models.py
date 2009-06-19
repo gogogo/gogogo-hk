@@ -93,6 +93,8 @@ class Agency(db.Model):
 	
 	#desc = MLStringProperty() - Later will implement a text input for multiple language handling
 
+	icon = db.StringProperty()
+
 	class Meta:
 		verbose_name = _('Transport Agency')
 		verbose_name_plural = _('Transport Agency')
