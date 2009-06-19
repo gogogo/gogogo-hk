@@ -2,7 +2,7 @@
 from django.conf import settings
 from django.utils.simplejson import dumps
 from os.path import getmtime
-import os, codecs, shutil
+import os, codecs, shutil, logging
 
 MEDIA_VERSION = unicode(settings.MEDIA_VERSION)
 COMPRESSOR = os.path.join(os.path.dirname(__file__), '.yuicompressor.jar')
@@ -75,7 +75,8 @@ def compress_file(path):
     from subprocess import Popen
     print '  Running yuicompressor...',
     try:
-        cmd = Popen(['java', '-jar', COMPRESSOR, path, '-o', path])
+        cmd = Popen(['java', '-jar', COMPRESSOR, '--charset', 'UTF-8',
+                     path, '-o', path])
         if cmd.wait() == 0:
             print '%d bytes' % os.path.getsize(path)
         else:
@@ -105,18 +106,22 @@ def get_file_content(handler, cache, **kwargs):
     path = get_file_path(handler, **kwargs)
     if path not in cache:
         if isinstance(handler, basestring):
-            file = codecs.open(path, 'r', 'utf-8')
             try:
+                file = codecs.open(path, 'r', 'utf-8')
                 cache[path] = file.read().lstrip(codecs.BOM_UTF8.decode('utf-8')
                     ).replace('\r\n', '\n').replace('\r', '\n')
             except:
-                print 'Error in %s', path
+                logging.error('Error in %s' % path)
                 raise
             file.close()
         elif callable(handler):
             cache[path] = handler(**kwargs)
         else:
             raise ValueError('Media generator source "%r" not valid!' % handler)
+    # Add $MEDIA_URL variable to CSS files
+    ext = os.path.splitext(path)[1]
+    if ext == '.css':
+        cache[path] = cache[path].replace('$MEDIA_URL/', settings.MEDIA_URL)
     return cache[path]
 
 def update_dynamic_file(handler, cache, **kwargs):
@@ -148,9 +153,10 @@ def get_targets(combine_media=settings.COMBINE_MEDIA, **kwargs):
     for target in sorted(combine_media.keys()):
         group = combine_media[target]
         if '.site_data.js' in group:
-            index = list(group).index('.site_data.js')
-            group = group[:index] + (site_data,) + group[index+1:]
-        group = tuple(group)
+            # site_data must always come first because other modules might
+            # depend on it
+            group.remove('.site_data.js')
+            group.insert(0, site_data)
         if '%(LANGUAGE_CODE)s' in target:
             # This file uses i18n, so generate a separate file per language.
             # The language data is always added before all other files.
@@ -159,7 +165,7 @@ def get_targets(combine_media=settings.COMBINE_MEDIA, **kwargs):
                 data['LANGUAGE_CODE'] = LANGUAGE_CODE
                 filename = target % data
                 data['target'] = filename
-                group = (lang_data,) + group
+                group.insert(0, lang_data)
                 targets.append((filename, data, group))
         elif '%(LANGUAGE_DIR)s' in target:
             # Generate CSS files for both text directions

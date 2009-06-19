@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from appenginepatcher import on_production_server
+from appenginepatcher import on_production_server, have_appserver
 import os
 DEBUG = not on_production_server
 
@@ -11,6 +11,7 @@ ADMIN_MEDIA_PREFIX = '%sadmin_media/'
 ADMINS = ()
 
 DATABASE_ENGINE = 'appengine'
+DATABASE_SUPPORTS_TRANSACTIONS = False
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -53,5 +54,8 @@ FILE_UPLOAD_HANDLERS = (
 CACHE_BACKEND = 'memcached://?timeout=0'
 
 COMBINE_MEDIA = {}
+
+if not on_production_server:
+    INTERNAL_IPS = ('127.0.0.1',)
 
 IGNORE_APP_SETTINGS = ()

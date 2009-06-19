@@ -26,20 +26,25 @@ files will be generated (one for each language code).
 """
 from django.core.management.base import NoArgsCommand
 from optparse import make_option
-from mediautils.generatemedia import generatemedia, MEDIA_ROOT
+from mediautils.generatemedia import generatemedia, updatemedia, MEDIA_ROOT
 import os, shutil
 
 class Command(NoArgsCommand):
     help = 'Combines and compresses your media files and saves them in _generated_media.'
     option_list = NoArgsCommand.option_list + (
-        make_option('--compressed', action='store_true', dest='compressed',
-            help='Run yuicompressor on generated media.'),
+        make_option('--uncompressed', action='store_true', dest='uncompressed',
+            help='Do not run yuicompressor on generated media.'),
+        make_option('--update', action='store_true', dest='update',
+            help='Only update changed files instead of regenerating everything.'),
     )
 
     requires_model_validation = False
 
     def handle_noargs(self, **options):
         compressed = None
-        if options.get('compressed'):
-            compressed = True
-        generatemedia(compressed)
+        if options.get('uncompressed'):
+            compressed = False
+        if options.get('update'):
+            updatemedia(compressed)
+        else:
+            generatemedia(compressed)

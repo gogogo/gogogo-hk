@@ -64,6 +64,7 @@ def update_js_translations(locale):
             file.close()
 
 def load_translations(path):
+    """Loads translations grouped into logical sections."""
     file = codecs.open(path, 'r', 'utf-8')
     lines = file.readlines()
     file.close()
@@ -72,6 +73,7 @@ def load_translations(path):
     start = -1
     resultlines = []
     for index, line in enumerate(lines):
+        # Group comments
         if line.startswith('#'):
             if resultlines and resultlines[-1].startswith('#'):
                 resultlines[-1] = resultlines[-1] + lines[index]
@@ -79,13 +81,13 @@ def load_translations(path):
                 resultlines.append(lines[index])
             continue
 
-        if msgid is not None and (not line.strip() or line.startswith('msgid')):
+        if msgid is not None and (not line.strip() or line.startswith('msgid ')):
             mapping[msgid] = len(resultlines)
             resultlines.append(''.join(lines[start:index]))
             msgid = None
             start = -1
 
-        if line.startswith('msgid'):
+        if line.startswith('msgid '):
             line = line[len('msgid'):].strip()
             start = -1
             msgid = ''
@@ -94,7 +96,7 @@ def load_translations(path):
             resultlines.append(lines[index])
             continue
 
-        if line.startswith('msgstr'):
+        if line.startswith('msgstr') and start < 0:
             start = index
 
         if start < 0:

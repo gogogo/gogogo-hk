@@ -25,18 +25,25 @@ INSTALLED_APPS += (
     'django_aep_export.django_templates',
 )
 
-# Add start markers, so apps can insert JS/CSS at correct position
-def add_app_media(env, combine, *appmedia):
-    COMBINE_MEDIA = env['COMBINE_MEDIA']
-    COMBINE_MEDIA.setdefault(combine, ())
-    if '!START!' not in COMBINE_MEDIA[combine]:
-        COMBINE_MEDIA[combine] = ('!START!',) + COMBINE_MEDIA[combine]
-    index = list(COMBINE_MEDIA[combine]).index('!START!')
-    COMBINE_MEDIA[combine] = COMBINE_MEDIA[combine][:index] + \
-        appmedia + COMBINE_MEDIA[combine][index:]
+# Convert all COMBINE_MEDIA to lists
+for key, value in COMBINE_MEDIA.items():
+    if not isinstance(value, list):
+        COMBINE_MEDIA[key] = list(value)
 
-def add_uncombined_app_media(env, app):
+# Add start markers, so apps can insert JS/CSS at correct position
+def add_app_media(combine, *appmedia):
+    if on_production_server:
+        return
+    COMBINE_MEDIA.setdefault(combine, [])
+    if '!START!' not in COMBINE_MEDIA[combine]:
+        COMBINE_MEDIA[combine].insert(0, '!START!')
+    index = COMBINE_MEDIA[combine].index('!START!')
+    COMBINE_MEDIA[combine][index:index] = appmedia
+
+def add_uncombined_app_media(app):
     """Copy all media files directly"""
+    if on_production_server:
+        return
     path = os.path.join(
         os.path.dirname(__import__(app, {}, {}, ['']).__file__), 'media')
     app = app.rsplit('.', 1)[-1]
@@ -46,26 +53,37 @@ def add_uncombined_app_media(env, app):
                 base = os.path.join(root, file)[len(path):].replace(os.sep,
                     '/').lstrip('/')
                 target = '%s/%s' % (app, base)
-                add_app_media(env, target, target)
+                add_app_media(target, target)
 
-def check_app_imports(app):
-    before = sys.modules.keys()
-    __import__(app, {}, {}, [''])
-    after = sys.modules.keys()
-    added = [key[len(app)+1:] for key in after if key not in before and
-             key.startswith(app + '.') and key[len(app)+1:]]
-    if added:
-        import logging
-        logging.warn('The app "%(app)s" contains imports in '
-                     'its __init__.py (at least %(added)s). This can cause '
-                     'strange bugs due to recursive imports! You should '
-                     'either do the import lazily (within functions) or '
-                     'ignore the app settings/urlsauto with '
-                     'IGNORE_APP_SETTINGS and IGNORE_APP_URLSAUTO in '
-                     'your settings.py.'
-                     % {'app': app, 'added': ', '.join(added)})
+if have_appserver or on_production_server:
+    check_app_imports = None
+else:
+    def check_app_imports(app):
+        before = sys.modules.keys()
+        __import__(app, {}, {}, [''])
+        after = sys.modules.keys()
+        added = [key[len(app)+1:] for key in after if key not in before and
+                 key.startswith(app + '.') and key[len(app)+1:]]
+        if added:
+            import logging
+            logging.warn('The app "%(app)s" contains imports in '
+                         'its __init__.py (at least %(added)s). This can cause '
+                         'strange bugs due to recursive imports! You should '
+                         'either do the import lazily (within functions) or '
+                         'ignore the app settings/urlsauto with '
+                         'IGNORE_APP_SETTINGS and IGNORE_APP_URLSAUTO in '
+                         'your settings.py.'
+                         % {'app': app, 'added': ', '.join(added)})
 
 # Import app-specific settings
+_globals = globals()
+class _Module(object):
+    def __setattr__(self, key, value):
+        _globals[key] = value
+    def __getattribute__(self, key):
+        return _globals[key]
+settings = _Module()
+
 for app in INSTALLED_APPS:
     # This is an optimization. Django's apps don't have special settings.
     # Also, allow for ignoring some apps' settings.
@@ -74,21 +92,16 @@ for app in INSTALLED_APPS:
         continue
     try:
         # First we check if __init__.py doesn't import anything
-        check_app_imports(app)
-        data = __import__(app + '.settings', {}, {}, [''])
-        for key, value in data.__dict__.items():
-            if not key.startswith('_'):
-                globals()[key] = value
+        if check_app_imports:
+            check_app_imports(app)
+        __import__(app + '.settings', {}, {}, [''])
     except ImportError:
         pass
 
 # Remove start markers
-for combine in COMBINE_MEDIA:
-    if '!START!' not in COMBINE_MEDIA[combine]:
-        continue
-    index = list(COMBINE_MEDIA[combine]).index('!START!')
-    COMBINE_MEDIA[combine] = COMBINE_MEDIA[combine][:index] + \
-        COMBINE_MEDIA[combine][index+1:]
+for key, value in COMBINE_MEDIA.items():
+    if '!START!' in value:
+        value.remove('!START!')
 
 try:
     from settings_overrides import *

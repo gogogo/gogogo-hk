@@ -1,3 +1,3 @@
-from ragendja.settings_post import *
+from ragendja.settings_post import settings
 
-add_uncombined_app_media(globals(), 'django_aep_export.admin_media')
+settings.add_uncombined_app_media('django_aep_export.admin_media')

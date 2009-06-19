@@ -2,20 +2,32 @@
 from copy import deepcopy
 from django.forms.forms import NON_FIELD_ERRORS
 from django.template import Library
-from django.utils import simplejson
 from django.utils.datastructures import SortedDict
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
 from ragendja.dbutils import prefetch_references
-from ragendja.template import LazyEncoder
 
 register = Library()
 
 register.filter('prefetch_references', prefetch_references)
 
+_js_escapes = {
+    '>': r'\x3E',
+    '<': r'\x3C',
+    '&': r'\x26',
+    '=': r'\x3D',
+    '-': r'\x2D',
+    ';': r'\x3B',
+}
+
 @register.filter
 def encodejs(value):
-    return mark_safe(simplejson.dumps(value, cls=LazyEncoder))
+    from django.utils import simplejson
+    from ragendja.json import LazyEncoder
+    value = simplejson.dumps(value, cls=LazyEncoder)
+    for bad, good in _js_escapes.items():
+        value = value.replace(bad, good)
+    return mark_safe(value)
 
 @register.filter
 def urlquerybase(url):

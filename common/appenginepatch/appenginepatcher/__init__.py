@@ -14,6 +14,5 @@ else:
     except ImportError:
         appid = None
 
-on_production_server = not (
-        os.environ.get('SERVER_SOFTWARE', '').lower().startswith('devel') or
-        sys.argv[0].endswith('manage.py'))
+on_production_server = have_appserver and \
+    not os.environ.get('SERVER_SOFTWARE', '').lower().startswith('devel')

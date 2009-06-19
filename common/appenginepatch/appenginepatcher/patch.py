@@ -6,7 +6,7 @@
 
 from google.appengine.ext import db
 from google.appengine.ext.db import polymodel
-import logging, new, os, re, sys
+import logging, os, re, sys
 
 base_path = os.path.abspath(os.path.dirname(__file__))
 
@@ -15,16 +15,31 @@ get_verbose_name = lambda class_name: re.sub('(((?<=[a-z])[A-Z])|([A-Z](?![A-Z]|
 DEFAULT_NAMES = ('verbose_name', 'ordering', 'permissions', 'app_label',
                  'abstract', 'db_table', 'db_tablespace')
 
+# Add checkpoints to patching procedure, so we don't apply certain patches
+# multiple times. This can happen if an exeception gets raised on the first
+# request of an instance. In that case, main.py gets reloaded and patch_all()
+# gets executed yet another time.
+done_patch_all = False
+
 def patch_all():
+    global done_patch_all
+    if done_patch_all:
+        return
     patch_python()
     patch_app_engine()
-    patch_django()
+    
+    # Add signals: post_save_committed, post_delete_committed
+    from appenginepatcher import transactions
+    
     setup_logging()
+    done_patch_all = True
 
 def patch_python():
-    # Remove modules that we want to override
+    # Remove modules that we want to override. Don't remove modules that we've
+    # already overridden.
     for module in ('memcache',):
-        if module in sys.modules:
+        if module in sys.modules and \
+                not sys.modules[module].__file__.startswith(base_path):
             del sys.modules[module]
 
     # For some reason the imp module can't be replaced via sys.path
@@ -54,6 +69,7 @@ def patch_app_engine():
             except:
                 return query._model_class
     db.Query.model = ModelProperty()
+    db.GqlQuery.model = ModelProperty()
 
     # Add a few Model methods that are needed for serialization and ModelForm
     def _get_pk_val(self):
@@ -73,11 +89,32 @@ def patch_app_engine():
     def pk(self):
         return self._get_pk_val()
     db.Model.id = db.Model.pk = property(pk)
+    def serializable_value(self, field_name):
+        """
+        Returns the value of the field name for this instance. If the field is
+        a foreign key, returns the id value, instead of the object. If there's
+        no Field object with this name on the model, the model attribute's
+        value is returned directly.
+
+        Used to serialize a field's value (in the serializer, or form output,
+        for example). Normally, you would just access the attribute directly
+        and not use this method.
+        """
+        from django.db.models.fields import FieldDoesNotExist
+        try:
+            field = self._meta.get_field(field_name)
+        except FieldDoesNotExist:
+            return getattr(self, field_name)
+        return getattr(self, field.attname)
+    db.Model.serializable_value = serializable_value
 
     # Make Property more Django-like (needed for serialization and ModelForm)
     db.Property.serialize = True
     db.Property.editable = True
     db.Property.help_text = ''
+    def blank(self):
+        return not self.required
+    db.Property.blank = property(blank)
     def _get_verbose_name(self):
         if not getattr(self, '_verbose_name', None):
             self._verbose_name = self.name.replace('_', ' ')
@@ -98,6 +135,7 @@ def patch_app_engine():
             self.multiple = True
             self.parent_link = False
             self.related_name = getattr(property, 'collection_name', None)
+            self.through = None
 
     class RelProperty(object):
         def __get__(self, property, cls):
@@ -113,19 +151,21 @@ def patch_app_engine():
     def formfield(self, **kwargs):
         return self.get_form_field(**kwargs)
     db.Property.formfield = formfield
-
+    
     # Add repr to make debugging a little bit easier
-    from django.utils.datastructures import SortedDict
     def __repr__(self):
-        d = SortedDict()
-        if self.has_key() and self.key().name():
-            d['key_name'] = self.key().name()
+        data = []
+        if self.has_key():
+            if self.key().name():
+                data.append('key_name='+repr(self.key().name()))
+            else:
+                data.append('key_id='+repr(self.key().id()))
         for field in self._meta.fields:
             try:
-                d[field.name] = getattr(self, field.name)
+                data.append(field.name+'='+repr(getattr(self, field.name)))
             except:
-                d[field.name] = field.get_value_for_datastore(self)
-        return u'%s(**%s)' % (self.__class__.__name__, repr(d))
+                data.append(field.name+'='+repr(field.get_value_for_datastore(self)))
+        return u'%s(%s)' % (self.__class__.__name__, ', '.join(data))
     db.Model.__repr__ = __repr__
 
     # Add default __str__ and __unicode__ methods
@@ -257,7 +297,9 @@ def patch_app_engine():
         def local_many_to_many(self):
             return tuple(sorted([p for p in self.model.properties().values()
                                  if isinstance(p, db.ListProperty) and
-                                     not p.name == '_class'],
+                                     not (issubclass(self.model,
+                                                     polymodel.PolyModel)
+                                          and p.name == 'class')],
                                 key=lambda prop: prop.creation_counter))
 
         @property
@@ -268,10 +310,10 @@ def patch_app_engine():
             """
             Returns the requested field by name. Raises FieldDoesNotExist on error.
             """
-            from django.db.models.fields import FieldDoesNotExist
             for f in self.fields:
                 if f.name == name:
                     return f
+            from django.db.models.fields import FieldDoesNotExist
             raise FieldDoesNotExist, '%s has no field named %r' % (self.object_name, name)
 
         def get_all_related_objects(self, local_only=False):
@@ -297,6 +339,7 @@ def patch_app_engine():
         def _fill_related_objects_cache(self):
             from django.db.models.loading import get_models
             from django.db.models.related import RelatedObject
+            from django.utils.datastructures import SortedDict
             cache = SortedDict()
             parent_list = self.get_parent_list()
             for parent in self.parents:
@@ -336,6 +379,7 @@ def patch_app_engine():
         def _fill_related_many_to_many_cache(self):
             from django.db.models.loading import get_models, app_cache_ready
             from django.db.models.related import RelatedObject
+            from django.utils.datastructures import SortedDict
             cache = SortedDict()
             parent_list = self.get_parent_list()
             for parent in self.parents:
@@ -389,27 +433,31 @@ def patch_app_engine():
 
     # Register models with Django
     from django.db.models import signals
-    old_propertied_class_init = db.PropertiedClass.__init__
-    def __init__(cls, name, bases, attrs, map_kind=True):
-        """Creates a combined appengine and Django model.
+    if not hasattr(db.PropertiedClass.__init__, 'patched'):
+        old_propertied_class_init = db.PropertiedClass.__init__
+        def __init__(cls, name, bases, attrs, map_kind=True):
+            """Creates a combined appengine and Django model.
 
-        The resulting model will be known to both the appengine libraries and
-        Django.
-        """
-        _initialize_model(cls, bases)
-        old_propertied_class_init(cls, name, bases, attrs,
-            not cls._meta.abstract)
-        signals.class_prepared.send(sender=cls)
-    db.PropertiedClass.__init__ = __init__
-
-    old_poly_init = polymodel.PolymorphicClass.__init__
-    def __init__(cls, name, bases, attrs):
-        if polymodel.PolyModel not in bases:
+            The resulting model will be known to both the appengine libraries
+            and Django.
+            """
             _initialize_model(cls, bases)
-        old_poly_init(cls, name, bases, attrs)
-        if polymodel.PolyModel not in bases:
+            old_propertied_class_init(cls, name, bases, attrs,
+                not cls._meta.abstract)
             signals.class_prepared.send(sender=cls)
-    polymodel.PolymorphicClass.__init__ = __init__
+        __init__.patched = True
+        db.PropertiedClass.__init__ = __init__
+
+    if not hasattr(polymodel.PolymorphicClass.__init__, 'patched'):
+        old_poly_init = polymodel.PolymorphicClass.__init__
+        def __init__(cls, name, bases, attrs):
+            if polymodel.PolyModel not in bases:
+                _initialize_model(cls, bases)
+            old_poly_init(cls, name, bases, attrs)
+            if polymodel.PolyModel not in bases:
+                signals.class_prepared.send(sender=cls)
+        __init__.patched = True
+        polymodel.PolymorphicClass.__init__ = __init__
 
     @classmethod
     def kind(cls):
@@ -417,31 +465,38 @@ def patch_app_engine():
     db.Model.kind = kind
 
     # Add model signals
-    old_model_init = db.Model.__init__
-    def __init__(self, *args, **kwargs):
-        signals.pre_init.send(sender=self.__class__, args=args, kwargs=kwargs)
-        old_model_init(self, *args, **kwargs)
-        signals.post_init.send(sender=self.__class__, instance=self)
-    db.Model.__init__ = __init__
+    if not hasattr(db.Model.__init__, 'patched'):
+        old_model_init = db.Model.__init__
+        def __init__(self, *args, **kwargs):
+            signals.pre_init.send(sender=self.__class__, args=args,
+                                  kwargs=kwargs)
+            old_model_init(self, *args, **kwargs)
+            signals.post_init.send(sender=self.__class__, instance=self)
+        __init__.patched = True
+        db.Model.__init__ = __init__
 
-    old_put = db.Model.put
-    def put(self, *args, **kwargs):
-        raw = False
-        signals.pre_save.send(sender=self.__class__, instance=self, raw=raw)
-        created = not self.is_saved()
-        result = old_put(self, *args, **kwargs)
-        signals.post_save.send(sender=self.__class__, instance=self,
-            created=created, raw=raw)
-        return result
-    db.Model.put = put
+    if not hasattr(db.Model.put, 'patched'):
+        old_put = db.Model.put
+        def put(self, *args, **kwargs):
+            raw = False
+            signals.pre_save.send(sender=self.__class__, instance=self, raw=raw)
+            created = not self.is_saved()
+            result = old_put(self, *args, **kwargs)
+            signals.post_save.send(sender=self.__class__, instance=self,
+                created=created, raw=raw)
+            return result
+        put.patched = True
+        db.Model.put = put
 
-    old_delete = db.Model.delete
-    def delete(self, *args, **kwargs):
-        signals.pre_delete.send(sender=self.__class__, instance=self)
-        result = old_delete(self, *args, **kwargs)
-        signals.post_delete.send(sender=self.__class__, instance=self)
-        return result
-    db.Model.delete = delete
+    if not hasattr(db.Model.delete, 'patched'):
+        old_delete = db.Model.delete
+        def delete(self, *args, **kwargs):
+            signals.pre_delete.send(sender=self.__class__, instance=self)
+            result = old_delete(self, *args, **kwargs)
+            signals.post_delete.send(sender=self.__class__, instance=self)
+            return result
+        delete.patched = True
+        db.Model.delete = delete
 
     # This has to come last because we load Django here
     from django.db.models.fields import BLANK_CHOICE_DASH
@@ -510,15 +565,11 @@ def fix_app_engine_bugs():
         return super(db.TimeProperty, self).get_form_field(**defaults)
     db.TimeProperty.get_form_field = get_form_field
 
-    # Fix default value of UserProperty (Google resolves the user too early)
-    # http://code.google.com/p/googleappengine/issues/detail?id=879
-    from django.utils.functional import lazy
-    from google.appengine.api import users
-    def get_form_field(self, **kwargs):
-        defaults = {'initial': lazy(users.GetCurrentUser, users.User)()}
-        defaults.update(kwargs)
-        return super(db.UserProperty, self).get_form_field(**defaults)
-    db.UserProperty.get_form_field = get_form_field
+    # Improve handing of StringListProperty
+    def get_form_field(self, **defaults):
+        defaults['required'] = False
+        return super(db.StringListProperty, self).get_form_field(**defaults)
+    db.StringListProperty.get_form_field = get_form_field
 
     # Fix file uploads via BlobProperty
     def get_form_field(self, **kwargs):
@@ -548,13 +599,6 @@ def fix_app_engine_bugs():
         defaults.update(kwargs)
         return super(db.ReferenceProperty, self).get_form_field(**defaults)
     db.ReferenceProperty.get_form_field = get_form_field
-
-def patch_django():
-    # Most patches are part of the django-app-engine project:
-    # http://www.bitbucket.org/wkornewald/django-app-engine/
-
-    # Activate ragendja's GLOBALTAGS support (automatically done on import)
-    from ragendja import template
 
 def setup_logging():
     from django.conf import settings

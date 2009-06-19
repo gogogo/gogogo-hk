@@ -8,7 +8,14 @@ class GoogleUserTraits(EmailUserTraits):
     @classmethod
     def get_djangouser_for_user(cls, user):
         django_user = cls.all().filter('user =', user).get()
-        if not django_user:
+        if django_user:
+            if getattr(settings, 'AUTH_ADMIN_USER_AS_SUPERUSER', True):
+                is_admin = users.is_current_user_admin()
+                if django_user.is_staff != is_admin or \
+                        django_user.is_superuser != is_admin:
+                    django_user.is_superuser = django_user.is_staff = is_admin
+                    django_user.put()
+        else:
             django_user = cls.create_djangouser_for_user(user)
             django_user.is_active = True
             if getattr(settings, 'AUTH_ADMIN_USER_AS_SUPERUSER', True) and \

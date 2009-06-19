@@ -102,7 +102,7 @@ def db_create(model, parent=None, key_name_format=u'%s',
         if result:
             return result
 
-def prefetch_references(object_list, references):
+def prefetch_references(object_list, references, cache=None):
     """
     Dereferences the given (Key)ReferenceProperty fields of a list of objects
     in as few get() calls as possible.
@@ -136,6 +136,16 @@ def prefetch_references(object_list, references):
                         continue
                     key = property.get_value_for_datastore(item)
                 if key:
+                    # Check if we already have a matching item in cache
+                    if cache:
+                        found_cached = None
+                        for cached_item in cache:
+                            if cached_item.key() == key:
+                                found_cached = cached_item
+                        if found_cached:
+                            setattr(item, name, found_cached)
+                            continue
+                    # No item found in cache. Retrieve it.
                     key = str(key)
                     prefetch[key] = prefetch.get(key, ()) + ((item, name),)
         for target_model, prefetch in targets.values():
@@ -446,21 +456,21 @@ class FakeModel(object):
     """
     # Important: If you want to change your fields at a later point you have
     # to write a converter which upgrades your datastore schema.
-    fields = ()
+    fields = ('value',)
 
     def __init__(self, **kwargs):
         if sorted(kwargs.keys()) != sorted(self.fields):
             raise ValueError('You have to pass the following values to '
                              'the constructor: %s' % ', '.join(self.fields))
 
-        for key, value in kwargs:
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     class _meta(object):
         installed = True
 
     def get_value_for_datastore(self):
-        return simplejson.dumps([getattr(self, field) for field in fields])
+        return simplejson.dumps([getattr(self, field) for field in self.fields])
 
     @property
     def pk(self):
@@ -480,13 +490,14 @@ class FakeModel(object):
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__,
-                             ' | '.join([getattr(self, field)
+                             ' | '.join([unicode(getattr(self, field))
                                          for field in self.fields]))
 
 class FakeModelProperty(db.Property):
     data_type = basestring
 
-    def __init__(self, model, *args, **kwargs):
+    def __init__(self, model, raw=False, *args, **kwargs):
+        self.raw = raw
         self.model = model
         super(FakeModelProperty, self).__init__(*args, **kwargs)
 
@@ -502,10 +513,22 @@ class FakeModelProperty(db.Property):
 
     def get_value_for_datastore(self, model_instance):
         fake_model = getattr(model_instance, self.name)
+        if not fake_model:
+            return None
+        if not self.indexed:
+            return db.Text(fake_model.get_value_for_datastore())
         return fake_model.get_value_for_datastore()
 
     def make_value_from_datastore(self, value):
-        return self.model.make_value_from_datastore(value)
+        if not value:
+            return None
+        return self.model.make_value_from_datastore(unicode(value))
+
+    def get_value_for_form(self, instance):
+        return self.get_value_for_datastore(instance)
+
+    def make_value_from_form(self, value):
+        return value
 
     def __set__(self, model_instance, value):
         if isinstance(value, basestring):
@@ -514,16 +537,20 @@ class FakeModelProperty(db.Property):
 
     @classmethod
     def get_fake_defaults(self, fake_model, multiple=False, **kwargs):
-        from django import forms
-        choices = tuple([(item.get_value_for_datastore(), unicode(item))
-                         for item in fake_model.all()])
-        form = multiple and forms.MultipleChoiceField or forms.ChoiceField
-        defaults = {'form_class': form, 'choices': choices}
+        from ragendja import forms
+        form = multiple and forms.FakeModelMultipleChoiceField or \
+                            forms.FakeModelChoiceField
+        defaults = {'form_class': form, 'fake_model': fake_model}
         defaults.update(kwargs)
         return defaults
 
     def get_form_field(self, **kwargs):
-        defaults = FakeModelProperty.get_fake_defaults(self.model, **kwargs)
+        if self.raw:
+          from django import forms
+          defaults = kwargs
+          defaults['widget'] = forms.TextInput(attrs={'size': 80})
+        else:
+          defaults = FakeModelProperty.get_fake_defaults(self.model, **kwargs)
         return super(FakeModelProperty, self).get_form_field(**defaults)
 
 class FakeModelListProperty(db.ListProperty):
@@ -531,6 +558,8 @@ class FakeModelListProperty(db.ListProperty):
 
     def __init__(self, model, *args, **kwargs):
         self.model = model
+        if not kwargs.get('indexed', True):
+            self.fake_item_type = db.Text
         super(FakeModelListProperty, self).__init__(
             self.__class__.fake_item_type, *args, **kwargs)
 
@@ -549,18 +578,21 @@ class FakeModelListProperty(db.ListProperty):
 
     def get_value_for_datastore(self, model_instance):
         fake_models = getattr(model_instance, self.name)
+        if not self.indexed:
+            return [db.Text(fake_model.get_value_for_datastore())
+                    for fake_model in fake_models]
         return [fake_model.get_value_for_datastore()
                 for fake_model in fake_models]
 
     def make_value_from_datastore(self, value):
-        return [self.model.make_value_from_datastore(item)
+        return [self.model.make_value_from_datastore(unicode(item))
                 for item in value]
 
     def get_value_for_form(self, instance):
         return self.get_value_for_datastore(instance)
 
     def make_value_from_form(self, value):
-        return self.make_value_from_datastore(value)
+        return value
 
     def get_form_field(self, **kwargs):
         defaults = FakeModelProperty.get_fake_defaults(self.model,

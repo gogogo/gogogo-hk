@@ -1,6 +1,7 @@
 from copy import deepcopy
 import re
 
+from django import forms
 from django.utils.datastructures import SortedDict, MultiValueDict
 from django.utils.html import conditional_escape
 from django.utils.encoding import StrAndUnicode, smart_unicode, force_unicode
@@ -8,6 +9,47 @@ from django.utils.safestring import mark_safe
 from django.forms.widgets import flatatt
 from google.appengine.ext import db
 from ragendja.dbutils import transaction
+
+class FakeModelIterator(object):
+    def __init__(self, fake_model):
+        self.fake_model = fake_model
+    
+    def __iter__(self):
+        for item in self.fake_model.all():
+            yield (item.get_value_for_datastore(), unicode(item))
+
+class FakeModelChoiceField(forms.ChoiceField):
+    def __init__(self, fake_model, *args, **kwargs):
+        self.fake_model = fake_model
+        kwargs['choices'] = ()
+        super(FakeModelChoiceField, self).__init__(*args, **kwargs)
+
+    def _get_choices(self):
+        return self._choices
+    def _set_choices(self, choices):
+        self._choices = self.widget.choices = FakeModelIterator(self.fake_model)
+    choices = property(_get_choices, _set_choices)
+
+    def clean(self, value):
+        value = super(FakeModelChoiceField, self).clean(value)
+        return self.fake_model.make_value_from_datastore(value)
+
+class FakeModelMultipleChoiceField(forms.MultipleChoiceField):
+    def __init__(self, fake_model, *args, **kwargs):
+        self.fake_model = fake_model
+        kwargs['choices'] = ()
+        super(FakeModelMultipleChoiceField, self).__init__(*args, **kwargs)
+
+    def _get_choices(self):
+        return self._choices
+    def _set_choices(self, choices):
+        self._choices = self.widget.choices = FakeModelIterator(self.fake_model)
+    choices = property(_get_choices, _set_choices)
+
+    def clean(self, value):
+        value = super(FakeModelMultipleChoiceField, self).clean(value)
+        return [self.fake_model.make_value_from_datastore(item)
+                for item in value]
 
 class FormWithSets(object):
     def __init__(self, form, formsets=()):
@@ -28,6 +70,8 @@ class FormWithSets(object):
     def __call__(self, *args,  **kwargs):
         prefix = kwargs['prefix'] + '-' if 'prefix' in kwargs else ''
         form = self.form(*args,  **kwargs)
+        if 'initial' in kwargs:
+            del kwargs['initial']
         formsets = []
         for name, formset in self.formsets:
             kwargs['prefix'] = prefix + name
@@ -115,13 +159,11 @@ class BoundFormSet(StrAndUnicode):
                 current_row = []
         if len(current_row) != 0:
             raise Exception('Unbalanced render')
-        def last_first(tuple):
-            return tuple[-1:] + tuple[:-1]
         return mark_safe(u'%s<table%s><tr>%s</tr><tr>%s</tr></table>%s'%(
             table_sections[0],
             flatatt(attrs),
-            u''.join(last_first(heads)),
-            u'</tr><tr>'.join((u''.join(last_first(x)) for x in output)), 
+            u''.join(heads),
+            u'</tr><tr>'.join((u''.join(x) for x in output)),
             table_sections[2]))
 
 class CachedQuerySet(object):
