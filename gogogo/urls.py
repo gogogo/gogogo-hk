@@ -2,6 +2,7 @@
 from django.conf.urls.defaults import *
 import os
 import gogogo.api
+import gogogo.views
 
 urlpatterns = patterns(
 	'',

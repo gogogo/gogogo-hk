@@ -10,7 +10,7 @@ from django.forms import ModelForm
 
 from ragendja.auth.decorators import staff_only
 from ragendja.template import render_to_response
-from models import *
+from gogogo.models import *
 
 def agency_list(request):
 	"""

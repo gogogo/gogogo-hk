@@ -8,8 +8,8 @@ from django.conf import settings
 from django.utils import simplejson
 from StringIO import StringIO
 
-from models import *
-from geo.geohash import Geohash
+from gogogo.models import *
+from gogogo.geo.geohash import Geohash
 #import json
 
 def default(o):
