@@ -21,22 +21,31 @@
 
   <body>
     {% block header %}
-      <div id="header">
+      <div id="header" style="height:20px;">
         <div class="menu">
-          <a href="/">Home</a> |
-          <a href="{% url myapp.views.list_people %}">Generic views sample</a> |
-          <a href="/admin/">Admin interface</a> |
-          <a href="http://code.google.com/p/app-engine-patch/">Visit app-engine-patch</a> |
-          <a href="http://code.google.com/p/app-engine-patch/wiki/Documentation">Documentation</a>
-          --
+        	<div class="left_menu" style="float:left">
+          		<a href="/">Planning</a> |
+          		<a href="/">Transit Information</a>
+			</div>
+			
+			<div class="right_menu" style="position : absolute ; right : 0px">
           {% if user.is_authenticated %}
-            Welcome, {{ user.username }}!
-            <a href="{% url django.contrib.auth.views.logout %}">Logout</a>
+          	{{ user.username }} |
+          		{% if user.is_staff %}
+				<a href="/admin/">Admin interface</a> |
+          		{% endif %}
+          {% endif %}
+          
+          Help |
+          
+          {% if user.is_authenticated %}
+            <a href="{% url django.contrib.auth.views.logout %}">Sign out</a>
           {% else %}
-            <a href="{% url django.contrib.auth.views.login %}">Login</a>
-            <a href="{% url registration.views.register %}">Register</a>
+            <a href="{% url django.contrib.auth.views.login %}">Sign in</a>
           {% endif %}
           {{LANGUAGE_CODE}}
+          	
+          	
 			<form action="/i18n/setlang/" method="post">
 			<input name="next" type="hidden" value="{{ request.get_full_path|urlencode }}" />
 			<select name="language">
@@ -47,6 +56,7 @@
 			<input type="submit" value="Go" />
 			</form>
           
+          	</div>
           
         </div>
       </div>

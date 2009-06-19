@@ -76,7 +76,7 @@ INSTALLED_APPS = (
     'django.contrib.redirects',
     'django.contrib.sites',
     'appenginepatcher',
-    'myapp',
+#    'myapp',
 #    'registration',
     'mediautils',
     'gogogo',
