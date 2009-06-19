@@ -35,10 +35,12 @@ def agency_browse(request,id):
 	"""
 	Browse the information of an agency
 	"""
+	try:
+		key = db.Key.from_path(Agency.kind(),id)
 	
-	key = db.Key.from_path(Agency.kind(),id)
-	
-	record = db.get(key)
+		record = db.get(key)
+	except (db.BadArgumentError,db.BadValueError):
+		raise Http404
 	
 	if record == None:
 		raise Http404
