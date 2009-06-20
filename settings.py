@@ -28,6 +28,18 @@ LANGUAGES = (
     ('zh-cn',u'简体中文')
 )
 
+# Can not put into the bottom of the file. It will raise unexcepted result
+COMBINE_MEDIA = {
+    'combined-%(LANGUAGE_CODE)s.js': (
+        # See documentation why site_data can be useful:
+        # http://code.google.com/p/app-engine-patch/wiki/MediaGenerator
+        #'.site_data.js',
+    ),
+    'combined-%(LANGUAGE_DIR)s.css': (
+        'global/gogogo-hk.css',
+    ),
+}
+
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.auth',
     'django.core.context_processors.media',
@@ -68,6 +80,12 @@ LOGOUT_URL = '/account/logout/'
 LOGIN_REDIRECT_URL = '/'
 
 INSTALLED_APPS = (
+    #This will add jquery to your COMBINE_MEDIA['combined-%(LANGUAGE_CODE)s.js'] automatically
+    'jquery',
+    
+    # Add blueprint CSS (http://blueprintcss.org/)
+    #'blueprintcss',
+
     'django.contrib.auth',
     'django.contrib.sessions',
     'django.contrib.admin',
@@ -80,10 +98,7 @@ INSTALLED_APPS = (
 #    'registration',
     'mediautils',
     'gogogo',
-       
-    #This will add jquery to your COMBINE_MEDIA['combined-%(LANGUAGE_CODE)s.js'] automatically
-    'jquery',
-    
+           
 )
 
 # List apps which should be left out from app settings and urlsauto loading
@@ -101,4 +116,5 @@ DEFAULT_CHARSET="utf-8"
 # Gogogo
 
 GOOGLE_MAPS_KEY = settings_private.GOOGLE_MAPS_KEY
+
 

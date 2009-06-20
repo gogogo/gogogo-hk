@@ -1,0 +1,25 @@
+/* Add your global CSS (i.e., code that is project-specific and not part of any app) here. */
+
+#header {
+	height:20px;
+}
+
+.left_menu {
+	float : left;
+}
+
+.right_menu {
+	position : absolute ;
+	right : 0px;
+}
+
+#content {
+	padding-top:20px;
+}
+
+.setlang_link { 
+	text-decoration: underline 
+}
+
+
+

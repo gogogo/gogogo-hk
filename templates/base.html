@@ -9,7 +9,7 @@
   <head>
     <title>{% block title %}{% endblock %}</title>
     {% block css %}
-      {# <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}combined-{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}.css" /> #}
+      <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}combined-{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}.css" />
     {% endblock %}
 
     {% block js %}
@@ -30,15 +30,15 @@
 
   <body>
     {% block header %}
-      <div id="header" style="height:20px;">
+      <div id="header">
         <div class="menu">
-        	<div class="left_menu" style="float:left">
+        	<div class="left_menu" >
           		<a href="/">Planning</a> |
           		<a href="{%url gogogo.views.transit %}">Transit Information</a> |
           		<a href="/">About</a>
 			</div>
 			
-			<div class="right_menu" style="position : absolute ; right : 0px">
+			<div class="right_menu" >
           {% if user.is_authenticated %}
           	{{ user.username }} |
           		{% if user.is_staff %}
@@ -62,7 +62,7 @@
         </div>
       </div>
     {% endblock %}
-    <div id="content" class="column" style="padding-top:20px">
+    <div id="content" class="column">
       {% block content-header %}
         {% if error %}<div class="error">{{ error }}</div>{% endif %}
         {% if info %}<div class="info">{{ info }}</div>{% endif %}
