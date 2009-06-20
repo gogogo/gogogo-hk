@@ -25,7 +25,7 @@
         <div class="menu">
         	<div class="left_menu" style="float:left">
           		<a href="/">Planning</a> |
-          		<a href="/">Transit Information</a>
+          		<a href="{%url gogogo.views.transit %}">Transit Information</a>
 			</div>
 			
 			<div class="right_menu" style="position : absolute ; right : 0px">
@@ -61,7 +61,7 @@
         </div>
       </div>
     {% endblock %}
-    <div id="content" class="column">
+    <div id="content" class="column" style="padding-top:20px">
       {% block content-header %}
         {% if error %}<div class="error">{{ error }}</div>{% endif %}
         {% if info %}<div class="info">{{ info }}</div>{% endif %}

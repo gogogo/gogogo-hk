@@ -1,0 +1,11 @@
+{% extends 'gogogo/transit/base.html' %}
+
+{% block content %}
+
+Transport Servier Provider
+<ul>
+	{% for agency in agency_list %}
+	<li><a href="{%url gogogo.views.transit_browse agency_id=agency.key_name%}">{{agency.name}}</a></li>
+   {% endfor %}	
+</ul>
+{% endblock %}

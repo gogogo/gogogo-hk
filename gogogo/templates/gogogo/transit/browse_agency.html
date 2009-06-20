@@ -1,0 +1,26 @@
+{% extends 'gogogo/transit/base.html' %}
+
+{% block content %}
+
+<table>
+    <tr>
+        <td>Name: </td>
+        <td>{{agency.name}}</td>
+    </tr>
+    <tr>
+    	<td>Icon: </td>
+    	<td><img src='{{MEDIA_URL}}{{agency.icon|default:"global/agency/icons/bus.png" }}'></td>
+    </tr>
+	<tr>
+		<td>URL:</td>
+    	<td> {{agency.url}}</td>  
+	</tr>
+    
+    <tr>
+    	<td>Phone:</td>
+    	<td> {{agency.phone}}</td>
+    </tr>
+    
+</table>
+
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %} {{ page_title }} {% endblock %}
+
+{% block content-header %}
+<div style="float:right">
+<form action="/" method="post">
+<input name="text" /><input type="submit" value="Route Search"  />
+</form>
+</div>
+{% endblock %}
