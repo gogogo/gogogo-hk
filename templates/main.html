@@ -1,21 +1,22 @@
 {% extends 'base.html' %}
-{% block title %}Welcome!{% endblock %}
+{% block title %}Gogogo{% endblock %}
 
 {% block content %}
-<h1>Welcome to the app-engine-patch sample project</h1>
-<p>This is your automatically scaling site!</p>
 
-<p>
-Let's have a look at our generic views
+{% ifequal LANGUAGE_CODE "en" %}
+<h1>Welcome to Gogogo project!</h1>
 
-(a simple person list with file uploads).
-</p>
+Gogogo is powered by <a href="http://code.google.com/p/app-engine-patch/">app-engine-patch</a>
 
-<p>
-You can also visit Django's <a href="/admin/">admin interface</a>. 
-</p>
+{% endifequal %}
 
-<p>
-This sample project includes a port of <a href="http://www.bitbucket.org/ubernostrum/django-registration/wiki/Home">django-registration</a>. We maintain a list of <a href="http://code.google.com/p/app-engine-patch/wiki/OpenSourceProjects">open-source projects</a> to get you started faster with App Engine development.
-</p>
+{% ifequal LANGUAGE_CODE "zh-tw" %}
+<h1>歡迎來到Gogogo計劃！</h1>
+{% endifequal %}
+
+{% ifequal LANGUAGE_CODE "zh-cn" %}
+<h1>欢迎来到Gogogo计划！</h1>
+{% endifequal %}
+
+
 {% endblock %}

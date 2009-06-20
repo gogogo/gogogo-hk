@@ -7,7 +7,7 @@ import gogogo.views
 urlpatterns = patterns(
 	'',
 	(r'^transit/(?P<agency_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit_browse'),
-	(r'^transit/$', 'gogogo.views.transit'),
+	(r'^transit$', 'gogogo.views.transit'),
 
     (r'^agency/list$', 'gogogo.views.agency_list'),
 	(r'^agency/browse/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.agency_browse'),

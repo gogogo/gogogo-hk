@@ -80,6 +80,10 @@ INSTALLED_APPS = (
 #    'registration',
     'mediautils',
     'gogogo',
+       
+    #This will add jquery to your COMBINE_MEDIA['combined-%(LANGUAGE_CODE)s.js'] automatically
+    'jquery',
+    
 )
 
 # List apps which should be left out from app settings and urlsauto loading
@@ -97,3 +101,4 @@ DEFAULT_CHARSET="utf-8"
 # Gogogo
 
 GOOGLE_MAPS_KEY = settings_private.GOOGLE_MAPS_KEY
+

@@ -13,7 +13,16 @@
     {% endblock %}
 
     {% block js %}
-      {# <script type="text/javascript" src="{{ MEDIA_URL }}combined-{{ LANGUAGE_CODE }}.js"></script> #}
+        <script type="text/javascript" src="{{ MEDIA_URL }}combined-{{ LANGUAGE_CODE }}.js"></script>
+		<script type="text/javascript">
+		  $(document).ready(function() {
+				$(".setlang_link").click(function(){
+					$("#setlang_input").val(this.lang);
+					$("#setlang_form").submit();
+				})
+		   })
+		</script>
+      
     {% endblock %}
 
     {% block extra-head %}{% endblock %}
@@ -25,7 +34,8 @@
         <div class="menu">
         	<div class="left_menu" style="float:left">
           		<a href="/">Planning</a> |
-          		<a href="{%url gogogo.views.transit %}">Transit Information</a>
+          		<a href="{%url gogogo.views.transit %}">Transit Information</a> |
+          		<a href="/">About</a>
 			</div>
 			
 			<div class="right_menu" style="position : absolute ; right : 0px">
@@ -35,27 +45,18 @@
 				<a href="/admin/">Admin interface</a> |
           		{% endif %}
           {% endif %}
+
+			{% for lang in LANGUAGES %}
+				{%if not forloop.first %}| {%endif%}<span class="setlang_link" id="setlang_{{lang.0}}" lang="{{lang.0}}">{{ lang.1 }}</span>
+			{% endfor %}
           
-          Help |
+          | Help |
           
           {% if user.is_authenticated %}
             <a href="{% url django.contrib.auth.views.logout %}">Sign out</a>
           {% else %}
             <a href="{% url django.contrib.auth.views.login %}">Sign in</a>
           {% endif %}
-          {{LANGUAGE_CODE}}
-          	
-          	
-			<form action="/i18n/setlang/" method="post">
-			<input name="next" type="hidden" value="{{ request.get_full_path|urlencode }}" />
-			<select name="language">
-			{% for lang in LANGUAGES %}
-			<option value="{{ lang.0 }}">{{ lang.1 }}</option>
-			{% endfor %}
-			</select>
-			<input type="submit" value="Go" />
-			</form>
-          
           	</div>
           
         </div>
@@ -73,5 +74,10 @@
       {% endblock %}
       {% block content %}{% endblock %}
     </div>
+    		{# Hidden language selection form #}
+ 			<form id="setlang_form" action="/i18n/setlang/" method="post">
+			<input name="next" type="hidden" value="{{ request.get_full_path|urlencode }}" />
+			<input id="setlang_input" name="language"  type="hidden">
+			</select>
   </body>
 </html>
