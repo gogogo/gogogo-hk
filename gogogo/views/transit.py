@@ -69,7 +69,9 @@ def agency(request,agency_id):
 
 def route(request,agency_id,route_id):
 	"""
-	Browse the information of a route data
+	Browse the information of a route data. 
+	
+	It is the most expensive call in the system.
 	"""
 
 	try:
@@ -80,7 +82,7 @@ def route(request,agency_id,route_id):
 		raise Http404
 
 	lang = MLStringProperty.get_current_lang(request)
-	entity = {
+	route_entity = {
 		'key_name' : record.key().name(),
 		'long_name' : MLStringProperty.trans(record.long_name,lang),
 		'short_name' : record.short_name,
@@ -90,10 +92,35 @@ def route(request,agency_id,route_id):
 		#'agency' : record.agency.key().name()
 	}
 	
+	gql = db.GqlQuery("SELECT * from gogogo_trip where route = :1",record)
+	
+	trip_list = []
+	travel_list = []
+	
+	for trip_record in gql:
+		stop_list = []
+		try:
+			first_stop = db.get(trip_record.stop_list[0])
+			last_stop = db.get(trip_record.stop_list[len(trip_record.stop_list)-1])
+			travel_list.append( (MLStringProperty.trans(first_stop.name,lang),MLStringProperty.trans(last_stop.name,lang)))
+		except:
+			pass
+			
+		for key in trip_record.stop_list:
+			stop = db.get(key)
+			stop_list.append( (key.name() , MLStringProperty.trans(stop.name,lang) ) )
+		trip_entity = {
+			'headsign' : MLStringProperty.trans(trip_record.headsign,lang),
+			'stop_list' : stop_list
+		}
+		trip_list.append(trip_entity)
+	
 	return render_to_response( 
 		request,
 		'gogogo/transit/route.html'
 		,{ 
 			'page_title': _("Transit Information"),
-		   "route" : entity,
+		   "route" : route_entity,
+		   "trip_list" : trip_list,
+		   "travel_list" : travel_list,
 		   })		
