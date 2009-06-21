@@ -1,0 +1,25 @@
+{% extends 'gogogo/base.html' %}
+
+{% block content %}
+
+{%include 'gogogo/route/search-box.html' %}
+
+{% if result|length %}
+
+	<table>
+	</table>
+
+	{% for route in result%}
+		<tr>
+			<td>{{route.short_name}}</td>
+	    </tr>
+	{%endfor%}
+
+{%else%}
+
+No matching result
+
+{%endif%}
+
+
+{% endblock %}
