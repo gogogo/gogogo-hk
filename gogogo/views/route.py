@@ -39,7 +39,10 @@ def search(request):
 	result = []
 	
 	for row in gql:
-		result.append(create_entity(row,request))
+		entity = create_entity(row,request)
+		entity['key_name'] = row.key().name()
+		entity['agency'] = row.agency.key().name()
+		result.append(entity)
 
 	return render_to_response( 
 		request,

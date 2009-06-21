@@ -5,7 +5,7 @@
 Transport Servier Provider
 <ul>
 	{% for agency in agency_list %}
-	<li><a href="{%url gogogo.views.transit_browse agency_id=agency.key_name%}">{{agency.name}}</a></li>
+	<li><a href="{%url gogogo.views.transit.agency agency_id=agency.key_name%}">{{agency.name}}</a></li>
    {% endfor %}	
 </ul>
 {% endblock %}

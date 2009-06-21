@@ -11,7 +11,7 @@
 
 	{% for route in result%}
 		<tr>
-			<td>{{route.short_name}}</td>
+			<td><a href="{%url gogogo.views.transit.route route.agency route.key_name %}">{{route.short_name}}</a></td>
 	    </tr>
 	{%endfor%}
 

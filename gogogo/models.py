@@ -52,7 +52,7 @@ class MLStringProperty(TitledStringListProperty):
 	get_current_lang = staticmethod(get_current_lang)
 		
 def create_entity(model,request = None):
-	""" Create entity from model with MLString translated. (based on Models._to_entity(self, entity) )
+	""" Create entity (a dict object) from model with: MLString translated. (based on Models._to_entity(self, entity) )
 
 	"""
 	entity = {}

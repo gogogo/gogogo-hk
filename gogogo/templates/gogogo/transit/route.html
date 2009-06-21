@@ -1,0 +1,21 @@
+{% extends 'gogogo/transit/base.html' %}
+
+{% block content %}
+
+<table>
+	<tr>
+		<td>Name:</td>
+    	<td>{{route.long_name}}</a></td>  
+	</tr>
+    <tr>
+        <td>Agency: </td>
+        <td><a href="{%url gogogo.views.transit.agency route.agency%}">{{route.agency}}</a></td>
+    </tr>
+    <tr>
+    	<td>Short Name: </td>
+    	<td>{{route.short_name}}</td>
+    </tr>
+    
+</table>
+
+{% endblock %}
