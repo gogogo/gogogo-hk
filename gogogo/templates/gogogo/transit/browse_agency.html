@@ -13,7 +13,7 @@
     </tr>
 	<tr>
 		<td>URL:</td>
-    	<td> {{agency.url}}</td>  
+    	<td><a href="{{agency.url}}">{{agency.url}}</a></td>  
 	</tr>
     
     <tr>
@@ -22,5 +22,20 @@
     </tr>
     
 </table>
+<p></p>
+{% if rail_list|length %}
+
+<table>
+	<th>Railway</th>
+{% for rail in rail_list %}
+    <tr>
+        <td>{{rail.short_name}}
+        </td>
+    </tr>
+{% endfor %}
+
+</table>
+
+{%endif%}
 
 {% endblock %}

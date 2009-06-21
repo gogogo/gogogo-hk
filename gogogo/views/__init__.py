@@ -50,12 +50,19 @@ def transit_browse(request,agency_id):
 		
 	agency = create_entity(record,request)
 	agency['key_name'] = record.key().name()
+	
+	gql = db.GqlQuery("SELECT * FROM gogogo_route where type = :1 and agency=:2",2,record)
+	rail_list = []
+	for row in gql:
+		rail_list.append(create_entity(row,request)) 
+	
 	t = loader.get_template('gogogo/transit/browse_agency.html')
 	c = RequestContext(
 		request,
 	{
         'page_title': agency['name'] ,
-        'agency' : agency
+        'agency' : agency,
+        'rail_list' : rail_list
     })
     		
 	return HttpResponse(t.render(c))

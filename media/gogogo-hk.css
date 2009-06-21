@@ -18,8 +18,15 @@
 }
 
 .setlang_link { 
-	text-decoration: underline 
+	text-decoration: underline ;
+	cursor : pointer;
 }
 
+.link_button {
+	color: #0000EE;
+}
 
+a.link_button:visited {
+	color: #0000EE;
+}
 
