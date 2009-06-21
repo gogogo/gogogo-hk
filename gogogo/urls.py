@@ -6,8 +6,9 @@ import gogogo.views
 
 urlpatterns = patterns(
 	'',
-	(r'^transit/(?P<agency_id>[0-9a-zA-Z_]*)/(?P<route_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.route'),
-	(r'^transit/(?P<agency_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.agency'),
+	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)/(?P<route_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.route'),
+	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.agency'),
+	(r'^transit/stop/(?P<stop_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.stop'),
 	(r'^transit$', 'gogogo.views.transit.index'),
 
     (r'^agency/list$', 'gogogo.views.agency_list'),

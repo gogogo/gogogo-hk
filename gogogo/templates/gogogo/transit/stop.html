@@ -1,0 +1,19 @@
+{% extends 'gogogo/transit/base.html' %}
+
+{% block content %}
+
+<table>
+    <tr>
+    	<td>Name: </td>
+    	<td>{{stop.name}}</td>
+    </tr>
+	<tr>
+		<td>URL:</td>
+    	<td><a href="{{stop.url}}">{{stop.url}}</a></td>  
+	</tr>
+   <tr>
+   		<td colspan="2">{{stop.desc}}</td>
+   </tr> 
+</table>
+
+{% endblock %}

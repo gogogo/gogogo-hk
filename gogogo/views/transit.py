@@ -1,3 +1,6 @@
+"""
+Show transit information for normal user. (Not a contributor)
+"""
 from django.http import HttpResponse
 from django.http import Http404
 from django.template import Context, loader , RequestContext
@@ -124,3 +127,31 @@ def route(request,agency_id,route_id):
 		   "trip_list" : trip_list,
 		   "travel_list" : travel_list,
 		   })		
+
+def stop(request,stop_id):
+	"""
+	Browse stop information
+	"""	
+	try:
+		key = db.Key.from_path(Stop.kind(),stop_id)
+	
+		record = db.get(key)
+	except (db.BadArgumentError,db.BadValueError):
+		raise Http404
+		
+	lang = MLStringProperty.get_current_lang(request)	
+	stop_entity = {
+		'key_name' : record.key().name(),
+		'name' : MLStringProperty.trans(record.name,lang),
+		'desc' : MLStringProperty.trans(record.desc,lang),
+		'url' : record.url
+	}
+
+	return render_to_response( 
+		request,
+		'gogogo/transit/stop.html'
+		,{ 
+			'page_title': _("Transit Information"),
+		   "stop" : stop_entity,
+		   })		
+	

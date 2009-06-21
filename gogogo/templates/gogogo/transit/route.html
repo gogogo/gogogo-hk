@@ -19,7 +19,7 @@
     <tr>
         <td>Travel : </td>
         <td>{%for travel in travel_list %}
-        {{travel.0}} &#60;=&#62; {{travel.1}}<br>
+        {{travel.0}} =&#62; {{travel.1}}<br>
         {% endfor%}
         </td>
     </tr>
@@ -42,7 +42,7 @@
         <td>
         	{%for stop in trip.stop_list %}
         	{#The link is not ready yet#}
-        	<a href="/transit/stop/{{stop.0}}">{{stop.1}}</a><br>
+        	<a href="{%url gogogo.views.transit.stop stop.0 %}">{{stop.1}}</a><br>
         	{%endfor %}
         </td>
         {%endfor %}
