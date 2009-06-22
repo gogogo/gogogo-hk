@@ -103,20 +103,3 @@ def agency_edit(request,id):
 		   "message" : message
 		   })		
 	
-def devtools(request,file):
-	"""
-		Handle the request to access devtools
-	"""
-		
-	tools = ["MassAddressQuery.html" , "StopMaps.html"]
-	
-	if file not in tools:
-		raise Http404
-		
-	t = loader.get_template("gogogo/devtools/" + file)
-	c = Context({
-        'GOOGLE_MAPS_KEY': settings.GOOGLE_MAPS_KEY,
-	})
-	return HttpResponse(t.render(c))
-	
-	

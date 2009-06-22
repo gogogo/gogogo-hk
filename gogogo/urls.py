@@ -16,8 +16,12 @@ urlpatterns = patterns(
 	(r'^agency/edit/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.agency_edit'),
     
     (r'^route/search/$', 'gogogo.views.route.search'),
+
+	(r'^devtools/MassAddressQuery.html$', 'django.views.generic.simple.direct_to_template',
+        {'template': 'gogogo/devtools/MassAddressQuery.html'}),
+	(r'^devtools/StopMaps.html$', 'django.views.generic.simple.direct_to_template',
+        {'template': 'gogogo/devtools/StopMaps.html'}),
     
-    (r'^devtools/(?P<file>.*)$', 'gogogo.views.devtools'),
     (r'^js/(?P<path>.*)$', 'django.views.static.serve',
          {'document_root': os.path.abspath(os.path.dirname(__file__) + '/js') }  ),
          

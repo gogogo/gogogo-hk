@@ -45,6 +45,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.request',
     'django.core.context_processors.i18n',
+    'gogogo.context_processors.maps_api_key'
 )
 
 MIDDLEWARE_CLASSES = (
