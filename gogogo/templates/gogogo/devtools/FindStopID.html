@@ -1,0 +1,50 @@
+{% extends 'gogogo/base.html' %}
+
+{% block js %}
+	{{block.super}}
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$("#generate").click(function(){
+			stop_list = $('#output').val()
+			new_stop_list = stop_list.replace(/\n/g,",");
+			$('#output2').val(new_stop_list);
+		})
+
+	})
+	</script>
+	
+{% endblock %}
+
+{% block content %}
+	<table>
+		<tr><td>Copy and Paste stop list here</td><td>Output(list of stop id)</td></tr>
+		<tr><td valign="top">
+			
+      <form action="{%url gogogo.views.devtools.find_stop_id%}" method="POST">
+      
+			<textarea id="input" name="text" rows="19" cols="40" value="{{input}}" >{{input}}</textarea><br>
+
+			  <select name="agency">
+				  {% for agency in agency_list %}
+				  <option value="{{ agency.0 }}">{{ agency.1 }}</option>
+				  {% endfor %}
+			  </select>
+
+			  <input type="submit" value="Search" >
+      </form>		
+		
+		
+		</td><td><textarea id="output" rows="19" cols="40" >{{output}}</textarea><br>
+		<button id="generate" type="submit" >Generate</button><br>
+		
+		
+		</td></tr>
+
+		<tr>
+			<td colspan=2><textarea id="output2" rows="39" cols="80" ></textarea></td>
+			
+		</tr>
+	
+	</table>
+
+{% endblock %}

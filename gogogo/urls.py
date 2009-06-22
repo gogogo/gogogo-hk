@@ -17,6 +17,7 @@ urlpatterns = patterns(
     
     (r'^route/search/$', 'gogogo.views.route.search'),
 
+	(r'^devtools/FindStopID$','gogogo.views.devtools.find_stop_id'),
 	(r'^devtools/MassAddressQuery.html$', 'django.views.generic.simple.direct_to_template',
         {'template': 'gogogo/devtools/MassAddressQuery.html'}),
 	(r'^devtools/StopMaps.html$', 'django.views.generic.simple.direct_to_template',
