@@ -85,7 +85,7 @@ INSTALLED_APPS = (
     'jquery',
     
     # Add blueprint CSS (http://blueprintcss.org/)
-    #'blueprintcss',
+    'blueprintcss',
 
     'django.contrib.auth',
     'django.contrib.sessions',
