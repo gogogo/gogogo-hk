@@ -13,6 +13,37 @@
     var map, layout;
 
     $(document).ready(function(){
+      $.getJSON("/gogogo/api/agency/list",
+        function(data) {
+          if (data.stat == "ok") {
+            $.each(data.data, function(i, item) {              
+              $("#AgencyList").append("<input id=\"" + item.name +
+                "\" type=\"checkbox\" />" +                
+                "<img width=\"16\" height=\"16\" src=\"{{MEDIA_URL}}" +
+                item.icon + "\"" + " /> " + item.name + " </br>");
+            });
+            $("input").bind("click", function(event) {
+              map.clearOverlays();     
+              bounds = map.getBounds();
+              // $("#Debug").append(event.target.type + " " + event.target.name + "</br>");
+              $("#Debug").append(bounds.getNorthEast().lat() + " " + bounds.getNorthEast().lng() + "</br>");
+              $("#Debug").append(bounds.getSouthWest().lat() + " " + bounds.getSouthWest().lng() + "</br>");
+              $.getJSON("/gogogo/api/stop/search/" + bounds.getNorthEast().lat() + "," + bounds.getNorthEast().lng() +
+                "," + bounds.getSouthWest().lat() + "," + bounds.getSouthWest().lng(), function(data) {
+                  if (data.stat == "ok") {
+                    $.each(data.data, function(i, item) {
+                      var point = new GLatLng(item.latlang[0], item.latlang[1]);
+                      var option = {
+                        title: item.name
+                      };
+                      option.title = item.name;
+                     map.addOverlay(new GMarker(point), option);
+                    });
+                  }
+                });
+            });
+          }
+        });
       $("button").click(function() {
         map.clearOverlays();     
         $.getJSON("api/data.json",
@@ -41,7 +72,11 @@
 <body>  
 
 <div class="ui-layout-west">
-  <button id="refresh" class="ui-state-default">Refresh</button>
+  <!--  <button id="refresh" class="ui-state-default">Refresh</button> -->
+  <div id="AgencyList">
+  </div>
+  <div id="Debug">
+  </div>
 </div>
 <div class="ui-layout-center">
   <div id="map" style="width: 100%; height: 100%"></div>
