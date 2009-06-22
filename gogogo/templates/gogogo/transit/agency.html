@@ -29,7 +29,7 @@
 	<th>Railway</th>
 {% for rail in rail_list %}
     <tr>
-        <td><a href="{%url gogogo.views.transit.route agency.key_name rail.key_name %}">{{rail.short_name}}</a>
+        <td><a href="{%url gogogo.views.transit.route agency.key_name rail.key_name %}">{{rail.long_name}}</a>
         </td>
     </tr>
 {% endfor %}

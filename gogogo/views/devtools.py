@@ -58,7 +58,9 @@ def find_stop_id(request):
 	return render_to_response( 
 		request,
 		'gogogo/devtools/FindStopID.html'
-		,{ 'agency_list' : agency_list,
+		,{ 
+			'page_title' : "Find Stop ID",
+			'agency_list' : agency_list,
 			'result_list' : result_list,
 			'output' : '\n'.join(result_list),
 			'stop_list' :stop_list,

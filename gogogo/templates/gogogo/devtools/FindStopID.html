@@ -1,5 +1,5 @@
 {% extends 'gogogo/base.html' %}
-
+{% block title%}{{page_title}}{% endblock %}
 {% block js %}
 	{{block.super}}
 	<script type="text/javascript">
@@ -41,7 +41,7 @@
 		</td></tr>
 
 		<tr>
-			<td colspan=2><textarea id="output2" rows="39" cols="80" ></textarea></td>
+			<td colspan=2><textarea id="output2" rows="2" cols="80" ></textarea></td>
 			
 		</tr>
 	

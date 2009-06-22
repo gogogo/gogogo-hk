@@ -11,6 +11,8 @@ from django.forms import ModelForm
 
 from ragendja.auth.decorators import staff_only
 from ragendja.template import render_to_response
+from ragendja.dbutils import get_object_or_404
+
 from gogogo.models import *
 
 def index(request):
@@ -89,6 +91,7 @@ def route(request,agency_id,route_id):
 		'key_name' : record.key().name(),
 		'long_name' : MLStringProperty.trans(record.long_name,lang),
 		'short_name' : record.short_name,
+		'desc' : MLStringProperty.trans(record.desc,lang),
 		
 		# Reduce the no. of database access
 		'agency' : agency_id
@@ -114,6 +117,7 @@ def route(request,agency_id,route_id):
 			stop_list.append( (key.name() , MLStringProperty.trans(stop.name,lang) ) )
 		trip_entity = {
 			'headsign' : MLStringProperty.trans(trip_record.headsign,lang),
+			'key_name' : trip_record.key().name(),
 			'stop_list' : stop_list
 		}
 		trip_list.append(trip_entity)
@@ -122,11 +126,67 @@ def route(request,agency_id,route_id):
 		request,
 		'gogogo/transit/route.html'
 		,{ 
-			'page_title': _("Transit Information"),
+			'page_title': route_entity['long_name'],
 		   "route" : route_entity,
 		   "trip_list" : trip_list,
 		   "travel_list" : travel_list,
 		   })		
+
+def trip(request,agency_id,route_id,trip_id):
+	"""
+	Browse the information of a trip
+	"""
+	#try:
+		#key = db.Key.from_path(Trip.kind(),trip_id)
+	
+		#trip_record = db.get(key)
+	#except (db.BadArgumentError,db.BadValueError):
+		#raise Http404
+	
+	#try:
+		#key = db.Key.from_path(Agency.kind(),agency_id)
+	
+		#agency_record = db.get(key)
+	#except (db.BadArgumentError,db.BadValueError):
+		#raise Http404
+
+	#try:
+		#key = db.Key.from_path(Route.kind(),route_id)
+	
+		#route_record = db.get(key)
+	#except (db.BadArgumentError,db.BadValueError):
+		#raise Http404
+
+	trip_record = get_object_or_404(Trip,key_name=trip_id)
+	agency_record = get_object_or_404(Agency,key_name=agency_id)
+	route_record = get_object_or_404(Route,key_name=route_id)
+	
+	lang = MLStringProperty.get_current_lang(request)
+	
+	trip_entity = {
+		'short_name' : MLStringProperty.trans(trip_record.short_name,lang),
+		'headsign' : MLStringProperty.trans(trip_record.headsign,lang)
+	}
+	
+	agency_entity = {
+		'name' : MLStringProperty.trans(agency_record.name,lang),
+	}
+	
+	route_entity = {
+		'long_name' : MLStringProperty.trans(route_record.long_name,lang),
+	}
+	
+	return render_to_response( 
+		request,
+		'gogogo/transit/trip.html'
+		,{ 
+			'page_title': trip_entity['headsign'],
+			"agency" : agency_entity,
+			"route" : route_entity,
+		   "trip" : trip_entity,
+		   })		
+	
+	
 
 def stop(request,stop_id):
 	"""

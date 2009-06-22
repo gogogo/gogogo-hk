@@ -1,0 +1,44 @@
+{% extends 'gogogo/transit/base.html' %}
+
+{% block content %}
+
+<div class="column">
+<table>
+    <tr>
+    	<td>Agency : </td>
+    	<td>{{agency.name}}</td>
+    </tr>
+
+	<tr>
+		<td>Route :</td>
+    	<td>{{route.long_name}}</a></td>  
+	</tr>
+
+    <tr>
+        <td>Trip : </td>
+        <td>{{trip.short_name}}</a></td>
+    </tr>
+
+    <tr>
+        <td>Headsign : </td>
+        <td>{{trip.headsign}}</td>
+    </tr>
+
+</table>
+</div>
+
+<div class="column">
+<table>
+	<th>Services </th>
+    <tr><td>Monday : </td><td></td></tr>
+    <tr><td>Tuesday : </td><td></td></tr>
+    <tr><td>Wednesday : </td><td></td></tr>
+    <tr><td>Thursday : </td><td></td></tr>
+    <tr><td>Friday : </td><td></td></tr>
+    <tr><td>Saturday : </td><td></td></tr>
+    <tr><td>Sunday : </td><td></td></tr>
+    <tr><td>Special : </td><td></td></tr>
+</table>
+</div>
+
+{% endblock %}

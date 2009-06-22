@@ -6,7 +6,11 @@
     <tr>
     	<td>Short Name: </td>
     	<td>{{route.short_name}}</td>
-    	<td rowspan="5" valign="top"> Service Hours : </td>
+    	<td rowspan="5" valign="middle" align="center"> 
+    	
+    		[Will place a GMap here]
+    	
+    	</td>
     </tr>
 	<tr>
 		<td>Name:</td>
@@ -25,28 +29,29 @@
     </tr>
 
    <tr>
-   		<td colspan="2">{{route.desc}}</td>
+   		<td colspan="3">{{route.desc}}</td>
    </tr> 
-</table>
 
-<p></p>
+	<tr><td colspan="3">
+	<table>
+		<tr>
+			{%for trip in trip_list %}
+			<td><a href="{%url gogogo.views.transit.trip route.agency route.key_name trip.key_name %}">{{trip.headsign}}</a></td>
+			{%endfor %}
+		</tr>
+		<tr>
+			{%for trip in trip_list %}
+			<td>
+				{%for stop in trip.stop_list %}
+				{#The link is not ready yet#}
+				<a href="{%url gogogo.views.transit.stop stop.0 %}">{{stop.1}}</a><br>
+				{%endfor %}
+			</td>
+			{%endfor %}
+		</tr>
 
-<table>
-    <tr>
-    	{%for trip in trip_list %}
-        <td>{{trip.headsign}}</td>
-        {%endfor %}
-    </tr>
-    <tr>
-    	{%for trip in trip_list %}
-        <td>
-        	{%for stop in trip.stop_list %}
-        	{#The link is not ready yet#}
-        	<a href="{%url gogogo.views.transit.stop stop.0 %}">{{stop.1}}</a><br>
-        	{%endfor %}
-        </td>
-        {%endfor %}
-    </tr>
+	</table>
+	</td></tr>
 
 </table>
 
