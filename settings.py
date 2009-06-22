@@ -33,7 +33,7 @@ COMBINE_MEDIA = {
     'combined-%(LANGUAGE_CODE)s.js': (
         # See documentation why site_data can be useful:
         # http://code.google.com/p/app-engine-patch/wiki/MediaGenerator
-        #'.site_data.js',
+        '.site_data.js',
     ),
     'combined-%(LANGUAGE_DIR)s.css': (
         'global/gogogo-hk.css',
