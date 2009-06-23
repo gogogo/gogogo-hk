@@ -1,16 +1,44 @@
 {% extends 'gogogo/transit/base.html' %}
 
-{% block content %}
+{% block js %}
+	{{block.super}}
+	<script type="text/javascript">
+		google.load("maps", "2.x");
+		var map;
+		
+		$(document).ready(function(){
+			width = parseInt($('#general_info').css("width").replace(/px/,'')) + 
+				parseInt($('#general_info').css("padding-right").replace(/px/,'')) + 
+				parseInt($('#general_info').css("margin-right").replace(/px/,''));
+			
+			height = parseInt($('#general_info').css("height").replace(/px/,''));
+			
+			$('#map').css("left",width+"px");
+			$('#map').css("width",(screen.width - width - 30)+"px");
+			$('#map').css("height",Math.max(height,250)+"px");
+			
+			
+			map = new GMap2(document.getElementById("map"));
+			map.setCenter(new GLatLng(22.3, 114.167), 13);
+			map.setUIToDefault();
+			map.setZoom(9);
+			
+			var point;
+			{% for point in endpoint_list %}
+			point = new GLatLng({{point.lat}}, {{point.lng}});
+            map.addOverlay(new GMarker(point));
+            {% endfor %}
+			
+		});
+	</script>
+{% endblock %}
 
+{% block content %}
+<div id="general_info" class="colborder span-8">
 <table>
     <tr>
     	<td>Short Name: </td>
     	<td>{{route.short_name}}</td>
-    	<td rowspan="5" valign="middle" align="center"> 
-    	
-    		[Will place a GMap here]
-    	
-    	</td>
     </tr>
 	<tr>
 		<td>Name:</td>
@@ -31,8 +59,12 @@
    <tr>
    		<td colspan="3">{{route.desc}}</td>
    </tr> 
+</table>
+</div>
 
-	<tr><td colspan="3">
+	<div id="map" ></div>
+
+
 	<table>
 		<tr>
 			{%for trip in trip_list %}
@@ -51,8 +83,7 @@
 		</tr>
 
 	</table>
-	</td></tr>
 
-</table>
+
 
 {% endblock %}

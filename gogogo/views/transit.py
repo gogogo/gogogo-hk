@@ -14,6 +14,7 @@ from ragendja.template import render_to_response
 from ragendja.dbutils import get_object_or_404
 
 from gogogo.models import *
+from gogogo.geo.LatLng import LatLng
 from widgets import Pathbar
 
 def index(request):
@@ -92,13 +93,6 @@ def route(request,agency_id,route_id):
 	agency_record = get_object_or_404(Agency,key_name=agency_id)
 	record = get_object_or_404(Route,key_name=route_id)
 
-	#try:
-		#key = db.Key.from_path(Route.kind(),route_id)
-	
-		#record = db.get(key)
-	#except (db.BadArgumentError,db.BadValueError):
-		#raise Http404
-
 	lang = MLStringProperty.get_current_lang(request)
 	
 	agency_entity = {
@@ -122,13 +116,24 @@ def route(request,agency_id,route_id):
 	trip_list = []
 	travel_list = []
 	
+	# Endpoint in all trip
+	endpoint_list = []
+	
 	for trip_record in gql:
 		stop_list = []
 		try:
 			first_stop = db.get(trip_record.stop_list[0])
 			last_stop = db.get(trip_record.stop_list[len(trip_record.stop_list)-1])
 			travel_list.append( (MLStringProperty.trans(first_stop.name,lang),MLStringProperty.trans(last_stop.name,lang)))
-		except:
+			
+			pt = LatLng(first_stop.latlng.lat,first_stop.latlng.lon )
+			if pt not in endpoint_list:
+				endpoint_list.append( pt )
+			
+			pt = LatLng(last_stop.latlng.lat,last_stop.latlng.lon )
+			if pt not in endpoint_list:
+				endpoint_list.append( pt )
+		except IndexError:
 			pass
 			
 		for key in trip_record.stop_list:
@@ -155,6 +160,7 @@ def route(request,agency_id,route_id):
 		   "route" : route_entity,
 		   "trip_list" : trip_list,
 		   "travel_list" : travel_list,
+		   "endpoint_list" : endpoint_list,
 		   })		
 
 def trip(request,agency_id,route_id,trip_id):

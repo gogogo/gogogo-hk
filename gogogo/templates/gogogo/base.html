@@ -1,2 +1,7 @@
 {% extends 'base.html' %}
 {# The base for all Gogogo pages.#}
+
+{% block js %}
+	{{block.super}}
+	<script src="http://www.google.com/jsapi?key={{GOOGLE_MAPS_KEY}}" type="text/javascript"></script>
+{% endblock %}
