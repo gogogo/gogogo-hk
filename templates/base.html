@@ -60,11 +60,13 @@
           	</div>
           
         </div>
+		<hr>
       </div>
-      <hr>
     {% endblock %}
     <div id="content">
+      	
       {% block content-header %}
+		 <div id="content-header">
         {% if error %}<div class="error">{{ error }}</div>{% endif %}
         {% if info %}<div class="info">{{ info }}</div>{% endif %}
         {% if messages %}
@@ -72,7 +74,9 @@
             <div class="info">{{ message }}</div>
           {% endfor %}
         {% endif %}
+		</div>
       {% endblock %}
+        
       {% block content %}{% endblock %}
     </div>
     <div id="footer">

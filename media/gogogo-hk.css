@@ -14,7 +14,12 @@
 }
 
 #content {
-	padding-top:20px;
+	padding-top:5px;
+	padding-left: 5px;
+}
+
+#content-header {
+	padding-bottom:20px;
 }
 
 #footer {

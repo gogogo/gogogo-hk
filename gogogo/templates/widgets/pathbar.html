@@ -1,0 +1,7 @@
+
+<div class="Pathbar">
+{% for path in pathbar.path  %}
+	{% if forloop.first %}{% else %}{{pathbar.sep}}{% endif %}<a href="{{path.1}}">{{path.0}}</a>
+{% endfor %}
+
+</div>
