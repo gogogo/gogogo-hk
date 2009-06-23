@@ -19,9 +19,8 @@
 			
 			
 			map = new GMap2(document.getElementById("map"));
-			map.setCenter(new GLatLng(22.3, 114.167), 13);
+			map.setCenter(new GLatLng({{GOGOGO_DEFAULT_LOCATION}}), {{GOGOGO_DEFAULT_ZOOM}});
 			map.setUIToDefault();
-			map.setZoom(9);
 			
 			var point;
 			{% for point in endpoint_list %}

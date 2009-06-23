@@ -99,6 +99,7 @@ INSTALLED_APPS = (
 #    'registration',
     'mediautils',
     'gogogo',
+
            
 )
 
@@ -114,8 +115,12 @@ from ragendja.settings_post import *
 
 DEFAULT_CHARSET="utf-8"
 
-# Gogogo
+###########
+# Gogogo #
+###########
 
 GOOGLE_MAPS_KEY = settings_private.GOOGLE_MAPS_KEY
 
-
+#Default location 
+GOGOGO_DEFAULT_LOCATION="22.3, 114.167"
+GOGOGO_DEFAULT_ZOOM=9
