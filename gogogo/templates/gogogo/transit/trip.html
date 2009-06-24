@@ -1,8 +1,31 @@
 {% extends 'gogogo/transit/base.html' %}
+{% block js %}
+	{{block.super}}
+	<script type="text/javascript">
+		google.load("maps", "2.x");
+		var map;
+		
+		$(document).ready(function(){
+			map = new GMap2(document.getElementById("map"));
+			map.setCenter(new GLatLng({{GOGOGO_DEFAULT_LOCATION}}), {{GOGOGO_DEFAULT_ZOOM}});
+			map.setUIToDefault();
+		{%if shape %}
+			var points = {{shape.points}};
+			var latlng = [];
+			for (var i = 0 ; i < points.length ;i+=2) {
+				latlng.push(new GLatLng(points[i],points[i+1] ));
+			}
+			map.addOverlay(new GPolyline(latlng));
+		{%endif %}
+							
+		});
+	</script>
+{% endblock %}
+
 
 {% block content %}
 
-<div class="span-6">
+<div class="span-6 colborder">
 <table>
     <tr>
     	<td>Agency : </td>
@@ -27,7 +50,7 @@
 </table>
 </div>
 
-<div class="span-18 last">
+<div class="span-6 colborder">
 <table>
 	<th>Services </th>
     <tr><td>Monday : </td><td></td></tr>
@@ -41,6 +64,9 @@
 </table>
 </div>
 
-
+<div class="span-12 last ">
+	{%if not shape %}<div class="alt">No shape available</div>	{%endif%}
+	<div id="map" style="width:100%;height:400px"/>	
+</div>
 
 {% endblock %}

@@ -1,7 +1,31 @@
 {% extends 'gogogo/transit/base.html' %}
 
+{% block js %}
+{{block.super}}
+	<script type="text/javascript">
+	
+	google.load("maps", "2.x");
+    var map, layout;
+    
+	$(document).ready(function(){
+		
+		// TODO: Resize ui-layout-container for height that fit for screen
+    	layout = $('#ui-layout-container').layout({ applyDefaultStyles: true });
+    	
+	    map = new GMap2(document.getElementById("map"));
+
+      	map.setCenter(new GLatLng({{GOGOGO_DEFAULT_LOCATION}}), {{GOGOGO_DEFAULT_ZOOM}});
+      	map.setUIToDefault();
+
+	})
+	</script>
+{%endblock%}
+
 {% block content %}
 
+<div id="ui-layout-container" style="width:100%;height:550px">
+
+<div class="ui-layout-west">
 <table>
     <tr>
     	<td>Name: </td>
@@ -15,5 +39,12 @@
    		<td colspan="2">{{stop.desc}}</td>
    </tr> 
 </table>
+</div>
+
+<div class="ui-layout-center">
+	<div id="map" style="width: 100%; height: 100%"></div>
+</div>
+
+</div>
 
 {% endblock %}

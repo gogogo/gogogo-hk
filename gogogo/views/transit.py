@@ -190,6 +190,11 @@ def trip(request,agency_id,route_id,trip_id):
 		'long_name' : MLStringProperty.trans(route_record.long_name,lang),
 	}
 	
+	shape_entity = None
+	if trip_record.shape:
+		shape_entity = {'points' : trip_record.shape.points,
+			'color': trip_record.shape.color	}
+	
 	pathbar = Pathbar()
 	pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
 	pathbar.append(agency_entity['name'] , 'gogogo.views.transit.agency' , [agency_entity['key_name']])
@@ -205,6 +210,7 @@ def trip(request,agency_id,route_id,trip_id):
 			"agency" : agency_entity,
 			"route" : route_entity,
 		   "trip" : trip_entity,
+		   "shape" : shape_entity
 		   })		
 	
 	

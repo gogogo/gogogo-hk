@@ -185,6 +185,10 @@ class Shape(db.Model):
 		Shape data model. The stored data can be a polyline or polygon
 		that represent a route, trip and zone etc.
 	"""
+	
+	def __unicode__(self):
+		return unicode(self.key().name())
+	
 
 	# Type of shape. 0: Polyline , 1 : Polygon
 	type = db.IntegerProperty()
@@ -224,6 +228,9 @@ class Trip(db.Model):
 	class Meta:
 		verbose_name = _('Trips')
 		verbose_name_plural = _('Trips')
+
+	def __unicode__(self):
+		return unicode(self.key().name())
 
 	route = db.ReferenceProperty(Route)
 
