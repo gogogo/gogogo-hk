@@ -13,10 +13,9 @@
 			
 			height = parseInt($('#general_info').css("height").replace(/px/,''));
 			
-			$('#map').css("left",width+"px");
-			$('#map').css("width",(screen.width - width - 30)+"px");
-			$('#map').css("height",Math.max(height,250)+"px");
-			
+			//$('#map').css("left",width+"px");
+			//$('#map').css("width",(screen.width - width - 30)+"px");
+			$('#map').css("height",Math.max(height,400)+"px");
 			
 			map = new GMap2(document.getElementById("map"));
 			map.setCenter(new GLatLng({{GOGOGO_DEFAULT_LOCATION}}), {{GOGOGO_DEFAULT_ZOOM}});
@@ -55,15 +54,18 @@
         </td>
     </tr>
 
-   <tr>
-   		<td colspan="3">{{route.desc}}</td>
-   </tr> 
 </table>
 </div>
 
-	<div id="map" ></div>
+<div class="span-16 last">
+	<div id="map" style="width:100%;height:100%"></div>
+</div>
 
+<div class="span-24 last">
+	{{route.desc|linebreaks}}
+</div>
 
+<div class="span-24">
 	<table>
 		<tr>
 			{%for trip in trip_list %}
@@ -82,7 +84,7 @@
 		</tr>
 
 	</table>
-
+</div>
 
 
 {% endblock %}

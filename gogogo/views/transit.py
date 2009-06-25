@@ -104,7 +104,7 @@ def route(request,agency_id,route_id):
 		'key_name' : record.key().name(),
 		'long_name' : MLStringProperty.trans(record.long_name,lang),
 		'short_name' : record.short_name,
-		'desc' : MLStringProperty.trans(record.desc,lang),
+		'desc' : record.desc,
 		
 		# Reduce the no. of database access
 		'agency' : agency_id

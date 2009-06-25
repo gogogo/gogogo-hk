@@ -170,7 +170,7 @@ class Route(db.Model):
 	
 	long_name = MLStringProperty()
 	
-	desc = MLStringProperty()
+	desc = db.TextProperty()
 	
 	type = db.IntegerProperty(choices=set(range(0,8)))
 	
