@@ -2,6 +2,10 @@
 
 #header {
 	height:20px;
+	padding-left:5px;
+	padding-right:5px;
+	padding-top:2px;
+	padding-bottom:5px;
 }
 
 .left_menu {
@@ -10,7 +14,7 @@
 
 .right_menu {
 	position : absolute ;
-	right : 0px;
+	right : 5px;
 }
 
 #content {
@@ -20,6 +24,7 @@
 
 #content-header {
 	padding-bottom:20px;
+	padding-right:5px;
 }
 
 #footer {

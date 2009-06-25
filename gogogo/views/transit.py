@@ -234,11 +234,16 @@ def stop(request,stop_id):
 		'url' : record.url
 	}
 
+	pathbar = Pathbar()
+	pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
+	pathbar.append(stop_entity['name'] , 'gogogo.views.transit.stop', [ stop_entity['key_name']]  )
+
 	return render_to_response( 
 		request,
 		'gogogo/transit/stop.html'
 		,{ 
 			'page_title': _("Transit Information"),
+			'pathbar' : pathbar,
 		   "stop" : stop_entity,
 		   })		
 	

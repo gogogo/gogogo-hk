@@ -25,6 +25,9 @@
 
 {% block content %}
 
+{# Left Column #}
+<div class="span-13 colborder">
+
 <div class="span-6 colborder">
 <table>
     <tr>
@@ -50,7 +53,7 @@
 </table>
 </div>
 
-<div class="span-6 colborder">
+<div class="span-6 last">
 <table>
 	<th>Services </th>
     <tr><td>Monday : </td><td></td></tr>
@@ -64,8 +67,14 @@
 </table>
 </div>
 
-<div class="span-12 last ">
-	{%if not shape %}<div class="alt">No shape available</div>	{%endif%}
+	<div class="span-12">
+		{%if not shape %}<div class="alt">No shape available. <a>Contribute.</a></div>	{%endif%}
+	</div>
+
+</div>
+{# Right Column #}
+<div class="span-11 last ">
+	
 	<div id="map" style="width:100%;height:400px"/>	
 </div>
 
