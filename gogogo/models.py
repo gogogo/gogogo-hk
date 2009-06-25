@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from ragendja.dbutils import get_object
 from geo.geohash import Geohash
 
+from gogogo.NumberListProperty import NumberListProperty
 # Utilities
 
 class MLStringProperty(TitledStringListProperty):
@@ -197,7 +198,7 @@ class Shape(db.Model):
 	color = db.StringProperty()
 	
 	# Points of the shape.
-	points = db.ListProperty(float)
+	points = NumberListProperty(float)
 
 class Calendar(db.Model):
 	class Meta:
@@ -248,7 +249,7 @@ class Trip(db.Model):
 	
 	stop_list = KeyListProperty(Stop)
 	
-	arrival_time_list = db.ListProperty(int)
+	arrival_time_list = NumberListProperty(int)
 	
 class Cluster:
 	
