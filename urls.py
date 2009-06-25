@@ -11,11 +11,12 @@ handler500 = 'ragendja.views.server_error'
 
 urlpatterns = auth_patterns + patterns('',
 	(r'^i18n/', include('django.conf.urls.i18n')),
-	('^gogogo/' ,include('gogogo.urls') ),
+
     ('^admin/(.*)', admin.site.root),
     (r'^$', 'django.views.generic.simple.direct_to_template',
         {'template': 'main.html'}),
- 
+	('^' ,include('gogogo.urls') ), 
+	
     # Override the default registration form
  #   url(r'^account/register/$', 'registration.views.register',
  #       kwargs={'form_class': UserRegistrationForm},
