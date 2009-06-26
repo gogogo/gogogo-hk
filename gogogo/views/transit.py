@@ -15,7 +15,33 @@ from ragendja.dbutils import get_object_or_404
 
 from gogogo.models import *
 from gogogo.geo.LatLng import LatLng
-from widgets import Pathbar
+from widgets import Pathbar as _Pathbar
+#import gogogo.views.widgets.Pathbar
+
+class Pathbar(_Pathbar):
+	"""
+	A Pathbar for transit information
+	"""
+	def __init__(self,agency=None , stop = None):
+		_Pathbar.__init__(self)
+	
+		self.append(_("Transit information") , 'gogogo.views.transit.index',None)
+	
+		if agency:
+			try:
+				self.append(agency[0]['name'] , 
+					'gogogo.views.transit.agency' , [agency[0]['key_name']])
+				self.append(agency[1]['long_name'] , 
+					'gogogo.views.transit.route' , 
+						[agency[0]['key_name'] , agency[1]['key_name']])
+				self.append(agency[2]['headsign'] , 
+					'gogogo.views.transit.trip' , 
+						[agency[0]['key_name'] , agency[1]['key_name'],agency[2]['key_name']])					
+			except IndexError:
+				pass
+				
+		elif stop:
+			self.append(stop['name'] , 'gogogo.views.transit.stop', [ stop['key_name']]  )		
 
 def index(request):
 	"""
@@ -23,7 +49,7 @@ def index(request):
 	"""
 
 	pathbar = Pathbar()
-	pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
+	#pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
 
 	query = Agency.all()
 	
@@ -67,9 +93,9 @@ def agency(request,agency_id):
 		entity['key_name'] = row.key().name()
 		rail_list.append(entity) 
 
-	pathbar = Pathbar()
-	pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
-	pathbar.append(agency['name'] , 'gogogo.views.transit.agency' , [agency['key_name']])
+	pathbar = Pathbar(agency=(agency,))
+	#pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
+	#pathbar.append(agency['name'] , 'gogogo.views.transit.agency' , [agency['key_name']])
 	
 	t = loader.get_template('gogogo/transit/agency.html')
 	c = RequestContext(
@@ -146,10 +172,10 @@ def route(request,agency_id,route_id):
 		}
 		trip_list.append(trip_entity)
 
-	pathbar = Pathbar()
-	pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
-	pathbar.append(agency_entity['name'] , 'gogogo.views.transit.agency' , [agency_entity['key_name']])
-	pathbar.append(route_entity['long_name'] , 'gogogo.views.transit.route' , [agency_entity['key_name'] , route_entity['key_name']])
+	pathbar = Pathbar(agency=(agency_entity,route_entity))
+	#pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
+	#pathbar.append(agency_entity['name'] , 'gogogo.views.transit.agency' , [agency_entity['key_name']])
+	#pathbar.append(route_entity['long_name'] , 'gogogo.views.transit.route' , [agency_entity['key_name'] , route_entity['key_name']])
 	
 	return render_to_response( 
 		request,
@@ -195,11 +221,11 @@ def trip(request,agency_id,route_id,trip_id):
 		shape_entity = {'points' : trip_record.shape.points,
 			'color': trip_record.shape.color	}
 	
-	pathbar = Pathbar()
-	pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
-	pathbar.append(agency_entity['name'] , 'gogogo.views.transit.agency' , [agency_entity['key_name']])
-	pathbar.append(route_entity['long_name'] , 'gogogo.views.transit.route' , [agency_entity['key_name'] , route_entity['key_name']])
-	pathbar.append(trip_entity['headsign'] , 'gogogo.views.transit.trip' , [agency_entity['key_name'] , route_entity['key_name'],trip_entity['key_name']])
+	pathbar = Pathbar(agency=(agency_entity,route_entity,trip_entity))
+	#pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
+	#pathbar.append(agency_entity['name'] , 'gogogo.views.transit.agency' , [agency_entity['key_name']])
+	#pathbar.append(route_entity['long_name'] , 'gogogo.views.transit.route' , [agency_entity['key_name'] , route_entity['key_name']])
+	#pathbar.append(trip_entity['headsign'] , 'gogogo.views.transit.trip' , [agency_entity['key_name'] , route_entity['key_name'],trip_entity['key_name']])
 	
 	return render_to_response( 
 		request,
@@ -234,9 +260,9 @@ def stop(request,stop_id):
 		'url' : record.url
 	}
 
-	pathbar = Pathbar()
-	pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
-	pathbar.append(stop_entity['name'] , 'gogogo.views.transit.stop', [ stop_entity['key_name']]  )
+	pathbar = Pathbar(stop=stop_entity)
+	#pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
+	#pathbar.append(stop_entity['name'] , 'gogogo.views.transit.stop', [ stop_entity['key_name']]  )
 
 	return render_to_response( 
 		request,
