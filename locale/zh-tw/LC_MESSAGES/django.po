@@ -1,0 +1,738 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-06-25 21:30-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: common/appenginepatch/ragendja/auth/google_admin.py:6
+msgid "Personal info"
+msgstr ""
+
+#: common/appenginepatch/ragendja/auth/google_admin.py:7
+msgid "Permissions"
+msgstr ""
+
+#: common/appenginepatch/ragendja/auth/google_admin.py:8
+msgid "Important dates"
+msgstr ""
+
+#: common/appenginepatch/ragendja/auth/google_admin.py:9
+msgid "Groups"
+msgstr ""
+
+#: common/appenginepatch/ragendja/auth/google_models.py:36
+#: common/appenginepatch/ragendja/auth/hybrid_models.py:14
+msgid "user"
+msgstr ""
+
+#: common/appenginepatch/ragendja/auth/google_models.py:37
+#: common/appenginepatch/ragendja/auth/hybrid_models.py:15
+msgid "users"
+msgstr ""
+
+#: common/appenginepatch/ragendja/auth/hybrid_models.py:8
+msgid "username"
+msgstr ""
+
+#: common/appenginepatch/ragendja/auth/hybrid_models.py:9
+msgid "e-mail address"
+msgstr ""
+
+#: common/appenginepatch/ragendja/auth/hybrid_models.py:10
+msgid "first name"
+msgstr ""
+
+#: common/appenginepatch/ragendja/auth/hybrid_models.py:11
+msgid "last name"
+msgstr ""
+
+#: common/appenginepatch/ragendja/auth/views.py:38
+msgid "Logged out"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/404.html:4
+#: common/django_aep_export/django_templates/templates/admin/404.html:8
+msgid "Page not found"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/404.html:10
+msgid "We're sorry, but the requested page could not be found."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/500.html:4
+#: common/django_aep_export/django_templates/templates/admin/app_index.html:8
+#: common/django_aep_export/django_templates/templates/admin/base.html:30
+#: common/django_aep_export/django_templates/templates/admin/change_form.html:17
+#: common/django_aep_export/django_templates/templates/admin/change_list.html:8
+#: common/django_aep_export/django_templates/templates/admin/delete_confirmation.html:6
+#: common/django_aep_export/django_templates/templates/admin/invalid_setup.html:4
+#: common/django_aep_export/django_templates/templates/admin/object_history.html:6
+#: common/django_aep_export/django_templates/templates/admin/auth/user/change_password.html:10
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:3
+#: common/django_aep_export/django_templates/templates/registration/logged_out.html:4
+#: common/django_aep_export/django_templates/templates/registration/password_change_done.html:4
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:4
+#: common/django_aep_export/django_templates/templates/registration/password_reset_complete.html:4
+#: common/django_aep_export/django_templates/templates/registration/password_reset_confirm.html:4
+#: common/django_aep_export/django_templates/templates/registration/password_reset_done.html:4
+#: common/django_aep_export/django_templates/templates/registration/password_reset_form.html:4
+msgid "Home"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/500.html:4
+msgid "Server error"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/500.html:6
+msgid "Server error (500)"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/500.html:9
+msgid "Server Error <em>(500)</em>"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/500.html:10
+msgid ""
+"There's been an error. It's been reported to the site administrators via e-"
+"mail and should be fixed shortly. Thanks for your patience."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/app_index.html:10
+#: common/django_aep_export/django_templates/templates/admin/index.html:19
+#, python-format
+msgid "%(name)s"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/base.html:25
+msgid "Welcome,"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/base.html:25
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:3
+#: common/django_aep_export/django_templates/templates/registration/password_change_done.html:3
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:3
+#: templates/admin/base_site.html:8
+msgid "Documentation"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/base.html:25
+#: common/django_aep_export/django_templates/templates/admin/auth/user/change_password.html:13
+#: common/django_aep_export/django_templates/templates/admin/auth/user/change_password.html:46
+#: common/django_aep_export/django_templates/templates/registration/password_change_done.html:3
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:3
+#: templates/admin/base_site.html:9
+msgid "Change password"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/base.html:25
+#: common/django_aep_export/django_templates/templates/registration/password_change_done.html:3
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:3
+#: templates/admin/base_site.html:10
+msgid "Log out"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/base_site.html:4
+#: templates/admin/base_site.html:4
+msgid "Django site admin"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/base_site.html:7
+#: templates/admin/base_site.html:14
+msgid "Django administration"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/change_form.html:20
+#: common/django_aep_export/django_templates/templates/admin/index.html:29
+msgid "Add"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/change_form.html:27
+#: common/django_aep_export/django_templates/templates/admin/object_history.html:10
+msgid "History"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/change_form.html:28
+#: common/django_aep_export/django_templates/templates/admin/edit_inline/stacked.html:13
+#: common/django_aep_export/django_templates/templates/admin/edit_inline/tabular.html:27
+msgid "View on site"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/change_form.html:38
+#: common/django_aep_export/django_templates/templates/admin/auth/user/change_password.html:22
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: common/django_aep_export/django_templates/templates/admin/change_list.html:16
+#, python-format
+msgid "Add %(name)s"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/change_list.html:26
+msgid "Filter"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/delete_confirmation.html:10
+#: common/django_aep_export/django_templates/templates/admin/submit_line.html:4
+msgid "Delete"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/delete_confirmation.html:16
+#, python-format
+msgid ""
+"Deleting the %(object_name)s '%(escaped_object)s' would result in deleting "
+"related objects, but your account doesn't have permission to delete the "
+"following types of objects:"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/delete_confirmation.html:23
+#, python-format
+msgid ""
+"Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? "
+"All of the following related items will be deleted:"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/delete_confirmation.html:28
+msgid "Yes, I'm sure"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/filter.html:2
+#, python-format
+msgid " By %(filter_title)s "
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/index.html:18
+#, python-format
+msgid "Models available in the %(name)s application."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/index.html:35
+msgid "Change"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/index.html:45
+msgid "You don't have permission to edit anything."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/index.html:53
+msgid "Recent Actions"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/index.html:54
+msgid "My Actions"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/index.html:58
+msgid "None available"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/invalid_setup.html:7
+msgid ""
+"Something's wrong with your database installation. Make sure the appropriate "
+"database tables have been created, and make sure the database is readable by "
+"the appropriate user."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/login.html:19
+msgid "Username:"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/login.html:22
+msgid "Password:"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/login.html:26
+#: common/django_aep_export/django_templates/templates/registration/password_reset_complete.html:14
+msgid "Log in"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/object_history.html:22
+msgid "Date/time"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/object_history.html:23
+msgid "User"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/object_history.html:24
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:33
+msgid "Action"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/object_history.html:30
+msgid "DATETIME_FORMAT"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/object_history.html:38
+msgid ""
+"This object doesn't have a change history. It probably wasn't added via this "
+"admin site."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/pagination.html:10
+msgid "Show all"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/search_form.html:8
+msgid "Go"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/search_form.html:10
+#, python-format
+msgid "1 result"
+msgid_plural "%(counter)s results"
+msgstr[0] ""
+msgstr[1] ""
+
+#: common/django_aep_export/django_templates/templates/admin/search_form.html:10
+#, python-format
+msgid "%(full_result_count)s total"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/submit_line.html:3
+msgid "Save"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/submit_line.html:5
+msgid "Save as new"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/submit_line.html:6
+msgid "Save and add another"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/submit_line.html:7
+msgid "Save and continue editing"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/auth/user/add_form.html:6
+msgid ""
+"First, enter a username and password. Then, you'll be able to edit more user "
+"options."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/auth/user/add_form.html:13
+msgid "Username"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/auth/user/add_form.html:20
+#: common/django_aep_export/django_templates/templates/admin/auth/user/change_password.html:33
+msgid "Password"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/auth/user/add_form.html:26
+#: common/django_aep_export/django_templates/templates/admin/auth/user/change_password.html:39
+msgid "Password (again)"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/auth/user/add_form.html:27
+#: common/django_aep_export/django_templates/templates/admin/auth/user/change_password.html:40
+msgid "Enter the same password as above, for verification."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/auth/user/change_password.html:26
+#, python-format
+msgid "Enter a new password for the user <strong>%(username)s</strong>."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin/edit_inline/tabular.html:15
+msgid "Delete?"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:3
+msgid "Bookmarklets"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:4
+msgid "Documentation bookmarklets"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:8
+msgid ""
+"\n"
+"<p class=\"help\">To install bookmarklets, drag the link to your bookmarks\n"
+"toolbar, or right-click the link and add it to your bookmarks. Now you can\n"
+"select the bookmarklet from any page in the site.  Note that some of these\n"
+"bookmarklets require you to be viewing the site from a computer designated\n"
+"as \"internal\" (talk to your system administrator if you aren't sure if\n"
+"your computer is \"internal\").</p>\n"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:18
+msgid "Documentation for this page"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:19
+msgid ""
+"Jumps you from any page to the documentation for the view that generates "
+"that page."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:21
+msgid "Show object ID"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:22
+msgid ""
+"Shows the content-type and unique ID for pages that represent a single "
+"object."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:24
+msgid "Edit this object (current window)"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:25
+msgid "Jumps to the admin page for pages that represent a single object."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:27
+msgid "Edit this object (new window)"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/admin_doc/bookmarklets.html:28
+msgid "As above, but opens the admin page in a new window."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/approve.html:4
+msgid "Approve a comment"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/approve.html:7
+msgid "Really make this comment public?"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/approve.html:12
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:49
+msgid "Approve"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/approved.html:4
+msgid "Thanks for approving"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/approved.html:7
+#: common/django_aep_export/django_templates/templates/comments/deleted.html:7
+#: common/django_aep_export/django_templates/templates/comments/flagged.html:7
+msgid ""
+"Thanks for taking the time to improve the quality of discussion on our site"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/delete.html:4
+msgid "Remove a comment"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/delete.html:7
+msgid "Really remove this comment?"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/delete.html:12
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:53
+msgid "Remove"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/deleted.html:4
+msgid "Thanks for removing"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/flag.html:4
+msgid "Flag this comment"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/flag.html:7
+msgid "Really flag this comment?"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/flag.html:12
+msgid "Flag"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/flagged.html:4
+msgid "Thanks for flagging"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/form.html:16
+#: common/django_aep_export/django_templates/templates/comments/preview.html:31
+msgid "Post"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/form.html:17
+#: common/django_aep_export/django_templates/templates/comments/preview.html:32
+msgid "Preview"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:4
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:19
+msgid "Comment moderation queue"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:26
+msgid "No comments to moderate"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:34
+msgid "Name"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:35
+msgid "Comment"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:36
+msgid "Email"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:37
+msgid "URL"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:38
+msgid "Authenticated?"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:39
+msgid "IP Address"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:40
+msgid "Date posted"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:63
+msgid "yes"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:63
+msgid "no"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/posted.html:4
+msgid "Thanks for commenting"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/posted.html:7
+msgid "Thank you for your comment"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/preview.html:4
+#: common/django_aep_export/django_templates/templates/comments/preview.html:12
+msgid "Preview your comment"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/preview.html:10
+msgid "Please correct the error below"
+msgid_plural "Please correct the errors below"
+msgstr[0] ""
+msgstr[1] ""
+
+#: common/django_aep_export/django_templates/templates/comments/preview.html:15
+msgid "and"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/preview.html:15
+msgid "Post your comment"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/comments/preview.html:15
+msgid "or make changes"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/logged_out.html:8
+msgid "Thanks for spending some quality time with the Web site today."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/logged_out.html:10
+msgid "Log in again"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_change_done.html:4
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:4
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:6
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:10
+msgid "Password change"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_change_done.html:6
+#: common/django_aep_export/django_templates/templates/registration/password_change_done.html:10
+msgid "Password change successful"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_change_done.html:12
+msgid "Your password was changed."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:12
+msgid ""
+"Please enter your old password, for security's sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:17
+msgid "Old password:"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:19
+#: common/django_aep_export/django_templates/templates/registration/password_reset_confirm.html:18
+msgid "New password:"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:21
+#: common/django_aep_export/django_templates/templates/registration/password_reset_confirm.html:20
+msgid "Confirm password:"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_change_form.html:23
+#: common/django_aep_export/django_templates/templates/registration/password_reset_confirm.html:21
+msgid "Change my password"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_complete.html:4
+#: common/django_aep_export/django_templates/templates/registration/password_reset_confirm.html:6
+#: common/django_aep_export/django_templates/templates/registration/password_reset_done.html:4
+#: common/django_aep_export/django_templates/templates/registration/password_reset_form.html:4
+#: common/django_aep_export/django_templates/templates/registration/password_reset_form.html:6
+#: common/django_aep_export/django_templates/templates/registration/password_reset_form.html:10
+msgid "Password reset"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_complete.html:6
+#: common/django_aep_export/django_templates/templates/registration/password_reset_complete.html:10
+msgid "Password reset complete"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_complete.html:12
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_confirm.html:4
+msgid "Password reset confirmation"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_confirm.html:12
+msgid "Enter new password"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_confirm.html:14
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_confirm.html:26
+msgid "Password reset unsuccessful"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_confirm.html:28
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_done.html:6
+#: common/django_aep_export/django_templates/templates/registration/password_reset_done.html:10
+msgid "Password reset successful"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_done.html:12
+msgid ""
+"We've e-mailed you instructions for setting your password to the e-mail "
+"address you submitted. You should be receiving it shortly."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_email.html:2
+msgid "You're receiving this e-mail because you requested a password reset"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_email.html:3
+#, python-format
+msgid "for your user account at %(site_name)s"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_email.html:5
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_email.html:9
+msgid "Your username, in case you've forgotten:"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_email.html:11
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_email.html:13
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_form.html:12
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll e-mail "
+"instructions for setting a new one."
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_form.html:16
+msgid "E-mail address:"
+msgstr ""
+
+#: common/django_aep_export/django_templates/templates/registration/password_reset_form.html:16
+msgid "Reset my password"
+msgstr ""
+
+#: gogogo/models.py:100 gogogo/models.py:101
+msgid "Transport Agency"
+msgstr ""
+
+#: gogogo/models.py:149 gogogo/models.py:150
+msgid "Stops"
+msgstr ""
+
+#: gogogo/models.py:161 gogogo/models.py:162
+msgid "Routes"
+msgstr ""
+
+#: gogogo/models.py:205 gogogo/models.py:206
+msgid "Service Calendar"
+msgstr ""
+
+#: gogogo/models.py:230 gogogo/models.py:231
+msgid "Trips"
+msgstr ""
+
+#: gogogo/models.py:257 gogogo/models.py:258
+msgid "Cluster"
+msgstr ""
+
+#: gogogo/views/__init__.py:31
+msgid "Agency List"
+msgstr ""
+
+#: gogogo/views/route.py:51
+msgid "Route searching"
+msgstr ""
+
+#: gogogo/views/transit.py:26 gogogo/views/transit.py:40
+#: gogogo/views/transit.py:71 gogogo/views/transit.py:150
+#: gogogo/views/transit.py:199 gogogo/views/transit.py:238
+#: gogogo/views/transit.py:245 templates/base.html:35
+msgid "Transit information"
+msgstr "交通工具資訊"
+
+#: templates/base.html:34
+msgid "Planning"
+msgstr "行程規劃"
+
+

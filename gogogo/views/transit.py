@@ -37,7 +37,7 @@ def index(request):
 		request,
 		'gogogo/transit/index.html'
 		,{ 
-			'page_title': _("Transit Information"),
+			'page_title': _("Transit information"),
 			'pathbar' : pathbar,
 		   "agency_list" : agency_list,
 		   })		
@@ -242,7 +242,7 @@ def stop(request,stop_id):
 		request,
 		'gogogo/transit/stop.html'
 		,{ 
-			'page_title': _("Transit Information"),
+			'page_title': _("Transit information"),
 			'pathbar' : pathbar,
 		   "stop" : stop_entity,
 		   })		

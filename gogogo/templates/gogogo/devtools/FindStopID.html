@@ -4,11 +4,19 @@
 	{{block.super}}
 	<script type="text/javascript">
 	$(document).ready(function(){
+		
 		$("#generate").click(function(){
 			stop_list = $('#output').val()
 			new_stop_list = stop_list.replace(/\n/g,",");
 			$('#output2').val(new_stop_list);
 		})
+
+		$("#generate_reverse").click(function(){
+			stop_list = $('#output').val().split("\n");
+			new_stop_list = stop_list.reverse();
+			$('#output2').val(new_stop_list.join(','));
+		})
+
 
 	})
 	</script>
@@ -35,8 +43,8 @@
 		
 		
 		</td><td><textarea id="output" rows="19" cols="40" >{{output}}</textarea><br>
-		<button id="generate" type="submit" >Generate</button><br>
-		
+		<button id="generate" type="submit" >Generate</button> <button id="generate_reverse" type="submit" > Reverse Generate</button><br>
+	
 		
 		</td></tr>
 
