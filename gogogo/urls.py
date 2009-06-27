@@ -13,9 +13,9 @@ urlpatterns = patterns(
 	(r'^transit/stop/(?P<stop_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.stop'),
 	(r'^transit$', 'gogogo.views.transit.index'),
 
-    (r'^agency/list$', 'gogogo.views.agency_list'),
-	(r'^agency/browse/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.agency_browse'),
-	(r'^agency/edit/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.agency_edit'),
+    (r'^db/agency/list$', 'gogogo.views.db.agency.list'),
+	(r'^db/agency/browse/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.db.agency.browse'),
+	(r'^db/agency/edit/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.db.agency.edit'),
     
     (r'^route/search/$', 'gogogo.views.route.search'),
 

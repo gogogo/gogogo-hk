@@ -45,3 +45,49 @@ a.link_button:visited {
 	color: #0000EE;
 }
 
+input[type="text"] {
+	border:1px solid #CCCCCC;
+	width:20em;
+	margin-right: 1em;
+}
+
+input[type="submit"] {
+	border-color:#DDDDDD #AAAAAA #AAAAAA #DDDDDD;
+	border-style:solid;
+	border-width:1px;
+	color:black;
+	padding:3px;
+}
+
+/* Form handling */
+
+fieldset.form  {
+	padding : 0px;
+	margin : 0px 5px 0px 5px;
+}
+
+.fieldWrapper {
+	border-bottom:1px solid #EEEEEE;
+	font-size:11px;
+	overflow:hidden;
+	padding:8px 12px;
+	#width:500px;
+	#margin-bottom : 5px
+}
+
+.fieldWrapper label {
+	display:block;
+	float:left;
+	padding:3px 10px 0 0;
+	width:8em;
+}
+
+.fieldWrapper input {
+	width:20em;
+	border:1px solid #CCCCCC;
+}
+
+.submit-row input {
+	margin-top : 0.5em;
+	margin-left : 5px;
+}

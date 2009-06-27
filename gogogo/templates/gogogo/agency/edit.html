@@ -1,24 +1,29 @@
 {% extends 'gogogo/base.html' %}
 {% block title %} {{ page_title }} {% endblock %}
 
-{% block content %}
+{%block content-header%}{%endblock%}
 
-<p></p><p></p>
+{% block content %}
 {% if user.is_staff %}
 
-<form action="{% url gogogo.views.agency_edit agency.key_name%}" method="POST">
 
+<form action="{% url gogogo.views.db.agency.edit agency.key_name%}" method="POST">
+	<fieldset class="form">
+	<div class="fieldWrapper">
+		<label>Agency </label> 
+	</div>
    {% for field in form %}
         <div class="fieldWrapper">
             {{ field.errors }}
-            {{ field.label_tag }}: {{ field }}
+            {{ field.label_tag }} {{ field }}
         </div>
     {% endfor %}
-
-<input type="submit" value="Submit" />
+	</fieldset>
+	<div class="submit-row">
+		<input type="submit" value="Submit" /> {{message}}
+	</div>
+	
 </form>
-
-{{message}}
 
 {% endif %}
 
