@@ -4,8 +4,6 @@
 {%block content-header%}{%endblock%}
 
 {% block content %}
-{% if user.is_staff %}
-
 
 <form action="{% url gogogo.views.db.agency.edit agency.key_name%}" method="POST">
 	<fieldset class="form">
@@ -20,11 +18,9 @@
     {% endfor %}
 	</fieldset>
 	<div class="submit-row">
-		<input type="submit" value="Submit" /> {{message}}
+		<input type="submit" value="Submit" /> {{message|safe}}
 	</div>
 	
 </form>
-
-{% endif %}
 
 {% endblock %}

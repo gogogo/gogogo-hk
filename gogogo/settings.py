@@ -6,3 +6,8 @@ settings.add_app_media('combined-%(LANGUAGE_CODE)s.js',
 
     # ...
 )
+
+settings.add_app_media('combined-%(LANGUAGE_DIR)s.css',
+    'gogogo/gogogo.css',
+    # ...
+)

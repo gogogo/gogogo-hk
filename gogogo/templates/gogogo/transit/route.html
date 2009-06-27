@@ -67,6 +67,7 @@
 	{{route.desc|linebreaks}}
 </div>
 
+{% if trip_list %}
 <div class="span-24 last">
 	<h3 class="alt"> Trips </h3>
 </div>
@@ -91,6 +92,6 @@
 
 	</table>
 </div>
-
+{% endif %}
 
 {% endblock %}

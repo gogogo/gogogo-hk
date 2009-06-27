@@ -21,10 +21,12 @@
     	<td>Phone:</td>
     	<td> {{agency.phone}}</td>
     </tr>   
-    <tr><td colspan="2" align="right"><div align="right">
-    <a class="link_button">Report incorrect information</a>
-    {%if user.is_staff %} | <a href="{% url gogogo.views.db.agency.edit agency.key_name%}" class="link_button">Edit</a>{%endif%}
-    </div></td></tr>
+    <tr><td colspan="2" align="right">
+    <ul class="object-tools" >
+    	<li></li><a href="/" >Report</a>
+    {%if user.is_staff %}<li><a href="{% url gogogo.views.db.agency.edit agency.key_name%}" >Edit</a>{%endif%}
+    </ul>
+    </td></tr>
 </table>
 </div>
 <p></p>

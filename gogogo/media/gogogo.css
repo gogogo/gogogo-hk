@@ -1,0 +1,96 @@
+
+input[type="text"] {
+	border:1px solid #CCCCCC;
+	width:20em;
+	margin-right: 1em;
+}
+
+input[type="submit"] {
+	border-color:#DDDDDD #AAAAAA #AAAAAA #DDDDDD;
+	border-style:solid;
+	border-width:1px;
+	color:black;
+	padding:3px;
+}
+
+/* Form handling */
+
+fieldset.form  {
+	padding : 0px;
+	margin : 0px 5px 0px 5px;
+}
+
+.fieldWrapper {
+	border-bottom:1px solid #EEEEEE;
+	font-size:11px;
+	overflow:hidden;
+	padding:8px 12px;
+	#width:500px;
+	#margin-bottom : 5px
+}
+
+.fieldWrapper label {
+	display:block;
+	float:left;
+	padding:3px 10px 0 0;
+	width:8em;
+}
+
+.fieldWrapper input {
+	width:20em;
+	border:1px solid #CCCCCC;
+}
+
+.submit-row input {
+	margin-top : 0.5em;
+	margin-left : 5px;
+}
+
+/* OBJECT TOOLS. Refer from global.css */
+.object-tools { 
+	font-size:10px; 
+	font-weight:bold;
+	font-family:Arial,Helvetica,sans-serif; 
+	#padding-left:0; 
+	float:right; 
+	position:relative; 
+	#margin-top:-2.4em; 
+	margin-bottom:-2em; 
+}
+
+.form-row .object-tools { 
+	margin-top:5px; 
+	margin-bottom:5px; 
+	#float:none; 
+	height:2em; 
+	padding-left:3.5em; 
+}
+
+.object-tools li { display:block; float:left; background:url(admin_media/img/admin/tool-left.gif) 0 0 no-repeat; padding:0 0 0 8px; margin-left:2px; height:16px; }
+.object-tools li:hover { background:url(admin_media/img/admin/tool-left_over.gif) 0 0 no-repeat; }
+
+.object-tools a:link, .object-tools a:visited {
+	 display:block; 
+	 float:left; 
+	 color:white; 
+	 padding:.1em 14px .1em 8px; 
+	 height:14px; 
+	 background:#999 url(admin_media/img/admin/tool-right.gif) 100% 0 no-repeat;  
+	 text-decoration:none;
+}
+
+.object-tools a:hover, .object-tools li:hover a { 
+	background:#5b80b2 url(admin_media/img/admin/tool-right_over.gif) 100% 0 no-repeat; 
+}
+
+.object-tools a.viewsitelink, .object-tools a.golink {
+	 background:#999 url(admin_media/img/admin/tooltag-arrowright.gif) top right no-repeat;
+	 padding-right:28px; 
+}
+
+.object-tools a.viewsitelink:hover, .object-tools a.golink:hover { background:#5b80b2 url(admin_media/img/admin/tooltag-arrowright_over.gif) top right no-repeat; }
+
+.object-tools a.addlink { background:#999 url(admin_media/img/admin/tooltag-add.gif) top right no-repeat; padding-right:28px; }
+
+.object-tools a.addlink:hover { background:#5b80b2 url(admin_media/img/admin/tooltag-add_over.gif) top right no-repeat; }
+
