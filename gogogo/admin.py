@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 from ragendja.forms import *
-from gogogo.models import Agency , Stop , Route,Trip , Shape
+from gogogo.models import *
 
 class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -83,3 +83,8 @@ class ShapeAdmin(admin.ModelAdmin):
 		return obj.key().name()
 	
 admin.site.register(Shape, ShapeAdmin)	
+
+class ChangelogAdmin(admin.ModelAdmin):
+	pass
+	
+admin.site.register(Changelog, ChangelogAdmin)	

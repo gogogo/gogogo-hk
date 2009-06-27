@@ -2,10 +2,13 @@
 from gogogo.models import *
 from ragendja.auth.decorators import staff_only
 from ragendja.dbutils import get_object_or_404
+from django import forms
 from django.forms import ModelForm
 from ragendja.template import render_to_response
 
 from django.core.urlresolvers import reverse as _reverse
+from gogogo.models.utils import createEntity , entityToText
+from datetime import datetime
 
 def reverse(object):
 	"""
@@ -29,16 +32,22 @@ class AgencyForm(ModelForm):
 	class Meta:
 		model = Agency
 		fields = ['name','phone','url','icon']
+		
+	log_message = forms.CharField(widget = forms.Textarea)
 
 class RouteForm(ModelForm):
 	class Meta:
 		model = Route
 		fields = ['agency','short_name','long_name','desc','type','url','color','text_color']
+		
+	log_message = forms.CharField(widget = forms.Textarea)
 
 class TripForm(ModelForm):
 	class Meta:
 		model = Trip
 		exclude = ["stop_list"]
+		
+	log_message = forms.CharField(widget = forms.Textarea)
 
 _supported_model = {
 	'route' : (Route,RouteForm),
@@ -57,12 +66,27 @@ def edit(request,kind,object_id):
 	message = ""
 	
 	object = get_object_or_404(model,key_name = object_id)
-	#object_entity = create_entity(object)
 	
 	if request.method == 'POST':
 		form = model_form(request.POST,instance=object)
 		if form.is_valid():
-			form.save()
+			old_rev = entityToText(createEntity(object))
+			new_object = form.save(commit = False)
+			new_rev = entityToText(createEntity(new_object))
+			
+			changelog = Changelog(
+				reference = object,
+				commit_date = datetime.now(),
+				user=request.user,
+				comment=form.cleaned_data['log_message'],
+				old_rev = old_rev,
+				new_rev = new_rev
+				)
+			
+			db.put([new_object,changelog])
+			
+			#TODO - Update cache
+			
 			message = "The form is successfully saved. <a href='%s'>View.</a> " % reverse(object)
 
 	else:

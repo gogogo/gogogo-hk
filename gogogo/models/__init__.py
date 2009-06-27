@@ -275,6 +275,9 @@ class Changelog(db.Model):
 	Change log
 	"""
 	
+	def __unicode__(self):
+		return "Changelog"
+	
 	# The committer. Anonymouse is not allowed
 	committer = db.UserProperty()
 	
