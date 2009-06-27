@@ -58,7 +58,13 @@ class StopAdmin(admin.ModelAdmin):
 admin.site.register(Stop, StopAdmin)
 
 class RouteAdmin(admin.ModelAdmin):
-	pass
+	fieldsets = (
+        (None, {
+            'fields': (
+     				'agency','short_name','long_name','desc','type','url','color','text_color'
+            	)
+        }),
+    )	
 	
 admin.site.register(Route, RouteAdmin)
 

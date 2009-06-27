@@ -1,12 +1,18 @@
 {% extends 'gogogo/base.html' %}
+{%load i18n%}
 
-{%block content-header%}{%endblock%}
+{%block title%}{%trans "Change" %} {{object}} | Gogogo {%endblock%}
+
+{%block content-header%}<div class="content-header">
+	<ul class="object-tools" >
+		<li><a href="{{reverse}}">View</a></li>
+	</ul>
+	{% trans "Change" %} {{object}}
+</div>{%endblock%}
 
 {% block content %}
-
 <form action="{{action}}" method="POST">
 	<fieldset class="form">
-	
 	
 		{#<div class="fieldWrapper"><label>Agency </label></div> #}
 	

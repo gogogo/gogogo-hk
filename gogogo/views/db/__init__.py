@@ -16,6 +16,10 @@ def reverse(object):
 		ret = _reverse('gogogo.views.transit.agency',args=[object.key().name()] )
 	elif isinstance(object,Route):
 		ret = _reverse('gogogo.views.transit.route',args=[object.agency.key().name(),object.key().name()] )
+	elif isinstance(object,Trip):
+		ret = _reverse('gogogo.views.transit.trip',args=[object.route.agency.key().name(),
+			object.route.key().name(),
+			object.key().name()] )
 	else:
 		raise ValueError("gogogo.views.db.reverse() do not support %s" % object.kind() )	
 
@@ -29,11 +33,17 @@ class AgencyForm(ModelForm):
 class RouteForm(ModelForm):
 	class Meta:
 		model = Route
-		fields = ['short_name','long_name','desc']
+		fields = ['agency','short_name','long_name','desc','type','url','color','text_color']
+
+class TripForm(ModelForm):
+	class Meta:
+		model = Trip
+		exclude = ["stop_list"]
 
 _supported_model = {
 	'route' : (Route,RouteForm),
 	'agency' : (Agency,AgencyForm),
+	'trip' : (Trip,TripForm),
 }
 
 @staff_only
@@ -47,6 +57,7 @@ def edit(request,kind,object_id):
 	message = ""
 	
 	object = get_object_or_404(model,key_name = object_id)
+	#object_entity = create_entity(object)
 	
 	if request.method == 'POST':
 		form = model_form(request.POST,instance=object)
@@ -63,6 +74,7 @@ def edit(request,kind,object_id):
 		,{ "form" : form , 
 		   "object" : object,
 		   "message" : message,
+		   "reverse" : reverse(object),
 		   "action" : _reverse('gogogo.views.db.edit',args=[kind,object_id]) ,
 		   })		
 

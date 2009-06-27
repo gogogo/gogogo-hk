@@ -7,9 +7,9 @@ from django.conf import settings
 from TitledStringListProperty import TitledStringListProperty
 from django.utils.translation import ugettext_lazy as _
 from ragendja.dbutils import get_object
-from geo.geohash import Geohash
+from gogogo.geo.geohash import Geohash
 
-from gogogo.NumberListProperty import NumberListProperty
+from gogogo.models.NumberListProperty import NumberListProperty
 # Utilities
 
 class MLStringProperty(TitledStringListProperty):
@@ -172,7 +172,7 @@ class Route(db.Model):
 	
 	desc = db.TextProperty()
 	
-	type = db.IntegerProperty(choices=set(range(0,8)))
+	type = db.IntegerProperty(choices=range(0,8))
 	
 	#As Link must not be empty, it is replaced by String Property
 	url = db.StringProperty()

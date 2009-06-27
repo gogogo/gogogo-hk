@@ -224,10 +224,6 @@ def trip(request,agency_id,route_id,trip_id):
 			'color': trip_record.shape.color	}
 	
 	pathbar = Pathbar(agency=(agency_entity,route_entity,trip_entity))
-	#pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
-	#pathbar.append(agency_entity['name'] , 'gogogo.views.transit.agency' , [agency_entity['key_name']])
-	#pathbar.append(route_entity['long_name'] , 'gogogo.views.transit.route' , [agency_entity['key_name'] , route_entity['key_name']])
-	#pathbar.append(trip_entity['headsign'] , 'gogogo.views.transit.trip' , [agency_entity['key_name'] , route_entity['key_name'],trip_entity['key_name']])
 	
 	return render_to_response( 
 		request,
@@ -235,6 +231,7 @@ def trip(request,agency_id,route_id,trip_id):
 		,{ 
 			'page_title': trip_entity['headsign'],
 			'pathbar': pathbar,
+			'object_type' : 'trip',
 			"agency" : agency_entity,
 			"route" : route_entity,
 		   "trip" : trip_entity,
