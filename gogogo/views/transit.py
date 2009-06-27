@@ -103,6 +103,7 @@ def agency(request,agency_id):
 	{
         'page_title': agency['name'] ,
         'pathbar' : pathbar,
+        'object_type' : 'agency',
         'agency' : agency,
         'rail_list' : rail_list
     })
@@ -183,6 +184,7 @@ def route(request,agency_id,route_id):
 		,{ 
 			'page_title': route_entity['long_name'],
 			'pathbar' : pathbar,
+        	'object_type' : 'route',
 		   "route" : route_entity,
 		   "trip_list" : trip_list,
 		   "travel_list" : travel_list,
