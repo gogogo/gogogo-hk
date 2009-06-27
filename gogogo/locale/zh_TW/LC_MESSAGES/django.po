@@ -22,11 +22,11 @@ msgstr ""
 
 #: models/__init__.py:152 models/__init__.py:153
 msgid "Stops"
-msgstr ""
+msgstr "車站"
 
 #: models/__init__.py:164 models/__init__.py:165
 msgid "Routes"
-msgstr ""
+msgstr "路線"
 
 #: models/__init__.py:208 models/__init__.py:209
 msgid "Service Calendar"
@@ -34,7 +34,7 @@ msgstr ""
 
 #: models/__init__.py:233 models/__init__.py:234
 msgid "Trips"
-msgstr ""
+msgstr "路程"
 
 #: models/__init__.py:260 models/__init__.py:261
 msgid "Cluster"

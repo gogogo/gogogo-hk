@@ -270,9 +270,9 @@ class Cluster:
 		
 	members = KeyListProperty(Stop)
 	
-class Changeset(db.Model):
+class Changelog(db.Model):
 	"""
-		Change log
+	Change log
 	"""
 	
 	# The committer. Anonymouse is not allowed
@@ -290,8 +290,8 @@ class Changeset(db.Model):
 	# A reference to the modified record.
 	reference = db.ReferenceProperty()
 	
-	# Original data
+	# Entity of original data
 	old_rev = db.TextProperty()
 
-	# New version of data
+	# Entity of new data
 	new_rev = db.TextProperty()
