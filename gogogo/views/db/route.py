@@ -9,6 +9,9 @@ from django.forms import ModelForm
 from ragendja.auth.decorators import staff_only
 from ragendja.template import render_to_response
 from gogogo.models import *
+from ragendja.dbutils import get_object_or_404
+from gogogo.views.db import reverse as db_reverse
+from django.core.urlresolvers import reverse
 
 import cgi
 
@@ -51,4 +54,41 @@ def search(request):
 			'page_title': _("Route searching"),
 			'result' : result
 		   })		
+	
+class Form(ModelForm):
+	class Meta:
+		model = Route
+		fields = ['short_name','long_name','desc']
+		
+@staff_only
+def edit(request,id):
+	"""
+	Edit route information (staff only)
+	"""
+	
+	record = get_object_or_404(Route,key_name=id)	
+
+	message=""
+
+	if request.method == 'POST':
+		form = Form(request.POST,instance=record)
+		if form.is_valid():
+			form.save()
+			message = "The form is successfully saved. <a href='%s'>View.</a> " % db_reverse(record)
+
+	else:
+		form = Form(instance=record)
+
+	agency = create_entity(record,request)
+	agency['key_name'] = record.key().name()
+	
+	return render_to_response( 
+		request,
+		'gogogo/db/edit.html'
+		,{ "form" : form , 
+		   "agency" : agency,
+		   "message" : message,
+		   "action" : reverse('gogogo.views.db.route.edit',args=[id,]) ,
+		   })		
+
 	

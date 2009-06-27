@@ -1,15 +1,16 @@
 {% extends 'gogogo/base.html' %}
-{% block title %} {{ page_title }} {% endblock %}
 
 {%block content-header%}{%endblock%}
 
 {% block content %}
 
-<form action="{% url gogogo.views.db.agency.edit agency.key_name%}" method="POST">
+<form action="{{action}}" method="POST">
 	<fieldset class="form">
-	<div class="fieldWrapper">
-		<label>Agency </label> 
-	</div>
+	
+	
+		{#<div class="fieldWrapper"><label>Agency </label></div> #}
+	
+	
    {% for field in form %}
         <div class="fieldWrapper">
             {{ field.errors }}

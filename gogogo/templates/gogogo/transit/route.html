@@ -33,6 +33,14 @@
 
 {% block content %}
 <div id="general_info" class="colborder span-8">
+{% if user.is_staff %}
+<div class="objects-tool">
+		<ul class="object-tools" >
+    	<li></li><a href="{%url gogogo.views.db.route.edit route.key_name %}" >Edit</a>
+    	</ul>
+</div>
+<p>
+{%endif%}
 <table>
     <tr>
     	<td>Short Name: </td>

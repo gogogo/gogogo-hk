@@ -17,7 +17,8 @@ urlpatterns = patterns(
 	(r'^db/agency/browse/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.db.agency.browse'),
 	(r'^db/agency/edit/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.db.agency.edit'),
     
-    (r'^route/search/$', 'gogogo.views.route.search'),
+    (r'^db/route/search/$', 'gogogo.views.db.route.search'),
+    (r'^db/route/edit/(?P<id>[0-9a-zA-Z_]*)$', 'gogogo.views.db.route.edit'),
 
 	(r'^devtools/FindStopID$','gogogo.views.devtools.find_stop_id'),
 	(r'^devtools/MassAddressQuery.html$', 'django.views.generic.simple.direct_to_template',
