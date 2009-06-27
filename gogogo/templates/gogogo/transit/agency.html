@@ -1,24 +1,24 @@
 {% extends 'gogogo/transit/base.html' %}
-
+{% load i18n%}
 {% block content %}
 
 <div class="span-6 last">
 <table>
     <tr>
-        <td>Name: </td>
+        <td>{%trans "Name"%}: </td>
         <td>{{agency.name}}</td>
     </tr>
     <tr>
-    	<td>Icon: </td>
+    	<td>{%trans "Icon"%}: </td>
     	<td><img src='{{MEDIA_URL}}{{agency.icon|default:"global/agency/icons/bus.png" }}'></td>
     </tr>
 	<tr>
-		<td>URL:</td>
+		<td>{%trans "URL"%}:</td>
     	<td><a href="{{agency.url}}">{{agency.url}}</a></td>  
 	</tr>
     
     <tr>
-    	<td>Phone:</td>
+    	<td>{%trans "Phone"%}:</td>
     	<td> {{agency.phone}}</td>
     </tr>   
     <tr><td colspan="2" align="right">

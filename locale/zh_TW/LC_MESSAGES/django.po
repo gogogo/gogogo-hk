@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-25 21:30-0500\n"
+"POT-Creation-Date: 2009-06-27 09:17-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -220,6 +220,8 @@ msgid "Models available in the %(name)s application."
 msgstr ""
 
 #: common/django_aep_export/django_templates/templates/admin/index.html:35
+#: gogogo/templates/gogogo/db/edit.html:4
+#: gogogo/templates/gogogo/db/edit.html:10
 msgid "Change"
 msgstr ""
 
@@ -484,6 +486,7 @@ msgid "No comments to moderate"
 msgstr ""
 
 #: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:34
+#: gogogo/templates/gogogo/transit/agency.html:8
 msgid "Name"
 msgstr ""
 
@@ -496,6 +499,7 @@ msgid "Email"
 msgstr ""
 
 #: common/django_aep_export/django_templates/templates/comments/moderation_queue.html:37
+#: gogogo/templates/gogogo/transit/agency.html:16
 msgid "URL"
 msgstr ""
 
@@ -692,47 +696,63 @@ msgstr ""
 msgid "Reset my password"
 msgstr ""
 
-#: gogogo/models.py:100 gogogo/models.py:101
+#: gogogo/models/__init__.py:103 gogogo/models/__init__.py:104
 msgid "Transport Agency"
 msgstr ""
 
-#: gogogo/models.py:149 gogogo/models.py:150
+#: gogogo/models/__init__.py:152 gogogo/models/__init__.py:153
 msgid "Stops"
 msgstr ""
 
-#: gogogo/models.py:161 gogogo/models.py:162
+#: gogogo/models/__init__.py:164 gogogo/models/__init__.py:165
 msgid "Routes"
 msgstr ""
 
-#: gogogo/models.py:205 gogogo/models.py:206
+#: gogogo/models/__init__.py:208 gogogo/models/__init__.py:209
 msgid "Service Calendar"
 msgstr ""
 
-#: gogogo/models.py:230 gogogo/models.py:231
+#: gogogo/models/__init__.py:233 gogogo/models/__init__.py:234
 msgid "Trips"
 msgstr ""
 
-#: gogogo/models.py:257 gogogo/models.py:258
+#: gogogo/models/__init__.py:260 gogogo/models/__init__.py:261
 msgid "Cluster"
 msgstr ""
 
-#: gogogo/views/__init__.py:31
+#: gogogo/templates/gogogo/route/search-box.html:4
+msgid "Route Search"
+msgstr ""
+
+#: gogogo/templates/gogogo/transit/agency.html:12
+msgid "Icon"
+msgstr ""
+
+#: gogogo/templates/gogogo/transit/agency.html:21
+msgid "Phone"
+msgstr ""
+
+#: gogogo/views/transit.py:29 gogogo/views/transit.py:67
+#: gogogo/views/transit.py:289 templates/base.html:35
+msgid "Transit information"
+msgstr "交通工具資訊"
+
+#: gogogo/views/db/agency.py:33
 msgid "Agency List"
 msgstr ""
 
-#: gogogo/views/route.py:51
+#: gogogo/views/db/route.py:54
 msgid "Route searching"
 msgstr ""
-
-#: gogogo/views/transit.py:26 gogogo/views/transit.py:40
-#: gogogo/views/transit.py:71 gogogo/views/transit.py:150
-#: gogogo/views/transit.py:199 gogogo/views/transit.py:238
-#: gogogo/views/transit.py:245 templates/base.html:35
-msgid "Transit information"
-msgstr "交通工具資訊"
 
 #: templates/base.html:34
 msgid "Planning"
 msgstr "行程規劃"
 
+#: templates/base.html:37
+msgid "About"
+msgstr "關於網站"
 
+#: templates/base.html:52
+msgid "Help"
+msgstr ""

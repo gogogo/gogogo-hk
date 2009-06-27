@@ -1,8 +1,8 @@
 {% extends 'gogogo/transit/base.html' %}
-
+{%load i18n%}
 {% block content %}
 
-Transport Servier Provider
+{%trans "Transit information"%}
 <ul>
 	{% for agency in agency_list %}
 	<li><a href="{%url gogogo.views.transit.agency agency_id=agency.key_name%}">{{agency.name}}</a></li>

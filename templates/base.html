@@ -34,7 +34,7 @@
           		<a href="/" class="link_button">{% trans "Planning"%}</a> |
           		<a href="{%url gogogo.views.transit.index %}" class="link_button">{%trans "Transit information" %}</a> |
           		{#{% if user.is_staff %}<a href="/" class="link_button">{%trans "Database" %}</a> |{% endif %}#}
-          		<a href="/" class="link_button">About</a>
+          		<a href="/" class="link_button">{% trans "About" %}</a>
 			</div>
 			
 			<div class="right_menu" >
@@ -49,7 +49,7 @@
 				{%if not forloop.first %}| {%endif%}<span class="setlang_link link_button" id="setlang_{{lang.0}}" lang="{{lang.0}}">{{ lang.1 }}</span>
 			{% endfor %}
           
-          | <a href="http://dev.gogogo.hk">Help</a> |
+          | <a href="http://dev.gogogo.hk">{%trans "Help" %}</a> |
           
           {% if user.is_authenticated %}
             <a href="{% url django.contrib.auth.views.logout %}" class="link_button">Sign out</a>
