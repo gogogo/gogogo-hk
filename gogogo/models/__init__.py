@@ -33,7 +33,10 @@ class MLStringProperty(TitledStringListProperty):
 		try:
 			ret = value[lang]
 		except IndexError:
-			ret = value[0]
+			try:
+				ret = value[0]
+			except IndexError: #Value is none
+				ret = ""
 		
 		return ret
 		

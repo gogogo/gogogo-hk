@@ -16,6 +16,7 @@ from ragendja.dbutils import get_object_or_404
 from gogogo.models import *
 from gogogo.geo.LatLng import LatLng
 from widgets import Pathbar as _Pathbar
+from gogogo.models.StopList import StopList
 #import gogogo.views.widgets.Pathbar
 
 class Pathbar(_Pathbar):
@@ -147,37 +148,55 @@ def route(request,agency_id,route_id):
 	endpoint_list = []
 	
 	for trip_record in gql:
-		stop_list = []
-		try:
-			first_stop = db.get(trip_record.stop_list[0])
-			last_stop = db.get(trip_record.stop_list[len(trip_record.stop_list)-1])
-			travel_list.append( (MLStringProperty.trans(first_stop.name,lang),MLStringProperty.trans(last_stop.name,lang)))
-			
-			pt = LatLng(first_stop.latlng.lat,first_stop.latlng.lon )
-			if pt not in endpoint_list:
-				endpoint_list.append( pt )
-			
-			pt = LatLng(last_stop.latlng.lat,last_stop.latlng.lon )
-			if pt not in endpoint_list:
-				endpoint_list.append( pt )
-		except IndexError:
-			pass
-			
-		for key in trip_record.stop_list:
-			stop = db.get(key)
-			stop_list.append( (key.name() , MLStringProperty.trans(stop.name,lang) ) )
+		stop_list = StopList(trip_record)
+		
+		travel_list.append( (MLStringProperty.trans(stop_list.first.name,lang),
+			MLStringProperty.trans(stop_list.last.name,lang)))
+		
+		pt = LatLng(stop_list.first.latlng.lat,stop_list.first.latlng.lon )
+		if pt not in endpoint_list:
+			endpoint_list.append( pt )
+		
+		pt = LatLng(stop_list.last.latlng.lat,stop_list.last.latlng.lon )
+		if pt not in endpoint_list:
+			endpoint_list.append( pt )	
+		
 		trip_entity = {
 			'headsign' : MLStringProperty.trans(trip_record.headsign,lang),
 			'key_name' : trip_record.key().name(),
-			'stop_list' : stop_list
+			'stop_list' : stop_list.createTREntity(request)
 		}
 		trip_list.append(trip_entity)
+	
+	#for trip_record in gql:
+		#stop_list = []
+		#try:
+			#first_stop = db.get(trip_record.stop_list[0])
+			#last_stop = db.get(trip_record.stop_list[len(trip_record.stop_list)-1])
+			#travel_list.append( (MLStringProperty.trans(first_stop.name,lang),MLStringProperty.trans(last_stop.name,lang)))
+			
+			#pt = LatLng(first_stop.latlng.lat,first_stop.latlng.lon )
+			#if pt not in endpoint_list:
+				#endpoint_list.append( pt )
+			
+			#pt = LatLng(last_stop.latlng.lat,last_stop.latlng.lon )
+			#if pt not in endpoint_list:
+				#endpoint_list.append( pt )
+		#except IndexError:
+			#pass
+			
+		#for key in trip_record.stop_list:
+			#stop = db.get(key)
+			#stop_list.append( (key.name() , MLStringProperty.trans(stop.name,lang) ) )
+		#trip_entity = {
+			#'headsign' : MLStringProperty.trans(trip_record.headsign,lang),
+			#'key_name' : trip_record.key().name(),
+			#'stop_list' : stop_list
+		#}
+		#trip_list.append(trip_entity)
 
 	pathbar = Pathbar(agency=(agency_entity,route_entity))
-	#pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
-	#pathbar.append(agency_entity['name'] , 'gogogo.views.transit.agency' , [agency_entity['key_name']])
-	#pathbar.append(route_entity['long_name'] , 'gogogo.views.transit.route' , [agency_entity['key_name'] , route_entity['key_name']])
-	
+
 	return render_to_response( 
 		request,
 		'gogogo/transit/route.html'
