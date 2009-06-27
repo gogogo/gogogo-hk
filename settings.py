@@ -24,8 +24,8 @@ LANGUAGE_CODE = 'en'
 LANGUAGES = (
 #    ('de', 'German'),
     ('en', 'English'),
-    ('zh-tw',u'繁體中文'),
-    ('zh-cn',u'简体中文')
+    ('zh_TW',u'繁體中文'),
+    ('zh_CN',u'简体中文')
 )
 
 # Can not put into the bottom of the file. It will raise unexcepted result
