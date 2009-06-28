@@ -11,7 +11,6 @@ from ragendja.template import render_to_response
 from django.core.urlresolvers import reverse
 from ragendja.dbutils import get_object_or_404
 from gogogo.models import *
-from gogogo.views.db import reverse as db_reverse
 
 from gogogo.models.cache import getCachedEntityOr404
 from gogogo.models.utils import createEntity

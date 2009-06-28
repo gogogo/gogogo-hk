@@ -10,6 +10,8 @@ from ragendja.dbutils import get_object
 from gogogo.geo.geohash import Geohash
 
 from gogogo.models.NumberListProperty import NumberListProperty
+
+from django.db.models import permalink # For permalink
 # Utilities
 
 class MLStringProperty(TitledStringListProperty):
@@ -106,6 +108,11 @@ class Agency(db.Model):
 	def __unicode__(self):
 		return u' | '.join(self.name)
 		
+	@permalink
+	def get_absolute_url(self):
+		return ('gogogo.views.transit.agency',[self.key().name()]) 
+
+		
 class Stop(db.Model):
 	"""
 		Stop/Station data model
@@ -184,6 +191,11 @@ class Route(db.Model):
 	
 	text_color = db.StringProperty()
 
+	@permalink
+	def get_absolute_url(self):
+		return ('gogogo.views.transit.route',[self.agency.key().name(),self.key().name()]) 
+
+
 class Shape(db.Model):
 	"""
 		Shape data model. The stored data can be a polyline or polygon
@@ -253,6 +265,12 @@ class Trip(db.Model):
 	stop_list = KeyListProperty(Stop)
 	
 	arrival_time_list = NumberListProperty(int)
+	
+	@permalink
+	def get_absolute_url(self):
+		return ('gogogo.views.transit.trip',[self.route.agency.key().name(),
+			self.route.key().name(),
+			self.key().name()]) 
 	
 class Cluster:
 	

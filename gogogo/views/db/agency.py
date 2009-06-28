@@ -11,7 +11,7 @@ from django.forms import ModelForm
 from ragendja.auth.decorators import staff_only
 from ragendja.template import render_to_response
 from gogogo.models import *
-from gogogo.views.db import reverse as db_reverse
+#from gogogo.views.db import reverse as db_reverse
 from django.core.urlresolvers import reverse
 
 def list(request):
@@ -89,7 +89,7 @@ def edit(request,id):
 		form = AgencyForm(request.POST,instance=record)
 		if form.is_valid():
 			form.save()
-			message = "The form is successfully saved. <a href='%s'>View.</a> " % db_reverse(record)
+			message = "The form is successfully saved. <a href='%s'>View.</a> " % record.get_absolute_url()
 
 	else:
 		form = AgencyForm(instance=record)

@@ -10,7 +10,7 @@ from ragendja.auth.decorators import staff_only
 from ragendja.template import render_to_response
 from gogogo.models import *
 from ragendja.dbutils import get_object_or_404
-from gogogo.views.db import reverse as db_reverse
+#from gogogo.views.db import reverse as db_reverse
 from django.core.urlresolvers import reverse
 
 import cgi
@@ -74,7 +74,7 @@ def edit(request,id):
 		form = Form(request.POST,instance=record)
 		if form.is_valid():
 			form.save()
-			message = "The form is successfully saved. <a href='%s'>View.</a> " % db_reverse(record)
+			message = "The form is successfully saved. <a href='%s'>View.</a> " % record.get_absolute_url()
 
 	else:
 		form = Form(instance=record)

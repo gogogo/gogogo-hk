@@ -11,23 +11,23 @@ from gogogo.models.utils import createEntity , entityToText
 from gogogo.models.cache import updateCachedObject
 from datetime import datetime
 
-def reverse(object):
-	"""
-	Return the link to the object
-	"""
+#def reverse(object):
+	#"""
+	#Return the link to the object
+	#"""
 	
-	if isinstance(object,Agency):
-		ret = _reverse('gogogo.views.transit.agency',args=[object.key().name()] )
-	elif isinstance(object,Route):
-		ret = _reverse('gogogo.views.transit.route',args=[object.agency.key().name(),object.key().name()] )
-	elif isinstance(object,Trip):
-		ret = _reverse('gogogo.views.transit.trip',args=[object.route.agency.key().name(),
-			object.route.key().name(),
-			object.key().name()] )
-	else:
-		raise ValueError("gogogo.views.db.reverse() do not support %s" % object.kind() )	
+	#if isinstance(object,Agency):
+		#ret = _reverse('gogogo.views.transit.agency',args=[object.key().name()] )
+	#elif isinstance(object,Route):
+		#ret = _reverse('gogogo.views.transit.route',args=[object.agency.key().name(),object.key().name()] )
+	#elif isinstance(object,Trip):
+		#ret = _reverse('gogogo.views.transit.trip',args=[object.route.agency.key().name(),
+			#object.route.key().name(),
+			#object.key().name()] )
+	#else:
+		#raise ValueError("gogogo.views.db.reverse() do not support %s" % object.kind() )	
 
-	return ret
+	#return ret
 
 class AgencyForm(ModelForm):
 	class Meta:
@@ -90,7 +90,7 @@ def edit(request,kind,object_id):
 			
 			#TODO - Update cache
 			
-			message = "The form is successfully saved. <a href='%s'>View.</a> " % reverse(object)
+			message = "The form is successfully saved. <a href='%s'>View.</a> " % object.get_absolute_url()
 
 	else:
 		form = model_form(instance=object)
@@ -102,7 +102,7 @@ def edit(request,kind,object_id):
 		   "object" : object,
 		   "message" : message,
 		   "history_link" : _reverse('gogogo.views.db.changelog.list') + "?kind=%s" % kind,
-		   "view_object_link" : reverse(object),
+		   "view_object_link" : object.get_absolute_url(),
 		   "action" : _reverse('gogogo.views.db.edit',args=[kind,object_id]) ,
 		   })		
 
