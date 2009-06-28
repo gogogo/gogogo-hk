@@ -17,6 +17,7 @@ from gogogo.models import *
 from gogogo.geo.LatLng import LatLng
 from widgets import Pathbar as _Pathbar
 from gogogo.models.StopList import StopList
+from gogogo.models.cache import getCachedObjectOr404
 #import gogogo.views.widgets.Pathbar
 
 class Pathbar(_Pathbar):
@@ -74,15 +75,17 @@ def agency(request,agency_id):
 	Browse the information of a transport agency
 	"""
 
-	try:
-		key = db.Key.from_path(Agency.kind(),agency_id)
+	record  = getCachedObjectOr404(Agency,key_name = agency_id)
+
+	#try:
+		#key = db.Key.from_path(Agency.kind(),agency_id)
 	
-		record = db.get(key)
-	except (db.BadArgumentError,db.BadValueError):
-		raise Http404
+		#record = db.get(key)
+	#except (db.BadArgumentError,db.BadValueError):
+		#raise Http404
 	
-	if record == None:
-		raise Http404
+	#if record == None:
+		#raise Http404
 		
 	agency = create_entity(record,request)
 	agency['key_name'] = record.key().name()

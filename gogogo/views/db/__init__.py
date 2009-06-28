@@ -8,6 +8,7 @@ from ragendja.template import render_to_response
 
 from django.core.urlresolvers import reverse as _reverse
 from gogogo.models.utils import createEntity , entityToText
+from gogogo.models.cache import updateCachedObject
 from datetime import datetime
 
 def reverse(object):
@@ -76,14 +77,16 @@ def edit(request,kind,object_id):
 			
 			changelog = Changelog(
 				reference = object,
-				commit_date = datetime.now(),
-				user=request.user,
+				commit_date = datetime.utcnow(),
+#				committer=request.user,
 				comment=form.cleaned_data['log_message'],
 				old_rev = old_rev,
-				new_rev = new_rev
+				new_rev = new_rev,
+				model_kind=kind,
 				)
 			
 			db.put([new_object,changelog])
+			updateCachedObject(new_object)
 			
 			#TODO - Update cache
 			

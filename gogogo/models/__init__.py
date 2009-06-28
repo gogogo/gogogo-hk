@@ -276,10 +276,10 @@ class Changelog(db.Model):
 	"""
 	
 	def __unicode__(self):
-		return "Changelog"
+		return "%s %s %s" % (self.commit_date.isoformat() ,str(self.committer) , self.model_kind )
 	
 	# The committer. Anonymouse is not allowed
-	committer = db.UserProperty()
+	committer = db.UserProperty(auto_current_user_add=True)
 	
 	# Date of submission
 	commit_date = db.DateTimeProperty()
@@ -293,8 +293,14 @@ class Changelog(db.Model):
 	# A reference to the modified record.
 	reference = db.ReferenceProperty()
 	
+	# The model kind
+	model_kind = db.StringProperty()
+	
 	# Entity of original data
 	old_rev = db.TextProperty()
 
 	# Entity of new data
 	new_rev = db.TextProperty()
+	
+	# A masked changelog will not be shown to public. It is probably a spam or invalid commit
+	masked = db.BooleanProperty()

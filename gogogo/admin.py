@@ -85,6 +85,13 @@ class ShapeAdmin(admin.ModelAdmin):
 admin.site.register(Shape, ShapeAdmin)	
 
 class ChangelogAdmin(admin.ModelAdmin):
-	pass
+	fieldsets = (
+        (None, {
+            'fields': (
+     				'committer','commit_date','model_kind','old_rev','new_rev','comment','tag','masked'
+            	)
+        }),
+    )	
+	exclude = ('reference',)
 	
 admin.site.register(Changelog, ChangelogAdmin)	
