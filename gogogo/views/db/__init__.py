@@ -101,7 +101,8 @@ def edit(request,kind,object_id):
 		,{ "form" : form , 
 		   "object" : object,
 		   "message" : message,
-		   "reverse" : reverse(object),
+		   "history_link" : _reverse('gogogo.views.db.changelog.list') + "?kind=%s" % kind,
+		   "view_object_link" : reverse(object),
 		   "action" : _reverse('gogogo.views.db.edit',args=[kind,object_id]) ,
 		   })		
 

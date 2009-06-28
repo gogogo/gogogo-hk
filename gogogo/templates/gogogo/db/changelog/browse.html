@@ -1,0 +1,68 @@
+{% extends 'gogogo/base.html' %}
+{% load i18n %}
+
+{% block content-header %}{% endblock%}
+{% block content %}
+<div class="span-24 last">
+<a href="{%url gogogo.views.db.changelog.list%}">Back to Changelog</a>
+<p></p>
+<div class="span-8 last">
+<table>
+    <tr>
+        <td>ID</td>
+        <td>{{changelog.id}}</td>
+    </tr>
+
+    <tr>
+        <td>Committer</td>
+        <td>
+        {%if user.is_authenticated%}
+        	{{changelog.committer}}
+        {%else%}
+        	Not listed. <a href="{% url django.contrib.auth.views.login %}" class="link_button">Sign in</a> to view
+        {%endif%}
+        </td>
+    </tr>
+    
+    <tr>
+        <td>Commit Date</td>
+        <td>{{changelog.commit_date}}</td>
+    </tr>
+
+    <tr>
+        <td>Model: </td>
+        <td>{{changelog.model_kind}}</td>
+    </tr>
+
+    <tr>
+        <td>Tag</td>
+        <td>{{changelog.tag|default:""}}</td>
+    </tr>
+
+    <tr>
+        <td>Comment</td>
+        <td>{{changelog.comment}}</td>
+    </tr>
+
+	<tr>
+		<td>Masked: </td>
+		<td>{{changelog.masked|default:"No"}}</td>
+	</tr>   
+	
+</table>
+</div>
+</div>
+
+<div class="span-24 last">
+<div class="span-10 colborder">
+Old revision:<p>
+{{changelog.old_rev|linebreaks}}
+</div>
+
+<div class="span-10 last">
+New revision:<p>
+{{changelog.new_rev|linebreaks}}
+</div>
+</div>
+
+{% endblock %}

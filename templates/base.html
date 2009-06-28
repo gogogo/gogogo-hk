@@ -41,7 +41,7 @@
           {% if user.is_authenticated %}
           	{{ user.username }} |
           		{% if user.is_staff %}
-				<a href="/admin/" class="link_button">Admin</a> |
+				<a href="/admin/" class="link_button">{% trans "Admin" %}</a> |
           		{% endif %}
           {% endif %}
 

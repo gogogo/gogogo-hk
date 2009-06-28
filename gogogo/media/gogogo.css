@@ -46,6 +46,10 @@ fieldset.form  {
 	margin-left : 5px;
 }
 
+.errorlist li {
+	color : red;
+}
+
 /* OBJECT TOOLS. Refer from global.css */
 .object-tools { 
 	font-size:10px; 

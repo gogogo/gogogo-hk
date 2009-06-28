@@ -755,4 +755,4 @@ msgstr "關於網站"
 
 #: templates/base.html:52
 msgid "Help"
-msgstr ""
+msgstr "求助"
