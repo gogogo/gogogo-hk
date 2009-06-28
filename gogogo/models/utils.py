@@ -22,7 +22,8 @@ def createEntity(object):
 			entity[prop.name] = datastore_value
 			
 			if isinstance(prop,db.ReferenceProperty):
-				entity[prop.name] = datastore_value.name()
+				if datastore_value:
+					entity[prop.name] = datastore_value.name()
 			elif isinstance(prop,MLStringProperty):
 				entity[prop.name] = u'|'.join(datastore_value)
 

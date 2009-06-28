@@ -39,8 +39,8 @@ class StopList:
 			data.append(entity)
 		
 		ret = {
-			'first' : create_entity(self.first,lang),
-			'last' : create_entity(self.last,lang),
+			'first' : create_entity(self.first,request),
+			'last' : create_entity(self.last,request),
 			'data' : data
 		}
 		
