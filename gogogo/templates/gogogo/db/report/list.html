@@ -1,0 +1,42 @@
+{% extends 'gogogo/base.html' %}
+{% load i18n %}
+{% block content %}
+
+{% block content-header %}{% endblock%}
+
+{% if result|length %}
+<div class="span-24 last">
+	<table>
+
+	{% for changelog in result%}
+		<tr>
+			<td><a href="{%url gogogo.views.db.changelog.browse changelog.id%}">{{changelog.id}}</a></td>
+			<td>{{changelog.model_kind}}</td>
+			<td>{{changelog.commit_date}}</td>
+			
+			{%if user.is_authenticated%}
+			<td>{{changelog.committer}}</td>
+			{% endif %}
+	    </tr>
+	{%endfor%}
+	</table>
+</div>
+<div class="span-24 last">
+	<div>
+	{%if show_prev %}
+		<a href="{%url gogogo.views.db.report.list%}?{%if kind%}kind={{kind}}&{%endif%}offset={{prev_offset}}">Prev</a>	
+	{%endif%}	
+	{%if show_next %}
+		<a href="{%url gogogo.views.db.report.list%}?{%if kind%}kind={{kind}}&{%endif%}offset={{offset}}">Next</a>
+	{%endif %}
+	</div>
+</div>
+	
+{%else%}
+
+{%trans "No matching result" %}
+
+{%endif%}
+
+
+{% endblock %}

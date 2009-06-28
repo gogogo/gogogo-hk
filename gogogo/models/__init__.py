@@ -290,7 +290,7 @@ class Cluster:
 	
 class Changelog(db.Model):
 	"""
-	Change log
+	Record the changes of data modified by web interface
 	"""
 	
 	def __unicode__(self):
@@ -300,7 +300,7 @@ class Changelog(db.Model):
 	committer = db.UserProperty(auto_current_user_add=True)
 	
 	# Date of submission
-	commit_date = db.DateTimeProperty()
+	commit_date = db.DateTimeProperty(auto_now_add=True)
 	
 	# Comment of the submission
 	comment = db.TextProperty()
@@ -322,3 +322,28 @@ class Changelog(db.Model):
 	
 	# A masked changelog will not be shown to public. It is probably a spam or invalid commit
 	masked = db.BooleanProperty()
+
+class Report(db.Model):
+	"""
+	Report of invalid information
+	"""
+	
+	# The committer. Anonymouse is not allowed
+	committer = db.UserProperty(auto_current_user_add=True)
+
+	commit_date = db.DateTimeProperty(auto_now_add=True)
+
+	reference = db.ReferenceProperty()
+	
+	subject = db.StringProperty()
+	
+	detail = db.TextProperty()
+	
+	# Status of the message. 
+	# 0 : Pending , no action has been made
+	# 1 : Accepted , will action on the report
+	# 2 : Rejected, will not do anything on it
+	# 3 : Spam , it is spam
+	# 4 : Fixed , it is fixed.
+	status = db.IntegerProperty(default=0)
+

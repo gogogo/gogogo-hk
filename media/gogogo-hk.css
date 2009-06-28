@@ -21,6 +21,16 @@
 	padding-top:5px;
 	padding-left: 5px;
 }
+#content h1 {
+	color:#666666;
+	font-size:18px;
+	margin:0 0 0.2em;
+	padding:0 6px 0 0;
+}
+
+#content h1, h2, h3, h4, h5 {
+	font-weight:bold;
+}
 
 #content-header {
 	padding-bottom:20px;

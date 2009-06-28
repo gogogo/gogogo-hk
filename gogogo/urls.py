@@ -6,6 +6,9 @@ import gogogo.views
 
 urlpatterns = patterns(
 	'',
+	
+	#Transit information
+	
 	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)/(?P<route_id>[0-9a-zA-Z_]*)/(?P<trip_id>[ 0-9a-zA-Z_]*)$', 'gogogo.views.transit.trip'),	
 	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)/(?P<route_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.route'),
 
@@ -13,16 +16,19 @@ urlpatterns = patterns(
 	(r'^transit/stop/(?P<stop_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.stop'),
 	(r'^transit$', 'gogogo.views.transit.index'),
 
+	# Database frontend
     (r'^db/agency/list$', 'gogogo.views.db.agency.list'),
 	(r'^db/agency/browse/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.db.agency.browse'),
 	#(r'^db/agency/edit/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.db.agency.edit'),
-    
     (r'^db/route/search/$', 'gogogo.views.db.route.search'),
     #(r'^db/route/edit/(?P<id>[0-9a-zA-Z_]*)$', 'gogogo.views.db.route.edit'),
     (r'^db/changelog/list$', 'gogogo.views.db.changelog.list'),
     (r'^db/changelog/browse/(?P<id>[0-9]*)$', 'gogogo.views.db.changelog.browse'),
+    (r'^db/(?P<kind>[a-z]*)/report/(?P<id>[0-9a-zA-Z_]*)$', 'gogogo.views.db.report.submit'),
     
     (r'^db/(?P<kind>[0-9a-zA-Z_]*)/edit/(?P<object_id>[0-9a-zA-Z_]*)$', 'gogogo.views.db.edit'),
+
+	# Development tools
 
 	(r'^devtools/FindStopID$','gogogo.views.devtools.find_stop_id'),
 	(r'^devtools/MassAddressQuery.html$', 'django.views.generic.simple.direct_to_template',

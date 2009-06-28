@@ -95,3 +95,8 @@ class ChangelogAdmin(admin.ModelAdmin):
 	exclude = ('reference',)
 	
 admin.site.register(Changelog, ChangelogAdmin)	
+
+class ReportAdmin(admin.ModelAdmin):
+	pass
+	
+admin.site.register(Report, ReportAdmin)		

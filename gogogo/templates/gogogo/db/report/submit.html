@@ -1,0 +1,30 @@
+{% extends 'gogogo/base.html' %}
+{%load i18n%}
+
+{%block title%}{%trans "Change" %} {{object}} - Gogogo {%endblock%}
+
+{%block content-header%}<div class="content-header">
+	<ul class="object-tools" >
+		<li><a href="{{view_object_link}}">{% trans "View" %}</a></li>
+	</ul>
+	<h1>{% trans "Submit invalid information report" %} {{object}}</h1>
+</div>{%endblock%}
+
+{% block content %}
+<form action="{{request.path}}" method="POST">
+	<fieldset class="form">	
+	
+   {% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+        </div>
+    {% endfor %}
+	</fieldset>
+	<div class="submit-row">
+		<input type="submit" value="Submit" /> {{message|safe}}
+	</div>
+	
+</form>
+
+{% endblock %}
