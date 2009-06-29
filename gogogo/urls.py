@@ -24,6 +24,8 @@ urlpatterns = patterns(
     #(r'^db/route/edit/(?P<id>[0-9a-zA-Z_]*)$', 'gogogo.views.db.route.edit'),
     (r'^db/changelog/list$', 'gogogo.views.db.changelog.list'),
     (r'^db/changelog/browse/(?P<id>[0-9]*)$', 'gogogo.views.db.changelog.browse'),
+    
+    (r'^db/report/list$', 'gogogo.views.db.report.list'),
     (r'^db/(?P<kind>[a-z]*)/report/(?P<id>[0-9a-zA-Z_]*)$', 'gogogo.views.db.report.submit'),
     
     (r'^db/(?P<kind>[0-9a-zA-Z_]*)/edit/(?P<object_id>[0-9a-zA-Z_]*)$', 'gogogo.views.db.edit'),
