@@ -6,7 +6,7 @@
 {%block content-header%}<div class="content-header">
 	<ul class="object-tools" >
 		<li><a href="{%url gogogo.views.db.report.list %}">{% trans "Other reports" %}</a></li>
-		<li><a href="{{view_object_link}}">{% trans "View" %}</a></li>
+		{#<li><a href="{{view_object_link}}">{% trans "View" %}</a></li>#}
 	</ul>
 	<h1>{% trans "Submit invalid information report" %} {{object}}</h1>
 </div>{%endblock%}

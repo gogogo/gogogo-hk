@@ -14,7 +14,11 @@ urlpatterns = auth_patterns + patterns('',
 
     ('^admin/(.*)', admin.site.root),
     (r'^$', 'django.views.generic.simple.direct_to_template',
-        {'template': 'main.html'}),
+        {'template': 'about.html'}),
+	(r'^about$', 'django.views.generic.simple.direct_to_template',
+        {'template': 'about.html'}),        
+	(r'^planning$', 'django.views.generic.simple.direct_to_template',
+        {'template': 'not_impl.html'}),                
 	('^' ,include('gogogo.urls') ), 
 	
     # Override the default registration form
