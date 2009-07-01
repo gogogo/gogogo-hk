@@ -3,8 +3,7 @@
 {% block js %}
 {{block.super}}
 	<script type="text/javascript">
-	
-	google.load("maps", "2.x");
+
     var map, layout;
     
 	$(document).ready(function(){
@@ -12,10 +11,9 @@
 		// TODO: Resize ui-layout-container for height that fit for screen
     	layout = $('#ui-layout-container').layout({ applyDefaultStyles: true });
     	
-	    map = new GMap2(document.getElementById("map"));
+	    map = new gogogo.Map(document.getElementById("map"));
 
-      	map.setCenter(new GLatLng({{GOGOGO_DEFAULT_LOCATION}}), {{GOGOGO_DEFAULT_ZOOM}});
-      	map.setUIToDefault();
+      	
 
 	})
 	</script>

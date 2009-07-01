@@ -3,7 +3,6 @@
 {% block js %}
 	{{block.super}}
 	<script type="text/javascript">
-		google.load("maps", "2.x");
 		var map;
 		
 		$(document).ready(function(){
@@ -17,9 +16,9 @@
 			//$('#map').css("width",(screen.width - width - 30)+"px");
 			$('#map').css("height",Math.max(height,400)+"px");
 			
-			map = new GMap2(document.getElementById("map"));
-			map.setCenter(new GLatLng({{GOGOGO_DEFAULT_LOCATION}}), {{GOGOGO_DEFAULT_ZOOM}});
-			map.setUIToDefault();
+			//map = new GMap2(document.getElementById("map"));
+			map = new gogogo.Map(document.getElementById("map"));
+			//map.setUIToDefault();
 			
 			var point;
 			{% for point in endpoint_list %}
