@@ -1,29 +1,10 @@
-{% extends 'gogogo/transit/base.html' %}
+{% extends 'gogogo/mapview.html' %}
 
-{% block js %}
-{{block.super}}
-	<script type="text/javascript">
+{% block content-header %}
+{% include 'gogogo/transit/content_header.html'%}
+{% endblock %}
 
-    var map, layout;
-    
-	$(document).ready(function(){
-		
-		// TODO: Resize ui-layout-container for height that fit for screen
-    	layout = $('#ui-layout-container').layout({ applyDefaultStyles: true });
-    	
-	    map = new gogogo.Map(document.getElementById("map"));
-
-      	
-
-	})
-	</script>
-{%endblock%}
-
-{% block content %}
-
-<div id="ui-layout-container" style="width:100%;height:550px">
-
-<div class="ui-layout-west">
+{% block left_column %}
 <table>
     <tr>
     	<td>Name: </td>
@@ -37,12 +18,4 @@
    		<td colspan="2">{{stop.desc}}</td>
    </tr> 
 </table>
-</div>
-
-<div class="ui-layout-center">
-	<div id="map" style="width: 100%; height: 100%"></div>
-</div>
-
-</div>
-
 {% endblock %}

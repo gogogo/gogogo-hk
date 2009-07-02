@@ -78,10 +78,12 @@
         
       {% block content %}{% endblock %}
     </div>
+    {% block footer %}
     <div id="footer">
     <hr>
       <a href="http://code.google.com/p/app-engine-patch/"><img src="{{ MEDIA_URL }}global/powered-by-app-engine-patch.png" alt="powered by app-engine-patch" /></a>
     </div>
+    {%endblock%}
     
     		{# Hidden language selection form #}
  			<form id="setlang_form" action="/i18n/setlang/" method="post">

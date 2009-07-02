@@ -1,0 +1,52 @@
+{% extends 'gogogo/base.html' %}
+{% load i18n %}
+{# Standard map viewer #}
+
+{% block js %}
+{{block.super}}
+	<script type="text/javascript">
+
+    var map, layout;
+    
+    function resize(){
+    	content_border = $("#content").outerHeight() - $("#content").height();
+    	//layout_border = $("#ui-layout-container").outerHeight() - $("#ui-layout-container").height();
+    	margin = 10;
+		$("#ui-layout-container").height($(window).height()  - $("#header").outerHeight()
+		- $("#content-header").outerHeight()	- content_border - margin	);
+		
+	}
+    
+	$(document).ready(function(){
+		resize();		
+
+    	layout = $('#ui-layout-container').layout({ applyDefaultStyles: true });
+    	$("#ui-layout-container").css("padding","0");
+	    map = new gogogo.Map(document.getElementById("map"));
+
+	})
+	
+	$(window).resize(function(){
+		resize();
+	});
+	</script>
+{%endblock%}
+
+{% block content %}
+<div id="content" style="height:550px">
+
+<div id="ui-layout-container" style="width:100%;height:100%">
+
+<div class="ui-layout-west">
+{% block left_column %}{% endblock %}
+</div>
+<div class="ui-layout-center" >
+	<div id="map" style="width: 100%; height: 100%"></div>
+</div>
+
+</div>
+
+</div>
+{%endblock%}
+
+{% block footer %}{%endblock %}
