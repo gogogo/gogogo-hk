@@ -1,5 +1,5 @@
 /*
- * gogogo.map
+ * gogogo.Map
  *
  *  Licensed under Affero GPL v3 (www.fsf.org/licensing/licenses/agpl-3.0.html )
  */

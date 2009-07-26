@@ -1,0 +1,21 @@
+{% extends 'gogogo/mapview.html' %}
+
+{% block content-header %}
+{% endblock %}
+
+{% block js %}
+{{block.super}}
+	<script type="text/javascript">
+	var stopManager;
+	
+	$(document).ready(function() {
+		stopManager = new gogogo.StopManager(map);	
+				
+	});
+	
+	</script>
+{% endblock %}
+
+{% block left_column %}
+The page is constructing
+{% endblock %}
