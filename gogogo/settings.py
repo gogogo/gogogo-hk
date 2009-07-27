@@ -21,6 +21,10 @@ settings.add_app_media('combined-%(LANGUAGE_CODE)s.js',
     #Marker Manager v1.1  
     # http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/1.1/src/markermanager_packed.js
     'gogogo/markermanager_1.1_packed.js', 
+    
+    #Marker Clusterer v1.0
+    # http://gmaps-utility-library.googlecode.com/svn/trunk/markerclusterer/1.0/src/markerclusterer_packed.js
+    'gogogo/markerclusterer_v1.0_packed.js',
         
     #Gogogo javascript
     setting_converter,
