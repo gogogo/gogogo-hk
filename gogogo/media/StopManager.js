@@ -5,11 +5,16 @@
  */
 
 gogogo.StopManager = function (map){
-	
+	this.minZoom = 15;
+		
 	this.map = map;
 	
 	// Stop dictionary
 	this.stops = new Object();
+	
+	var options = { borderPadding: 50, trackMarkers: true };
+	
+	this.markermanager = new MarkerManager(map,options);
 	
 	manager = this;
 
@@ -26,7 +31,8 @@ gogogo.StopManager = function (map){
 gogogo.StopManager.prototype.refresh = function() {
 	
 	zoom = this.map.getZoom();
-	if (zoom <= 15)
+	
+	if (zoom < this.minZoom)
 		return;	
 	
 	bounds = this.map.getBounds();
@@ -36,6 +42,8 @@ gogogo.StopManager.prototype.refresh = function() {
 	
 	manager = this;
 	
+	var cache = jQuery.ajaxSettings.cache;
+	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
 	$.getJSON(api, null , function(data) {
 		if (data.stat == "ok") {
 			$.each(data.data, function(i, item){
@@ -44,15 +52,16 @@ gogogo.StopManager.prototype.refresh = function() {
 					var option = {
                         "title": item.name
                    	};
-                   	option.title = item.name;
+                   	marker = new GMarker(point,option);
                  
-                	manager.map.addOverlay(new GMarker(point), option);
+                	manager.markermanager.addMarker(marker,manager.minZoom);
                 	manager.stops[item.id] = item;
-                	count ++;
 				}
 			});
+			manager.markermanager.refresh();
 		}
-	});	
+	});
+	jQuery.ajaxSettings.cache = cache;	
 		
 }
 
