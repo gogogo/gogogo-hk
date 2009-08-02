@@ -24,16 +24,14 @@
 			$(addressList[index]).focus();		
 		}
 		
-		var i =0;
-		for (var j in addressMap){
+		$.each(addressList,function(i,input){
 
-			var address = planner.getAddress(i++);
-			var input = j;			
+			var address = planner.getAddress(i);
 			
 			$(address).bind("addressChanged" , function(e) {
 				$(input).val(e.target.getAddress() );
 			})
-		}
+		});
 				
 		
 		$(planner).bind("clarifyAddress",function(event,index,address,response){
@@ -81,10 +79,16 @@
 			
 		});
 		
+		/// For temporary use
+		var directions = new GDirections(map,  document.getElementById("planningOutput"));
+		GEvent.addListener(directions,"error",function() {
+			console.log("error",directions.getStatus());
+		});
+		
 		$(planner).bind("tripReady",function(event,data) {
-			var output = planningOutput;
-			output.empty();
-			output.append("Successful");
+			planningOutput.empty();
+			query = "from:" + $(addressList[0]).val() + " to: " + $(addressList[1]).val();
+			directions.load(query);
 		});
 
 		$("#planButton").click(function() {
