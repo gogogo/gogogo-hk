@@ -1,7 +1,12 @@
 /*
- * gogogo.map
+ * gogogo.StopManager
  *
  *  Licensed under Affero GPL v3 (www.fsf.org/licensing/licenses/agpl-3.0.html )
+ */
+
+/** Stop Manager
+ * 
+ * @constructor 
  */
 
 gogogo.StopManager = function (map){

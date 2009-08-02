@@ -1,4 +1,5 @@
 {% extends 'gogogo/mapview.html' %}
+{% load i18n %}
 
 {% block content-header %}
 {% endblock %}
@@ -7,15 +8,116 @@
 {{block.super}}
 	<script type="text/javascript">
 	var stopManager;
+	var planner;
+
 	
 	$(document).ready(function() {
 		stopManager = new gogogo.StopManager(map);	
+		planner = new gogogo.Planner();
+		planningOutput = $("#planningOutput");
+		
+		var addressMap = {"#startAddress" : 0 , "#endAddress" : 1};
+		var addressList = ["#startAddress" , "#endAddress"];
+		
+		/// Set the focus to start or end address input
+		function setFocus(index) {
+			$(addressList[index]).focus();		
+		}
+		
+		var i =0;
+		for (var j in addressMap){
+
+			var address = planner.getAddress(i++);
+			var input = j;			
+			
+			$(address).bind("addressChanged" , function(e) {
+				$(input).val(e.target.getAddress() );
+			})
+		}
 				
+		
+		$(planner).bind("clarifyAddress",function(event,index,address,response){
+		
+			
+			var output = planningOutput;
+			
+			output.empty();
+			
+			if (address.getAddress() == undefined || address.getAddress() == "") {
+				
+				setFocus(index);
+				
+				output.append("Please input address");
+			
+			} else if (response.Status.code != 200 ) {
+				
+				setFocus(index);
+				
+				output.append("Address unknown " + planner.getAddress(index) );
+				
+			} else {
+				output.append("<div> Do you mean ? </div>");
+				
+				$(response.Placemark).each(  function(i,place){
+					
+					var div = output.append("<div></div>");
+					div.append(i + ". ");
+					
+					var lnk = $("<a class='link_button'>" + place.address + " </a>");
+					
+					div.append(lnk);
+					var target = address;
+					var addr = place.address;
+					var point = place.point;
+					
+					$(lnk).click(function() {						
+						target.setAddress(addr);
+						//setAddress(index,place.address);
+						target.setLocation(point);
+					});
+					
+				});
+			}
+			
+		});
+		
+		$(planner).bind("tripReady",function(event,data) {
+			var output = planningOutput;
+			output.empty();
+			output.append("Successful");
+		});
+
+		$("#planButton").click(function() {
+			for (i in addressMap ){
+				if ( $(i).val() == "" ) {
+					$(i).focus();
+					planningOutput.empty();
+					planningOutput.append("Please input the address");
+					return;
+				}
+			}
+			
+			planner.suggest ($("#startAddress").val() , $("#endAddress").val());
+		});
+			
 	});
+	
 	
 	</script>
 {% endblock %}
 
 {% block left_column %}
-The page is constructing
+<b>The page is constructing</b><p></p>
+
+<div>
+	<input id="startAddress" type="text" name="start" style="width:150px"/>
+	<input id="endAddress" type="text" name="end" style="width:150px;margin-top:5px;margin-bottom:5px" />
+
+	<button id="planButton">{%trans "Plan"%}</button>
+</div>
+
+<div id="planningOutput">
+
+</div>
+
 {% endblock %}

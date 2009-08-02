@@ -1,0 +1,5 @@
+
+Javascript Document Generation
+------------------------------
+
+jsdoc media/*.js -d=docs
