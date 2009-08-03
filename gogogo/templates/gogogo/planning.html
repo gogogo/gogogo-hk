@@ -12,16 +12,29 @@
 
 	
 	$(document).ready(function() {
+    	layout.sizePane("west",230);
+    	
 		stopManager = new gogogo.StopManager(map);	
 		planner = new gogogo.Planner();
 		planningOutput = $("#planningOutput");
 		
-		var addressMap = {"#startAddress" : 0 , "#endAddress" : 1};
 		var addressList = ["#startAddress" , "#endAddress"];
+		var panButtonList = ["#planStartAddress" , "#planEndAddress"];
 		
 		/// Set the focus to start or end address input
 		function setFocus(index) {
 			$(addressList[index]).focus();		
+		}
+		
+		/// Pan to the input address
+		function panTo(index) {
+			var address = planner.getAddress(index);
+			address.setAddress($(addressList[index]).val());
+			if (address.getLocation() == undefined){
+				address.queryLocation();
+			} else {
+				map.panTo(address.getLocation());
+			}
 		}
 		
 		$.each(addressList,function(i,input){
@@ -31,6 +44,12 @@
 			$(address).bind("addressChanged" , function(e) {
 				$(input).val(e.target.getAddress() );
 			})
+		});
+		
+		$.each(panButtonList,function(i,btn){
+			$(btn).click(function(){
+				panTo(i);
+			});
 		});
 				
 		
@@ -44,7 +63,7 @@
 			if (address.getAddress() == undefined || address.getAddress() == "") {
 				
 				setFocus(index);
-				
+				output.empty();
 				output.append("Please input address");
 			
 			} else if (response.Status.code != 200 ) {
@@ -92,14 +111,15 @@
 		});
 
 		$("#planButton").click(function() {
-			for (i in addressMap ){
-				if ( $(i).val() == "" ) {
-					$(i).focus();
+			
+			$.each(addressList,function(i,input){
+				if ($(input).val() == ""){
+					$(input).focus();
 					planningOutput.empty();
 					planningOutput.append("Please input the address");
-					return;
+					return false;
 				}
-			}
+			});
 			
 			planner.suggest ($("#startAddress").val() , $("#endAddress").val());
 		});
@@ -114,8 +134,10 @@
 <b>The page is constructing</b><p></p>
 
 <div>
-	<input id="startAddress" type="text" name="start" style="width:150px"/>
-	<input id="endAddress" type="text" name="end" style="width:150px;margin-top:5px;margin-bottom:5px" />
+	<input id="startAddress" type="text" name="start" style="width:150px;margin-right:2px"/> 
+	<button id="planStartAddress">{%trans "Pan"%}</button>
+	<input id="endAddress" type="text" name="end" style="width:150px;margin-right:2px;margin-top:5px;margin-bottom:5px" />
+	<button id="planEndAddress">{%trans "Pan"%}</button>
 
 	<button id="planButton">{%trans "Plan"%}</button>
 </div>
