@@ -10,6 +10,8 @@
  */
 
 gogogo.StopManager = function (map){
+	
+	/// The min zoom of stop markers
 	this.minZoom = 15;
 		
 	this.map = map;
@@ -53,14 +55,12 @@ gogogo.StopManager.prototype.refresh = function() {
 		if (data.stat == "ok") {
 			$.each(data.data, function(i, item){
 				if (manager.stops[item.id] == undefined ) {
-					var point = new GLatLng(item.latlang[0], item.latlang[1]);
-					var option = {
-                        "title": item.name
-                   	};
-                   	marker = new GMarker(point,option);
+					var stop = new gogogo.Stop();
+					stop.updateFromJson(item);
+					var marker = stop.createMarker();
                  
                 	manager.markermanager.addMarker(marker,manager.minZoom);
-                	manager.stops[item.id] = item;
+                	manager.stops[item.id] = stop;
 				}
 			});
 			manager.markermanager.refresh();
