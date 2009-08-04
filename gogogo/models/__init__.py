@@ -60,6 +60,7 @@ class MLStringProperty(TitledStringListProperty):
 def create_entity(model,request = None):
 	""" Create entity (a dict object) from model with: MLString translated. (based on Models._to_entity(self, entity) )
 
+
 	"""
 	entity = {}
 	code_index = -1

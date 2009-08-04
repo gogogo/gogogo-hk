@@ -47,7 +47,8 @@ urlpatterns = patterns(
 
 	
 	(r'^api/stop/search/(?P<lat0>[0-9]*\.[0-9]*),(?P<lng0>[0-9]*\.[0-9]*),(?P<lat1>[0-9]*\.[0-9]*),(?P<lng1>[0-9]*\.[0-9]*)$' 
-		,'gogogo.api.stop_search'),
+		,'gogogo.api.stop.search'),
+	(r'^api/stop/markerwin/(?P<id>[0-9a-zA-Z_]*)$' , 'gogogo.api.stop.markerwin'),
 	(r'^api/shape/get/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.api.shape_get'),		
 
 )

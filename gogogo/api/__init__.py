@@ -68,52 +68,6 @@ def agency_list(request):
 	
 	return ApiResponse(data=result)
 
-def stop_search(request,lat0,lng0,lat1,lng1):
-	"""
-		Search stop (api/stop/search)
-	"""
-	lat0 = float(lat0)
-	lng0 = float(lng0)
-	lat1 = float(lat1)
-	lng1 = float(lng1)
-	
-	if lat0 < lat1:
-		minlat = lat0
-		maxlat = lat1
-	else:
-		minlat = lat1
-		maxlat = lat0
-	
-	if lng0 < lng1:
-		minlng = lng0
-		maxlng = lng1
-	else:
-		minlng = lng1
-		maxlng = lng0
-		
-	#TODO: Check the distance. Prevent to dump the database that will spend too much bandwidth
-	hash0 = str(Geohash( (minlng,minlat) ))
-	hash1 = str(Geohash( (maxlng,maxlat) ))
-
-	result = []
-	
-	lang = MLStringProperty.get_current_lang(request)	
-	
-	query = Stop.all().filter("geohash >=" , hash0).filter("geohash <=" , hash1)
-	
-	for stop in query:
-		#TODO: Check again for real lat/lng value
-		entity = {
-			"id" : stop.key().name(),
-			"name" : MLStringProperty.trans(stop.name,lang),
-			"url" : stop.url,
-			"latlng" : stop.latlng,
-			"agency" : stop.agency,
-		}
-		result.append(entity)
-	
-	return ApiResponse(data=result)
-
 def shape_get(request,id):
 	key = db.Key.from_path(Shape.kind(),id)
 	

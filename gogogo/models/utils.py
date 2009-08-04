@@ -10,8 +10,9 @@ def createEntity(object):
 
 
 	Opertions:
-	
 	- Convert all ReferenceProperty to the key_name/key
+	- set 'key_name' attribute
+	- set 'instance' attribute , the reference to the model instance
 
 	"""
 	entity = {}
