@@ -107,7 +107,7 @@ def stop_search(request,lat0,lng0,lat1,lng1):
 			"id" : stop.key().name(),
 			"name" : MLStringProperty.trans(stop.name,lang),
 			"url" : stop.url,
-			"latlang" : stop.latlng,
+			"latlng" : stop.latlng,
 			"agency" : stop.agency,
 		}
 		result.append(entity)

@@ -26,8 +26,8 @@ gogogo.Stop.prototype.updateFromJson = function(json){
 		}
 	});
 	
-	if (json.latlang != undefined){
-		this.latlng = new GLatLng(json.latlang[0], json.latlang[1]);
+	if (json.latlng != undefined){
+		this.latlng = new GLatLng(json.latlng[0], json.latlng[1]);
 	}
 }
 

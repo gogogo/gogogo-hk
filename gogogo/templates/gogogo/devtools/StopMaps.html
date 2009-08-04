@@ -30,7 +30,7 @@
                 "," + bounds.getSouthWest().lat() + "," + bounds.getSouthWest().lng(), function(data) {
                   if (data.stat == "ok") {
                     $.each(data.data, function(i, item) {
-                      var point = new GLatLng(item.latlang[0], item.latlang[1]);
+                      var point = new GLatLng(item.latlng[0], item.latlng[1]);
                       var option = {
                         title: item.name
                       };
