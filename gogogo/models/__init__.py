@@ -12,50 +12,10 @@ from gogogo.geo.geohash import Geohash
 from gogogo.models.NumberListProperty import NumberListProperty
 
 from django.db.models import permalink # For permalink
+
+from utils import createEntity , trEntity
+from MLStringProperty import MLStringProperty
 # Utilities
-
-class MLStringProperty(TitledStringListProperty):
-	"""
-		Multi-language string property
-	"""
-	def __init__ (self,*args,**kwargs):
-		fields = []
-		for f in settings.LANGUAGES:
-			fields.append(f[1])
-		
-		super(MLStringProperty,self).__init__(fields,*args,**kwargs)
-
-	def trans(value,lang=0):
-		"""
-			Translate a MLTextProperty value to a string for specific language.
-			If no such translation existed , it will return the default language
-			(The first language)
-		"""
-		
-		try:
-			ret = value[lang]
-		except IndexError:
-			try:
-				ret = value[0]
-			except IndexError: #Value is none
-				ret = ""
-		
-		return ret
-		
-	trans = staticmethod(trans)
-	
-	def get_current_lang(request):
-		"""
-		Get the current language 
-		"""
-		ret = 0
-		for (i,lang) in enumerate(settings.LANGUAGES):
-			if lang[0] == request.LANGUAGE_CODE:
-				ret = i
-				break
-		return ret
-		
-	get_current_lang = staticmethod(get_current_lang)
 		
 def create_entity(model,request = None):
 	""" Create entity (a dict object) from model with: MLString translated. (based on Models._to_entity(self, entity) )

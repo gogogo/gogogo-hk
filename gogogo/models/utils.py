@@ -2,17 +2,18 @@ from google.appengine.api import memcache
 from ragendja.dbutils import get_object_or_404
 from google.appengine.ext import db
 import logging
-from gogogo.models import MLStringProperty
+from MLStringProperty import MLStringProperty
 
 def createEntity(object):
 	"""  Create an entity from model instance object which is 
 	suitable for data import and export. 
 
-
 	Opertions:
 	- Convert all ReferenceProperty to the key_name/key
 	- set 'key_name' attribute
 	- set 'instance' attribute , the reference to the model instance
+	
+	@return A dict object contains the entity of the model instance. The fields are not translated , use trEntity to translate to user's locale
 
 	"""
 	entity = {}
@@ -32,8 +33,31 @@ def createEntity(object):
 	entity['instance'] = object
 	return entity
 
-def entityToText(entity):
+def trEntity(entity,request):
+	"""
+	Translate an entity 
+	"""
+	ret = {}
+	ret.update(entity)
 	
+	lang = MLStringProperty.get_current_lang(request)
+	
+	for prop in entity['instance'].properties().values():
+		datastore_value = prop.get_value_for_datastore(entity['instance'])
+		logging.info(datastore_value)
+		if not datastore_value == []:
+			ret[prop.name] = datastore_value
+			
+			if request and isinstance(prop,MLStringProperty):
+				
+				ret[prop.name] = MLStringProperty.trans(datastore_value,lang)
+
+	return ret
+
+def entityToText(entity):
+	"""
+	Convert entity to text object. (For debugging and changelog generation)
+	"""
 	bad_word = ['key_name' , 'instance']
 	
 	text = u"key_name : %s\n" % entity['key_name']

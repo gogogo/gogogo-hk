@@ -1,1 +1,4 @@
-{{ stop.key_name }}
+{{ stop.name }}
+{% for trip in trip_list %}
+	{{trip.headsign}}
+{% endfor %}

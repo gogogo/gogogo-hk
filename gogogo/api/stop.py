@@ -5,6 +5,8 @@ from django.conf import settings
 
 from django.utils import simplejson
 from StringIO import StringIO
+from google.appengine.api import memcache
+from google.appengine.ext import db
 
 from gogogo.models import *
 from gogogo.geo.geohash import Geohash
@@ -13,6 +15,8 @@ from . import ApiResponse
 from gogogo.models.cache import getCachedObjectOr404
 from gogogo.models.cache import getCachedEntityOr404
 import logging
+
+_default_cache_time = 3600
 
 def search(request,lat0,lng0,lat1,lng1):
 	"""
@@ -65,12 +69,27 @@ def markerwin(request,id):
 	Generate marker window
 	"""
 	
-	stop = getCachedEntityOr404(Stop,key_name=id)
-	logging.info(stop)
+	cache_key = "gogogo__stop_markerwin_%s" % id #Prefix of memecache key
+	
+	cache = memcache.get(cache_key)
+	
+	if cache == None:
+		stop = getCachedEntityOr404(Stop,key_name=id)
+		cache = {}
+		cache['stop'] = stop
+		
+		trip_list = []	
+			
+		cache['trip_list']  = trip_list
+				
+		#memcache.add(cache_key, cache, _default_cache_time):
+		
 	t = loader.get_template('gogogo/api/stop-markerwin.html')
 	c = Context(
 	{
-        'stop': stop
+        'stop': trEntity(stop,request),
+        #'stop' : stop,
+        'trip_list' : cache['trip_list']
 	})
     		
 	return HttpResponse(t.render(c))
