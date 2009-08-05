@@ -86,9 +86,11 @@ def markerwin(request,id):
 		if  stop['parent_station'] == None:
 			station_key = stop['instance'].key()
 		else:
-			station_key = db.Key.from_path(Stop.kind(),stop['parent_station'])
-			parent_station = getCachedEntityOr404(Stop,key = station_key)
-			cache['parent_station'] = parent_station
+			#station_key = db.Key.from_path(Stop.kind(),stop['parent_station'])
+			#logging.info(station_key)
+			#parent_station = getCachedEntityOr404(Stop,key = station_key)
+			station_key = stop['instance'].parent_station.key()
+			cache['parent_station'] = createEntity(stop['instance'].parent_station)
 		
 		q = Trip.all().filter("stop_list = " , station_key)
 		for row in q:
