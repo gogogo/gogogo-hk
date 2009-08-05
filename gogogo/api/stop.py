@@ -72,24 +72,51 @@ def markerwin(request,id):
 	cache_key = "gogogo__stop_markerwin_%s" % id #Prefix of memecache key
 	
 	cache = memcache.get(cache_key)
-	
+
 	if cache == None:
+
 		stop = getCachedEntityOr404(Stop,key_name=id)
+
 		cache = {}
 		cache['stop'] = stop
 		
 		trip_list = []	
+	
+		
+		if  stop['parent_station'] == None:
+			station_key = stop['instance'].key()
+		else:
+			station_key = db.Key.from_path(Stop.kind(),stop['parent_station'])
+			parent_station = getCachedEntityOr404(Stop,key = station_key)
+			cache['parent_station'] = parent_station
+		
+		q = Trip.all().filter("stop_list = " , station_key)
+		for row in q:
+			trip = createEntity(row)
 			
-		cache['trip_list']  = trip_list
+			trip['route_id'] = trip['instance'].route.key().id_or_name()
+			
+			trip['agency_id'] = trip['instance'].route.agency.key().id_or_name()
+			trip_list.append(trip)
+						
+		cache['trip_list'] = trip_list
 				
-		#memcache.add(cache_key, cache, _default_cache_time):
+		memcache.add(cache_key, cache, _default_cache_time)
+		
+	stop = trEntity(cache['stop'],request)
+	trip_list = [trEntity(trip,request) for trip in cache['trip_list']   ]
+	
+	parent_station = None
+	if 'parent_station' in cache:
+		parent_station = trEntity(cache['parent_station'],request)
+		
 		
 	t = loader.get_template('gogogo/api/stop-markerwin.html')
 	c = Context(
 	{
-        'stop': trEntity(stop,request),
-        #'stop' : stop,
-        'trip_list' : cache['trip_list']
+        'stop': stop,
+        'parent_station' : parent_station,
+        'trip_list' : trip_list
 	})
     		
 	return HttpResponse(t.render(c))

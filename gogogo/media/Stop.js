@@ -49,7 +49,6 @@ gogogo.Stop.prototype.createMarker = function(){
 			html="<object id='markerwin' type='text/html' data='/api/stop/markerwin/" + stop.id + "'> \
 			<p>Loading...</p>\
 			</object>"
-			console.log(html);
 			marker.openInfoWindowHtml(html);
 			
 		});

@@ -1,4 +1,11 @@
-{{ stop.name }}
+{{ stop.name }} 
+{% if parent_station %}
+: {{parent_station.name}}
+{% endif %}
+<lu>
 {% for trip in trip_list %}
-	{{trip.headsign}}
+<li>
+<a href="{%url gogogo.views.transit.trip trip.agency_id trip.route_id trip.key_name %}">{{trip.headsign}}</a>
+</li>
 {% endfor %}
+</lu>

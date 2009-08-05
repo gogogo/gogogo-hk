@@ -25,11 +25,11 @@ def createEntity(object):
 			
 			if isinstance(prop,db.ReferenceProperty):
 				if datastore_value:
-					entity[prop.name] = datastore_value.name()
+					entity[prop.name] = datastore_value.id_or_name()
 			elif isinstance(prop,MLStringProperty):
 				entity[prop.name] = u'|'.join(datastore_value)
-
-	entity['key_name'] = object.key().name()
+			
+	entity['key_name'] = object.key().id_or_name()
 	entity['instance'] = object
 	return entity
 
@@ -44,7 +44,6 @@ def trEntity(entity,request):
 	
 	for prop in entity['instance'].properties().values():
 		datastore_value = prop.get_value_for_datastore(entity['instance'])
-		logging.info(datastore_value)
 		if not datastore_value == []:
 			ret[prop.name] = datastore_value
 			
