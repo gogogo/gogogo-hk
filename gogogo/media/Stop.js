@@ -8,6 +8,15 @@ gogogo.Stop = function(json){
 	
 	this.marker = undefined;
 	
+	// The object contains complete information of the stop
+	this.complete = false
+	
+	// TRUE if it is querying the complete information of the stop from server
+	this.querying = false;
+	
+	// The ID of the stop
+	this.id = undefined;
+	
 	if (json != undefined){
 		this.updateFromJson(json);
 	}
@@ -20,7 +29,7 @@ gogogo.Stop = function(json){
 
 gogogo.Stop.prototype.updateFromJson = function(json){
 	var stop = this;
-	$.each(["id","name","url"] ,function(i,attr){
+	$.each(["id","name","url","code","agency","geohash","parent_station","desc"] ,function(i,attr){
 		if (json[attr]	 != undefined){
 			stop[attr] = json[attr];
 		}
@@ -55,4 +64,31 @@ gogogo.Stop.prototype.createMarker = function(){
 	}
 	
 	return this.marker;
+}
+
+/**
+ * Query the complete information from server
+ */
+
+gogogo.Stop.prototype.query = function(callback) {
+	if (this.querying)
+		return;
+	
+	this.querying = true;
+	
+	api = "/api/stop/get/" + this.id;
+	var cache = jQuery.ajaxSettings.cache;
+	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
+	var stop = this;
+	
+	$.getJSON(api, null , function(response) {	
+		if (response.stat == "ok"){
+			stop.updateFromJson(response.data);
+			stop.complete = true;
+		}
+		if (callback!=undefined)
+			callback();
+		this.querying = false;
+	});
+	jQuery.ajaxSettings.cache = cache;	
 }

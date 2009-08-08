@@ -10,6 +10,9 @@ from StringIO import StringIO
 
 from gogogo.models import *
 from gogogo.geo.geohash import Geohash
+from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
+from gogogo.models.utils import trEntity
+import logging
 #import json
 
 def default(o):
@@ -77,3 +80,15 @@ def shape_get(request,id):
 		return ApiResponse(data=create_entity(object,request))
 	else:
 		return ApiResponse(error="Shape not found")
+
+def trip_get(request,id):
+
+	try:
+		entity = getCachedEntityOr404(Trip,key_name = id)
+		entity = trEntity(entity,request)
+		logging.info(entity)
+		del entity['instance']
+		return ApiResponse(data=entity)
+	except Http404:
+		return ApiResponse(error="Trip not found")
+	

@@ -146,6 +146,7 @@ def route(request,agency_id,route_id):
 	
 	trip_list = []
 	travel_list = []
+	trip_id_list = []
 	
 	# Endpoint in all trip
 	endpoint_list = []
@@ -169,6 +170,8 @@ def route(request,agency_id,route_id):
 			'key_name' : trip_record.key().name(),
 			'stop_list' : stop_list.createTREntity(request)
 		}
+		
+		trip_id_list.append(trip_record.key().name())
 		trip_list.append(trip_entity)
 	
 	#for trip_record in gql:
@@ -211,6 +214,8 @@ def route(request,agency_id,route_id):
 		   "trip_list" : trip_list,
 		   "travel_list" : travel_list,
 		   "endpoint_list" : endpoint_list,
+		   
+		   "trip_id_list" : trip_id_list
 		   })		
 
 def trip(request,agency_id,route_id,trip_id):

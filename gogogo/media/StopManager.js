@@ -70,4 +70,49 @@ gogogo.StopManager.prototype.refresh = function() {
 		
 }
 
+/** Get stop
+ * 
+ * @return A stop object instance or undefined 
+ */
+gogogo.StopManager.prototype.getStop = function(id) {
+	stop = this.stops[id];
+	if (stop != undefined) {
+		if (stop.complete == false)
+			stop = undefined;
+	}
+	return stop;
+}
 
+/**
+ * Query the stop from database
+ * 
+ * Signals:
+ * 
+ * stopComplete - A stop's query() operation is completed.
+ * 
+ * @return If the stop is already queryed , it will return the object. Otherwise, it will return undefined.
+ * 
+ */
+
+gogogo.StopManager.prototype.queryStop = function(id) {
+	var stop = this.getStop(id);
+	
+	if (stop == undefined) {
+		if (this.stops[id] == undefined){
+			this.stops[id] = new gogogo.Stop();
+			this.stops[id].id = id;
+		}
+		stop = this.stops[id];
+		
+		if (stop.complete == false && !stop.querying ){
+			var manager = this;		
+			stop.query(function(){
+				$(manager).trigger("stopComplete",stop);
+			});
+		}
+		return undefined;
+		
+	}  else {
+		return stop;
+	}
+}

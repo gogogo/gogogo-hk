@@ -25,6 +25,24 @@
 			point = new GLatLng({{point.lat}}, {{point.lng}});
             map.addOverlay(new GMarker(point));
             {% endfor %}
+            
+            var stopManager = new gogogo.StopManager(map);
+            
+            {% for trip in trip_id_list %}
+            	var trip = new gogogo.Trip("{{trip}}");
+
+				$(trip).bind("stopObjectListComplete",function (e){
+					console.log("stopObjectListCompele");
+					var line = e.target.createPolyline();
+					map.addOverlay(line);
+				});
+				
+            	trip.query(function(trip){
+            		console.log(trip,"queryStops");
+					trip.queryStops(stopManager);
+				});
+				
+            {% endfor %}
 			
 		});
 	</script>

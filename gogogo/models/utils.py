@@ -3,6 +3,7 @@ from ragendja.dbutils import get_object_or_404
 from google.appengine.ext import db
 import logging
 from MLStringProperty import MLStringProperty
+from ragendja.dbutils import KeyListProperty
 
 def createEntity(object):
 	"""  Create an entity from model instance object which is 
@@ -28,6 +29,9 @@ def createEntity(object):
 					entity[prop.name] = datastore_value.id_or_name()
 			elif isinstance(prop,MLStringProperty):
 				entity[prop.name] = u'|'.join(datastore_value)
+			elif isinstance(prop,KeyListProperty):
+				logging.info("KeyListProperty is not supported")
+				del entity[prop.name]
 			
 	entity['key_name'] = object.key().id_or_name()
 	entity['instance'] = object
