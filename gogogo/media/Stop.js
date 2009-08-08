@@ -2,40 +2,31 @@
 /** Stop
  * 
  * @constructor 
+ * @base gogogo.Model 
  */
 
-gogogo.Stop = function(json){
+gogogo.Stop = function(id){
+	gogogo.Model.call(this,id);
 	
 	this.marker = undefined;
 	
-	// The object contains complete information of the stop
-	this.complete = false
-	
-	// TRUE if it is querying the complete information of the stop from server
-	this.querying = false;
-	
-	// The ID of the stop
-	this.id = undefined;
-	
-	if (json != undefined){
-		this.updateFromJson(json);
-	}
-	
 }
+
+extend(gogogo.Stop , gogogo.Model)
+
+//$.extend(gogogo.Stop , gogogo.Model) // Can not be used  updateFromJson() will raise "too much recursion"
+
+gogogo.Stop.prototype.modelType = "stop";
 
 /**
  * Update from JSON
  */
 
 gogogo.Stop.prototype.updateFromJson = function(json){
-	var stop = this;
-	$.each(["id","name","url","code","agency","geohash","parent_station","desc"] ,function(i,attr){
-		if (json[attr]	 != undefined){
-			stop[attr] = json[attr];
-		}
-	});
+
+	gogogo.Model.prototype.updateFromJson.call(this,json);
 	
-	if (json.latlng != undefined){
+	if (json.latlng != undefined) {
 		this.latlng = new GLatLng(json.latlng[0], json.latlng[1]);
 	}
 }
@@ -66,29 +57,3 @@ gogogo.Stop.prototype.createMarker = function(){
 	return this.marker;
 }
 
-/**
- * Query the complete information from server
- */
-
-gogogo.Stop.prototype.query = function(callback) {
-	if (this.querying)
-		return;
-	
-	this.querying = true;
-	
-	api = "/api/stop/get/" + this.id;
-	var cache = jQuery.ajaxSettings.cache;
-	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
-	var stop = this;
-	
-	$.getJSON(api, null , function(response) {	
-		if (response.stat == "ok"){
-			stop.updateFromJson(response.data);
-			stop.complete = true;
-		}
-		if (callback!=undefined)
-			callback();
-		this.querying = false;
-	});
-	jQuery.ajaxSettings.cache = cache;	
-}

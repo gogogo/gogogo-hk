@@ -3,7 +3,7 @@
  * 
  * @constructor 
  * @extends gogogo.Model
- * @base gogogo.Model
+ 
  */
 
 gogogo.Trip = function(id){
@@ -29,7 +29,7 @@ gogogo.Trip.prototype.queryStops = function (manager) {
 	var trip = this;
 	
 	$(manager).bind("stopComplete",function(e,stop) { 
-		console.log("stopComplete",stop);
+
 		for (var i = 0 ; i < trip.info.stop_list.length ;i++) {
 			
 			if (trip.info.stop_list[i] == stop.id){
@@ -65,7 +65,6 @@ gogogo.Trip.prototype.isStopObjectListComplete = function () {
 	} else {
 		ret = false;
 	}
-	console.log(this.stopObjectList.length,ret);	
 	
 	return ret;
 }
@@ -82,7 +81,7 @@ gogogo.Trip.prototype.createPolyline = function(options) {
 	for (var i = 0 ; i < this.stopObjectList.length ;i++) {		
 		pts[i] = this.stopObjectList[i].latlng;
 	}
-
+	
 	this.polyline = new GPolyline(pts,"#000000",5,0.5,options);
 
 	return this.polyline;

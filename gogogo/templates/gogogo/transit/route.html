@@ -32,13 +32,11 @@
             	var trip = new gogogo.Trip("{{trip}}");
 
 				$(trip).bind("stopObjectListComplete",function (e){
-					console.log("stopObjectListCompele");
 					var line = e.target.createPolyline();
 					map.addOverlay(line);
 				});
 				
             	trip.query(function(trip){
-            		console.log(trip,"queryStops");
 					trip.queryStops(stopManager);
 				});
 				

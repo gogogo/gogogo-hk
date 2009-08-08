@@ -28,6 +28,7 @@ settings.add_app_media('combined-%(LANGUAGE_CODE)s.js',
         
     #Gogogo javascript
     setting_converter,
+    'gogogo/utils.js',
 	'gogogo/map.js',
 	'gogogo/Model.js',
 	'gogogo/Stop.js',

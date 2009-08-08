@@ -55,7 +55,7 @@ gogogo.StopManager.prototype.refresh = function() {
 		if (data.stat == "ok") {
 			$.each(data.data, function(i, item){
 				if (manager.stops[item.id] == undefined ) {
-					var stop = new gogogo.Stop();
+					var stop = new gogogo.Stop(item.id);
 					stop.updateFromJson(item);
 					var marker = stop.createMarker();
                  
@@ -106,7 +106,7 @@ gogogo.StopManager.prototype.queryStop = function(id) {
 		
 		if (stop.complete == false && !stop.querying ){
 			var manager = this;		
-			stop.query(function(){
+			stop.query(function(stop){
 				$(manager).trigger("stopComplete",stop);
 			});
 		}
