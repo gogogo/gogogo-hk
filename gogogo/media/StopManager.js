@@ -72,7 +72,7 @@ gogogo.StopManager.prototype.refresh = function() {
 
 /** Get stop
  * 
- * @return A stop object instance or undefined 
+ * @return A stop object instance with complete information or undefined if it is not queryed.
  */
 gogogo.StopManager.prototype.getStop = function(id) {
 	stop = this.stops[id];
@@ -90,11 +90,14 @@ gogogo.StopManager.prototype.getStop = function(id) {
  * 
  * stopComplete - A stop's query() operation is completed.
  * 
+ * @param id The id of the stop
+ * @param callback The callback to be involved after the query complete. Only a single argument of the model instance is passed
+ * 
  * @return If the stop is already queryed , it will return the object. Otherwise, it will return undefined.
  * 
  */
 
-gogogo.StopManager.prototype.queryStop = function(id) {
+gogogo.StopManager.prototype.queryStop = function(id,callback) {
 	var stop = this.getStop(id);
 	
 	if (stop == undefined) {
@@ -110,9 +113,17 @@ gogogo.StopManager.prototype.queryStop = function(id) {
 				$(manager).trigger("stopComplete",stop);
 			});
 		}
+		
+		if (callback!=undefined)
+			stop.query(callback);
+		
 		return undefined;
 		
 	}  else {
+		
+		if (callback!=undefined)
+			callback(stop)
+		
 		return stop;
 	}
 }

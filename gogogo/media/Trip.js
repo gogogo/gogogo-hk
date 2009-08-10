@@ -10,48 +10,46 @@ gogogo.Trip = function(id){
 	gogogo.Model.call(this,id);
 	this.polyline = undefined;
 	this.stopObjectList = [];
+	this.stopObjectListCount = 0;
 }
 
 $.extend(gogogo.Trip,gogogo.Model);
 
 gogogo.Trip.prototype.modelType = "trip";
 
+/**
+ * Query a single stop object from StopManager
+ */
+
+gogogo.Trip.prototype._queryStop = function(manager,index,callback){
+	var trip = this;	
+	manager.queryStop(this.info.stop_list[index],
+		function(stop) {					
+			trip.stopObjectList[index] = stop;
+			trip.stopObjectListCount++;
+			if (trip.isStopObjectListComplete()) {
+				$(trip).trigger("stopObjectListComplete");
+				if (callback !=undefined){
+					callback(trip);
+				}
+			}
+		});	
+};
+
 /** Query associative stop objects from StopManager
  * 
  */
 
-gogogo.Trip.prototype.queryStops = function (manager) {
+gogogo.Trip.prototype.queryStops = function (manager,callback) {
 	
 	if (this.info.stop_list == undefined) {
 		return ;
 	}
 
-	var trip = this;
-	
-	$(manager).bind("stopComplete",function(e,stop) { 
-		for (var i = 0 ; i < trip.info.stop_list.length ;i++) {
-			
-			if (trip.info.stop_list[i] == stop.id){
-				trip.stopObjectList[i] = stop;
-				if (trip.isStopObjectListComplete()) {
-					$(manager).unbind("stopComplete",this);
-					$(trip).trigger("stopObjectListComplete");
-				}
-				break;
-			}
-		}
-		
-	});
-
+	this.stopObjectListCount = 0;
 	
 	for (var i = 0 ; i < this.info.stop_list.length ;i++) {
-		var stop = manager.queryStop(this.info.stop_list[i]);
-		
-		if (stop != undefined){
-			this.stopObjectList[i] = stop;
-			if (this.isStopObjectListComplete())
-				$(this).trigger("stopObjectListComplete");
-		}
+		this._queryStop(manager,i,callback);
 	}
 }
 
@@ -61,7 +59,7 @@ gogogo.Trip.prototype.queryStops = function (manager) {
 gogogo.Trip.prototype.isStopObjectListComplete = function () {
 
 	var ret;
-	if (this.stopObjectList.length == this.info.stop_list.length){		
+	if (this.stopObjectListCount == this.info.stop_list.length){		
 		ret =true;
 	} else {
 		ret = false;
@@ -78,7 +76,6 @@ gogogo.Trip.prototype.createPolyline = function(options) {
 		return undefined;
 
 	var pts = [];
-	
 	for (var i = 0 ; i < this.stopObjectList.length ;i++) {		
 	//for (i in this.stopObjectList) {
 		if (this.stopObjectList[i] == 'undefined') {

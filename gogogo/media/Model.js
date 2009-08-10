@@ -40,21 +40,27 @@ gogogo.Model.prototype.updateFromJson = function(json){
 /**
  * Query the complete information from server
  * 
- * @param callback The callback function to be involved after the operation. (It is invalid only in the first query)
+ * @param callback The callback function to be involved after the operation. The first arg is model instance , the second arg is the response from server
  * 
  */
 
 gogogo.Model.prototype.query = function(callback) {
-	if (this.querying)
+	var	model = this;
+		
+	if (this.querying) {
+		if (callback!=undefined){
+			$(this).one("complete" , function(e,response){
+				callback(model,response);
+			});
+		}
 		return;
+	}
 	
 	this.querying = true;
 	
 	api = "/api/" + this.modelType + "/get/" + this.id;
 	var cache = jQuery.ajaxSettings.cache;
 	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
-	
-	var	model = this;
 	
 	$.getJSON(api, null , function(response) {	
 		if (response.stat == "ok"){

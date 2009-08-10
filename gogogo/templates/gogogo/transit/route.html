@@ -25,7 +25,7 @@
             {% for trip in trip_id_list %}
             	var trip = new gogogo.Trip("{{trip}}");
 
-				$(trip).bind("stopObjectListComplete",function (e){
+				$(trip).one("stopObjectListComplete",function (e){
 					var line = e.target.createPolyline();
 					map.addOverlay(line);
 				});
