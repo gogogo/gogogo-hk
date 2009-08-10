@@ -12,8 +12,7 @@ from gogogo.models import *
 from gogogo.geo.geohash import Geohash
 
 from . import ApiResponse
-from gogogo.models.cache import getCachedObjectOr404
-from gogogo.models.cache import getCachedEntityOr404
+from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
 import logging
 
 _default_cache_time = 3600

@@ -8,7 +8,7 @@
 
 gogogo.Trip = function(id){
 	gogogo.Model.call(this,id);
-	
+	this.polyline = undefined;
 	this.stopObjectList = [];
 }
 
@@ -29,13 +29,14 @@ gogogo.Trip.prototype.queryStops = function (manager) {
 	var trip = this;
 	
 	$(manager).bind("stopComplete",function(e,stop) { 
-
 		for (var i = 0 ; i < trip.info.stop_list.length ;i++) {
 			
 			if (trip.info.stop_list[i] == stop.id){
 				trip.stopObjectList[i] = stop;
-				if (trip.isStopObjectListComplete())
+				if (trip.isStopObjectListComplete()) {
+					$(manager).unbind("stopComplete",this);
 					$(trip).trigger("stopObjectListComplete");
+				}
 				break;
 			}
 		}
@@ -65,7 +66,7 @@ gogogo.Trip.prototype.isStopObjectListComplete = function () {
 	} else {
 		ret = false;
 	}
-	
+
 	return ret;
 }
 
@@ -75,10 +76,15 @@ gogogo.Trip.prototype.createPolyline = function(options) {
 		
 	if (!this.isStopObjectListComplete())
 		return undefined;
-	
-	var pts = []
+
+	var pts = [];
 	
 	for (var i = 0 ; i < this.stopObjectList.length ;i++) {		
+	//for (i in this.stopObjectList) {
+		if (this.stopObjectList[i] == 'undefined') {
+			console.error("Unknown stop - " , this.info.stop_list[i]);
+			continue;
+		}
 		pts[i] = this.stopObjectList[i].latlng;
 	}
 	

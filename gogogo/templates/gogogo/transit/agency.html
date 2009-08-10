@@ -2,7 +2,7 @@
 {% load i18n%}
 {% block content %}
 
-<div class="span-6 last">
+<div id="agency_info" class="span-6 {% ifequal showMap 'False' %}last{%endifequal%}">
 <table>
     <tr>
         <td>{%trans "Name"%}: </td>
@@ -28,15 +28,16 @@
     </ul>
     </td></tr>
 </table>
-</div>
+
+
 <p></p>
-{% if rail_list|length %}
+{% if railway_list|length %}
 
 <table>
 	<th>Railway</th>
-{% for rail in rail_list %}
+{% for railway in railway_list %}
     <tr>
-        <td><a href="{%url gogogo.views.transit.route agency.key_name rail.key_name %}">{{rail.long_name}}</a>
+        <td><a href="{%url gogogo.views.transit.route agency.key_name railway.key_name %}">{{railway.long_name}}</a>
         </td>
     </tr>
 {% endfor %}
@@ -44,5 +45,46 @@
 </table>
 
 {%endif%}
+</div><!-- End of agency_info -->
+
+{% if showMap %}
+
+<div class="span-18 last" >
+	<script type="text/javascript">
+		var map;
+		var stopManager;
+		
+		$(document).ready(function(){
+			
+			height = $('#agency_info').height();
+		
+			$('#map').height(Math.max(height,400));
+			
+			map = new GMap2(document.getElementById("map"));
+			gogogo.mapSetup(map);
+			stopManager = new gogogo.StopManager(map);
+			
+			var trip_id_list = "{{ trip_id_list|join:"," }}";
+			trip_id_list = trip_id_list.split(",");
+			
+            for (var i in trip_id_list){
+            	var trip = new gogogo.Trip(trip_id_list[i]);
+
+				$(trip).bind("stopObjectListComplete",function (e){
+					var line = e.target.createPolyline();
+					map.addOverlay(line);
+				});
+				
+            	trip.query(function(trip){
+					trip.queryStops(stopManager);
+				});
+			}
+		});
+	</script>
+	<div id="map" style="width:100%;height:100%"></div>
+</div>
+
+{% endif %}
+
 
 {% endblock %}
