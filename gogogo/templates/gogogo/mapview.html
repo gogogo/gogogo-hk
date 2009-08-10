@@ -22,8 +22,9 @@
 
     	layout = $('#ui-layout-container').layout({ applyDefaultStyles: true });
     	$("#ui-layout-container").css("padding","0");
-	    map = new gogogo.Map(document.getElementById("map"));
-
+	    //map = new gogogo.Map(document.getElementById("map"));
+		map = new GMap2(document.getElementById("map"));
+		gogogo.mapSetup(map);
 	})
 	
 	$(window).resize(function(){

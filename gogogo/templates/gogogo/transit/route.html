@@ -6,19 +6,13 @@
 		var map;
 		
 		$(document).ready(function(){
-			width = parseInt($('#general_info').css("width").replace(/px/,'')) + 
-				parseInt($('#general_info').css("padding-right").replace(/px/,'')) + 
-				parseInt($('#general_info').css("margin-right").replace(/px/,''));
 			
-			height = parseInt($('#general_info').css("height").replace(/px/,''));
+			height = $('#general_info').height();
+		
+			$('#map').height(Math.max(height,400));
 			
-			//$('#map').css("left",width+"px");
-			//$('#map').css("width",(screen.width - width - 30)+"px");
-			$('#map').css("height",Math.max(height,400)+"px");
-			
-			//map = new GMap2(document.getElementById("map"));
-			map = new gogogo.Map(document.getElementById("map"));
-			//map.setUIToDefault();
+			map = new GMap2(document.getElementById("map"));
+			gogogo.mapSetup(map);
 			
 			var point;
 			{% for point in endpoint_list %}
