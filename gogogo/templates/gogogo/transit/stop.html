@@ -4,6 +4,23 @@
 {% include 'gogogo/transit/content_header.html'%}
 {% endblock %}
 
+{% block js %}
+	{{block.super}}
+	<script type="text/javascript">
+	var stopManager;
+	
+	$(document).ready(function(){
+		stopManager = new gogogo.StopManager(map);
+		
+		latlng = new GLatLng({{stop.latlng.lat}},{{stop.latlng.lon}});
+		map.setZoom(19);
+		map.panTo(latlng);
+		
+	});
+	
+	</script>
+{% endblock %}
+
 {% block left_column %}
 <table>
     <tr>

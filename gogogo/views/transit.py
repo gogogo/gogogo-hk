@@ -111,9 +111,9 @@ def agency(request,agency_id):
 		cache['trip_id_list'] = trip_id_list
 		memcache.add(cache_key, cache, _default_cache_time)
 
-	pathbar = Pathbar(agency=(cache['agency'],))
-	
 	agency = trEntity(cache['agency'],request)
+	pathbar = Pathbar(agency=(agency,))
+	
 	showMap = cache['showMap']
 	railway_list = [ trEntity(e,request) for e in cache['railway_list'] ]
 	trip_id_list = cache['trip_id_list']
@@ -290,31 +290,18 @@ def stop(request,stop_id):
 	"""
 	Browse stop information
 	"""	
-	try:
-		key = db.Key.from_path(Stop.kind(),stop_id)
-	
-		record = db.get(key)
-	except (db.BadArgumentError,db.BadValueError):
-		raise Http404
-		
-	lang = MLStringProperty.get_current_lang(request)	
-	stop_entity = {
-		'key_name' : record.key().name(),
-		'name' : MLStringProperty.trans(record.name,lang),
-		'desc' : MLStringProperty.trans(record.desc,lang),
-		'url' : record.url
-	}
+	entity = getCachedEntityOr404(Stop,key_name = stop_id)
 
-	pathbar = Pathbar(stop=stop_entity)
-	#pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
-	#pathbar.append(stop_entity['name'] , 'gogogo.views.transit.stop', [ stop_entity['key_name']]  )
+	entity = trEntity(entity,request)		
+	pathbar = Pathbar(stop=entity)
 
-	return render_to_response( 
+	t = loader.get_template('gogogo/transit/stop.html')
+	c = RequestContext(
 		request,
-		'gogogo/transit/stop.html'
-		,{ 
-			'page_title': _("Transit information"),
-			'pathbar' : pathbar,
-		   "stop" : stop_entity,
-		   })		
-	
+	{
+		'page_title': entity['name'] ,
+		'pathbar' : pathbar,
+	   	"stop" : entity,
+    })
+    		
+	return HttpResponse(t.render(c))
