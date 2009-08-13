@@ -33,16 +33,17 @@
 <p></p>
 {% if railway_list|length %}
 
-<table>
-	<th>Railway</th>
+<h4>Railway</h4>
+
 {% for railway in railway_list %}
-    <tr>
-        <td><a href="{%url gogogo.views.transit.route agency.key_name railway.key_name %}">{{railway.long_name}}</a>
-        </td>
-    </tr>
+    <div style="margin-bottom: 5px">
+    	<div style="float: left; width:5em; margin-right:1em;background-color: {{railway.color}}">&nbsp;</div>
+        <a href="{%url gogogo.views.transit.route agency.key_name railway.key_name %}">{{railway.long_name}}</a>
+	</div>
+    
 {% endfor %}
 
-</table>
+
 
 {%endif%}
 </div><!-- End of agency_info -->
