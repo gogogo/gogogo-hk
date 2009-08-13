@@ -85,7 +85,7 @@ gogogo.Trip.prototype.createPolyline = function(options) {
 		pts[i] = this.stopObjectList[i].latlng;
 	}
 	
-	this.polyline = new GPolyline(pts,"#000000",5,0.5,options);
+	this.polyline = new GPolyline(pts,this.info.color,5,0.4,options);
 
 	return this.polyline;
 }

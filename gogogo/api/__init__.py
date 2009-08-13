@@ -8,12 +8,16 @@ from django.conf import settings
 from django.utils import simplejson
 from StringIO import StringIO
 
+from google.appengine.api import memcache
+
 from gogogo.models import *
 from gogogo.geo.geohash import Geohash
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
 from gogogo.models.utils import trEntity
 import logging
 #import json
+
+_default_cache_time = 3600
 
 def default(o):
 	"""
@@ -84,10 +88,23 @@ def shape_get(request,id):
 def trip_get(request,id):
 
 	try:
-		entity = getCachedEntityOr404(Trip,key_name = id)
+		cache_key = "gogogo__trip_get_%s" % id #Prefix of memecache key
+		cache = memcache.get(cache_key)
+		
+		if cache == None:
+			entity = getCachedEntityOr404(Trip,key_name = id)
+			logging.info(entity)
+			entity['color'] = entity['instance'].route.color
+			
+			cache = {}
+			cache['entity'] = entity
+			
+			memcache.add(cache_key, cache, _default_cache_time)
+		
+		entity = cache['entity']
 		entity = trEntity(entity,request)
-		logging.info(entity)
-		del entity['instance']
+		del entity['instance']		
+			
 		return ApiResponse(data=entity)
 	except Http404:
 		return ApiResponse(error="Trip not found")

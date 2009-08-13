@@ -17,6 +17,11 @@ gogogo.Map = function (container){
 $.extend(gogogo.Map,GMap2);
 */
 
+/** Setup a GMap2 object to the default value used in gogogo
+ * 
+ * @param map A GMap2 object
+ */
+
 gogogo.mapSetup = function(map){
 	map.setUIToDefault();
 	

@@ -9,11 +9,11 @@ urlpatterns = patterns(
 	
 	#Transit information
 	
-	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)/(?P<route_id>[0-9a-zA-Z_]*)/(?P<trip_id>[ 0-9a-zA-Z_]*)$', 'gogogo.views.transit.trip'),	
+	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)/(?P<route_id>[0-9a-zA-Z_]*)/(?P<trip_id>[ -0-9a-zA-Z_]*)$', 'gogogo.views.transit.trip'),	
 	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)/(?P<route_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.route'),
 
 	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.agency'),
-	(r'^transit/stop/(?P<stop_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.stop'),
+	(r'^transit/stop/(?P<stop_id>[0-9a-zA-Z_-]*)$', 'gogogo.views.transit.stop'),
 	(r'^transit$', 'gogogo.views.transit.index'),
 
 	# Database frontend
@@ -49,8 +49,8 @@ urlpatterns = patterns(
 	(r'^api/stop/search/(?P<lat0>[0-9]*\.[0-9]*),(?P<lng0>[0-9]*\.[0-9]*),(?P<lat1>[0-9]*\.[0-9]*),(?P<lng1>[0-9]*\.[0-9]*)$' 
 		,'gogogo.api.stop.search'),
 	(r'^api/stop/markerwin/(?P<id>[0-9a-zA-Z_]*)$' , 'gogogo.api.stop.markerwin'),
-	(r'^api/stop/get/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.api.stop.get'),		
+	(r'^api/stop/get/(?P<id>[0-9a-zA-Z_-]*)$' ,'gogogo.api.stop.get'),		
 	(r'^api/shape/get/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.api.shape_get'),		
-	(r'^api/trip/get/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.api.trip_get'),
+	(r'^api/trip/get/(?P<id>[0-9a-zA-Z_-]*)$' ,'gogogo.api.trip_get'),
 
 )

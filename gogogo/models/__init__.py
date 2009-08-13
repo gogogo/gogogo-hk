@@ -243,10 +243,13 @@ class Cluster:
 	
 	geohash = db.StringProperty()
 	
+	# The radious of the cluster (in KM)
 	radius = db.FloatProperty()
 
+	# The shape of the cluster
 	shape = db.ReferenceProperty(Shape)
-		
+	
+	# Member in the cluster
 	members = KeyListProperty(Stop)
 	
 class Changelog(db.Model):
@@ -294,10 +297,13 @@ class Report(db.Model):
 
 	commit_date = db.DateTimeProperty(auto_now_add=True)
 
+	# The record with problem
 	reference = db.ReferenceProperty()
 	
+	# Subject line of the message
 	subject = db.StringProperty()
 	
+	# Detail of the problem
 	detail = db.TextProperty()
 	
 	# Status of the message. 
