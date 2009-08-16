@@ -12,6 +12,7 @@ class LatLng:
 		assert (lat >= -90 and lat <= 90 and lng >= -180 and lng <= 180)
 		self.lat = lat
 		self.lng = lng
+		self.data = None
 		
 	def distance(self,other):
 		"""
@@ -112,6 +113,18 @@ class LatLng:
 		return (r * 180 / math.pi + 360)   % 360
 		
 	r2d = staticmethod(r2d)	
+	
+	def setData(self,data):
+		"""
+		Set user customized data
+		"""
+		self.data = data
+		
+	def getData(self):
+		"""
+		Get user customized data
+		"""
+		return self.data
 
 if __name__ == "__main__":
 	import doctest

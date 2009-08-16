@@ -12,6 +12,7 @@ class LatLngGroup:
 		>>> str(LatLngGroup([(22.35,114.17),(22.37,114.15)]))
 		'(22.350000,114.170000).(22.370000,114.150000)'
 		"""
+		self.data = None
 		self.pts = []
 		for p in pts:
 			if isinstance(p,LatLng):
@@ -52,6 +53,9 @@ class LatLngGroup:
 		return self.radius
 	
 	def append(self,pt):
+		"""
+		@type pt gogogo.geo.LatLng
+		"""
 		self.pts.append(pt)
 		self.dirty = True
 		
@@ -118,6 +122,18 @@ class LatLngGroup:
 			self.gdi /= n
 
 		self.dirty = False	
+
+	def setData(self,data):
+		"""
+		Set user customized data
+		"""
+		self.data = data
+		
+	def getData(self):
+		"""
+		Get user customized data
+		"""
+		return self.data
 
 if __name__ == "__main__":
 	import doctest

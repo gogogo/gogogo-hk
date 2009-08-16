@@ -93,7 +93,6 @@ def trip_get(request,id):
 		
 		if cache == None:
 			entity = getCachedEntityOr404(Trip,key_name = id)
-			logging.info(entity)
 			entity['color'] = entity['instance'].route.color
 			
 			cache = {}

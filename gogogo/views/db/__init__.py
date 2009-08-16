@@ -1,4 +1,8 @@
 
+###################################################################
+# Database frontend (for advanced data viewing and editing)
+###################################################################
+
 from gogogo.models import *
 from ragendja.auth.decorators import staff_only
 from ragendja.dbutils import get_object_or_404

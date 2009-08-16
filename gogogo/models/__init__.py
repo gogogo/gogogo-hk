@@ -165,7 +165,10 @@ class Shape(db.Model):
 	
 	def __unicode__(self):
 		return unicode(self.key().name())
-	
+		
+	@permalink
+	def get_absolute_url(self):
+		return ('gogogo.views.db.shape.browse',[self.key().id_or_name()]) 
 
 	# Type of shape. 0: Polyline , 1 : Polygon
 	type = db.IntegerProperty()
@@ -175,6 +178,9 @@ class Shape(db.Model):
 	
 	# Points of the shape.
 	points = NumberListProperty(float)
+	
+	# The owner of the shape
+	owner = db.ReferenceProperty()
 
 class Calendar(db.Model):
 	class Meta:
@@ -233,7 +239,7 @@ class Trip(db.Model):
 			self.route.key().name(),
 			self.key().name()]) 
 	
-class Cluster:
+class Cluster(db.Model):
 	
 	class Meta:
 		verbose_name = _('Cluster')
@@ -252,6 +258,9 @@ class Cluster:
 	# Member in the cluster
 	members = KeyListProperty(Stop)
 	
+	def update_geohash(self):
+		self.geohash = str(Geohash( (self.center.lon , self.center.lat) ))
+		
 class Changelog(db.Model):
 	"""
 	Record the changes of data modified by web interface

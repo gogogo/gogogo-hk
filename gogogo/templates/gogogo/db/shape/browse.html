@@ -1,0 +1,31 @@
+{% extends 'gogogo/mapview.html' %}
+
+{% block content-header %}
+{% endblock %}
+
+{% block js %}
+	{{block.super}}
+	<script type="text/javascript">
+	var stopManager;
+	
+	$(document).ready(function(){
+		var shape = new gogogo.Shape("{{shape.key_name}}")
+		
+		shape.query(function(){
+			var overlay = shape.createOverlay();
+			map.addOverlay(overlay);
+		});
+		
+	});
+	
+	</script>
+{% endblock %}
+
+{% block left_column %}
+<table>
+    <tr>
+    	<td>Name: </td>
+    	<td>{{shape.key_name}}</td>
+    </tr>
+</table>
+{% endblock %}

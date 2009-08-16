@@ -7,7 +7,7 @@ import gogogo.views
 urlpatterns = patterns(
 	'',
 	
-	#Transit information
+	#Transit information (for general user)
 	
 	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)/(?P<route_id>[0-9a-zA-Z_]*)/(?P<trip_id>[ -0-9a-zA-Z_]*)$', 'gogogo.views.transit.trip'),	
 	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)/(?P<route_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.route'),
@@ -16,7 +16,11 @@ urlpatterns = patterns(
 	(r'^transit/stop/(?P<stop_id>[0-9a-zA-Z_-]*)$', 'gogogo.views.transit.stop'),
 	(r'^transit$', 'gogogo.views.transit.index'),
 
-	# Database frontend
+	#############################################################
+	# Database frontend (for advanced viewing and editing)
+	#############################################################
+	(r'^db/shape/browse/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.db.shape.browse'),
+	
     (r'^db/agency/list$', 'gogogo.views.db.agency.list'),
 	(r'^db/agency/browse/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.db.agency.browse'),
 	#(r'^db/agency/edit/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.db.agency.edit'),
@@ -25,6 +29,7 @@ urlpatterns = patterns(
     (r'^db/changelog/list$', 'gogogo.views.db.changelog.list'),
     (r'^db/changelog/browse/(?P<id>[0-9]*)$', 'gogogo.views.db.changelog.browse'),
     
+    	#Report
     (r'^db/report/list$', 'gogogo.views.db.report.list'),
     (r'^db/(?P<kind>[a-z]*)/report/(?P<id>[0-9a-zA-Z_]*)$', 'gogogo.views.db.report.submit'),
     

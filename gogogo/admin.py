@@ -80,7 +80,7 @@ class ShapeAdmin(admin.ModelAdmin):
 	list_display = ('Shape_ID',)	
 	
 	def Shape_ID(self,obj):
-		return obj.key().name()
+		return obj.key().id_or_name()
 	
 admin.site.register(Shape, ShapeAdmin)	
 
