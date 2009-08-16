@@ -23,8 +23,8 @@
 			map.panTo(center);
 	
 		});
-		
-		var clusterManager = new gogogo.ClusterManager(map);
+		var modelManager = new gogogo.ModelManager();
+		var clusterManager = new gogogo.ClusterManager(map,modelManager);
 		
 	});
 	

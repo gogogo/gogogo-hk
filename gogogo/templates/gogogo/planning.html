@@ -9,12 +9,19 @@
 	<script type="text/javascript">
 	var stopManager;
 	var planner;
-
+	var modelManager;
+	var clusterManager;
 	
 	$(document).ready(function() {
     	layout.sizePane("west",230);
     	
 		stopManager = new gogogo.StopManager(map);	
+		
+		modelManager = new gogogo.ModelManager();
+		
+		clusterManager = new gogogo.ClusterManager(map,modelManager);
+		
+		
 		planner = new gogogo.Planner();
 		planningOutput = $("#planningOutput");
 		
