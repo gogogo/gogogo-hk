@@ -14,6 +14,14 @@
 		shape.query(function(){
 			var overlay = shape.createOverlay();
 			map.addOverlay(overlay);
+			
+			var bounds = overlay.getBounds() ;
+			var center = bounds.getCenter() ;
+			var zoom = map.getBoundsZoomLevel(bounds) ;
+			map.setZoom(zoom);
+
+			map.panTo(center);
+	
 		});
 		
 	});

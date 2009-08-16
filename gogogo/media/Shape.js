@@ -34,7 +34,7 @@ gogogo.Shape.prototype.createOverlay = function(options){
 	if (this.info.type == 0 ){
 		this.overlay = new GPolyline(pts,this.info.color,5,0.4,options);		
 	} else {
-		this.overlay = new GPolygon(pts,this.info.color,5,0.4,this.info.color,0.3 ,options);
+		this.overlay = new GPolygon(pts,this.info.color,5,0.4,this.info.color,0.6 ,options);
 	}
 
 	

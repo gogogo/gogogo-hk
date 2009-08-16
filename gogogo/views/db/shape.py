@@ -19,7 +19,7 @@ def browse(request,id):
 	"""
 	Browse the information of a shape
 	"""
-	entity = getCachedEntityOr404(Shape,key_name = id)
+	entity = getCachedEntityOr404(Shape,id_or_name = id)
 	
 	t = loader.get_template('gogogo/db/shape/browse.html')
 	c = RequestContext(

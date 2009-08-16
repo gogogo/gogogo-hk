@@ -76,13 +76,13 @@ def agency_list(request):
 	return ApiResponse(data=result)
 
 def shape_get(request,id):
-	key = db.Key.from_path(Shape.kind(),id)
+	try:
+		entity = getCachedEntityOr404(Shape,id_or_name = id)
 	
-	object = db.get(key)
-	
-	if object:
-		return ApiResponse(data=create_entity(object,request))
-	else:
+		del entity['owner']
+		del entity['instance']
+		return ApiResponse(data=entity)
+	except Http404:
 		return ApiResponse(error="Shape not found")
 
 def trip_get(request,id):
