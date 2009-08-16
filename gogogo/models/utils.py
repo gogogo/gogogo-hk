@@ -33,7 +33,8 @@ def createEntity(object):
 				logging.info("KeyListProperty is not supported")
 				del entity[prop.name]
 			
-	entity['key_name'] = object.key().id_or_name()
+	entity['key_name'] = object.key().id_or_name() #TODO Deprecate
+	entity['id'] = object.key().id_or_name()
 	entity['instance'] = object
 	return entity
 

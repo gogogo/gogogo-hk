@@ -169,6 +169,10 @@ class Shape(db.Model):
 	@permalink
 	def get_absolute_url(self):
 		return ('gogogo.views.db.shape.browse',[self.key().id_or_name()]) 
+		
+	def setOwner(self,owner):
+		self.owner = owner;
+		self.ownerKind = owner.kind()
 
 	# Type of shape. 0: Polyline , 1 : Polygon
 	type = db.IntegerProperty()
@@ -181,6 +185,9 @@ class Shape(db.Model):
 	
 	# The owner of the shape
 	owner = db.ReferenceProperty()
+	
+	# The kind of owner entry
+	ownerKind = db.StringProperty()
 
 class Calendar(db.Model):
 	class Meta:

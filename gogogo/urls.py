@@ -55,7 +55,11 @@ urlpatterns = patterns(
 		,'gogogo.api.stop.search'),
 	(r'^api/stop/markerwin/(?P<id>[0-9a-zA-Z_]*)$' , 'gogogo.api.stop.markerwin'),
 	(r'^api/stop/get/(?P<id>[0-9a-zA-Z_-]*)$' ,'gogogo.api.stop.get'),		
-	(r'^api/shape/get/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.api.shape_get'),		
+	(r'^api/shape/get/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.api.shape.get'),		
+
 	(r'^api/trip/get/(?P<id>[0-9a-zA-Z_-]*)$' ,'gogogo.api.trip_get'),
+	
+	(r'^api/cluster/search/(?P<lat0>[0-9]+\.*[0-9]*),(?P<lng0>[0-9]+\.*[0-9]*),(?P<lat1>[0-9]+\.*[0-9]*),(?P<lng1>[0-9]+\.*[0-9]*)$' 
+		,'gogogo.api.cluster.search'),		
 
 )

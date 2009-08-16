@@ -20,6 +20,8 @@ _default_cache_time = 3600
 def search(request,lat0,lng0,lat1,lng1):
 	"""
 		Search stop (api/stop/search)
+		
+		@TODO - Memcache support
 	"""
 	lat0 = float(lat0)
 	lng0 = float(lng0)
