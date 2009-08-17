@@ -114,13 +114,13 @@ class LatLng:
 		
 	r2d = staticmethod(r2d)	
 	
-	def setData(self,data):
+	def set_data(self,data):
 		"""
 		Set user customized data
 		"""
 		self.data = data
 		
-	def getData(self):
+	def get_data(self):
 		"""
 		Get user customized data
 		"""

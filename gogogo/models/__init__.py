@@ -170,9 +170,9 @@ class Shape(db.Model):
 	def get_absolute_url(self):
 		return ('gogogo.views.db.shape.browse',[self.key().id_or_name()]) 
 		
-	def setOwner(self,owner):
+	def set_owner(self,owner):
 		self.owner = owner;
-		self.ownerKind = owner.kind()
+		self.owner_kind = owner.kind()
 
 	# Type of shape. 0: Polyline , 1 : Polygon
 	type = db.IntegerProperty()
@@ -187,7 +187,7 @@ class Shape(db.Model):
 	owner = db.ReferenceProperty()
 	
 	# The kind of owner entry
-	ownerKind = db.StringProperty()
+	owner_kind = db.StringProperty()
 
 class Calendar(db.Model):
 	class Meta:
@@ -252,7 +252,16 @@ class Cluster(db.Model):
 		verbose_name = _('Cluster')
 		verbose_name_plural = _('Cluster')
 
+	# The center point of the cluster
 	center = db.GeoPtProperty()
+	
+	# The "station" of the cluster. If this field is set, the center 
+	# will always be equal to the location of the station
+	station = db.ReferenceProperty(Stop)
+	
+	# Name of the cluster. If station is set , it will be equal to 
+	# the name of the stop
+	name = db.StringProperty()
 	
 	geohash = db.StringProperty()
 	
@@ -267,6 +276,12 @@ class Cluster(db.Model):
 	
 	def update_geohash(self):
 		self.geohash = str(Geohash( (self.center.lon , self.center.lat) ))
+		
+	def set_station(self,station):
+		self.station = station
+		if station != None:
+			self.center = db.GeoPt(station.latlng.lat,station.latlng.lon)
+			self.name = u'|'.join(station.name)
 		
 class Changelog(db.Model):
 	"""

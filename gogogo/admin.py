@@ -84,6 +84,16 @@ class ShapeAdmin(admin.ModelAdmin):
 	
 admin.site.register(Shape, ShapeAdmin)	
 
+class ClusterAdmin(admin.ModelAdmin):
+	list_display = ('Cluster_Name',)
+	
+	def Cluster_Name(self,obj):
+		if obj.station != None:
+			return obj.name
+		return obj.key().id_or_name()
+	
+admin.site.register(Cluster, ClusterAdmin)		
+
 class ChangelogAdmin(admin.ModelAdmin):
 	fieldsets = (
         (None, {

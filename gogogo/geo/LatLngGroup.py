@@ -22,6 +22,9 @@ class LatLngGroup:
 			else:
 				raise ValueError
 		self.dirty = True
+		
+		# The fixed center point
+		self.fixedCentroid = None
 	
 	def get_centroid(self):	
 		"""
@@ -34,7 +37,6 @@ class LatLngGroup:
 		>>> str(LatLngGroup([LatLng(22.252195,113.866299)]).get_centroid())
 		'(22.252195,113.866299)'
 		"""
-	
 		if self.dirty:
 			self._calc()
 		return self.centroid
@@ -104,14 +106,17 @@ class LatLngGroup:
 		n = len(self.pts)
 		if n > 0:
 			self.radius = 0
-			lat = 0
-			lng = 0
-			for pt in self.pts:
-				lat += pt.lat
-				lng += pt.lng
-#				self.centroid += pt
-				
-			self.centroid = LatLng(lat / n , lng / n)
+			
+			if self.fixedCentroid:
+				self.centroid = self.fixedCentroid
+			else:
+				lat = 0
+				lng = 0
+				for pt in self.pts:
+					lat += pt.lat
+					lng += pt.lng
+					
+				self.centroid = LatLng(lat / n , lng / n)
 			
 			for pt in self.pts:
 				dist = self.centroid.distance(pt)
@@ -121,15 +126,32 @@ class LatLngGroup:
 			
 			self.gdi /= n
 
-		self.dirty = False	
+		self.dirty = False
+		
+	def set_fixed_centroid(self,center):
+		"""
+		Set a fixed centroid. A group with fixed centroid always use the assigned
+		point as the centroid independent of the points contained.
+		
+		>>> l = LatLngGroup([LatLng(0,0) , LatLng(10,0),LatLng(0,10),LatLng(10,10)])
+		>>> l.set_fixed_centroid(LatLng(7,7))
+		>>> str(l.get_centroid())
+		'(7.000000,7.000000)'
 
-	def setData(self,data):
+		"""
+		self.fixedCentroid = center
+		self.dirty = True
+	
+	def get_fixed_centroid(self):
+		return self.fixedCentroid
+
+	def set_data(self,data):
 		"""
 		Set user customized data
 		"""
 		self.data = data
 		
-	def getData(self):
+	def get_data(self):
 		"""
 		Get user customized data
 		"""
