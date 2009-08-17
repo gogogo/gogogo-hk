@@ -61,7 +61,7 @@ def index(request):
 	agency_list = []
 	for row in query:
 		entity = create_entity(row,request)
-		entity['key_name'] = row.key().name()
+		entity['key_name'] = row.key().id_or_name()
 		agency_list.append(entity)
 
 	return render_to_response( 
@@ -83,7 +83,7 @@ def agency(request,agency_id):
 	cache = memcache.get(cache_key)
 	
 	if cache == None:
-		entity = getCachedEntityOr404(Agency,key_name = agency_id)
+		entity = getCachedEntityOr404(Agency,id_or_name = agency_id)
 
 		cache = {}
 		cache['agency'] = entity

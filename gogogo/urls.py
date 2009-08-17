@@ -33,9 +33,15 @@ urlpatterns = patterns(
     (r'^db/report/list$', 'gogogo.views.db.report.list'),
     (r'^db/(?P<kind>[a-z]*)/report/(?P<id>[0-9a-zA-Z_]*)$', 'gogogo.views.db.report.submit'),
     
-    (r'^db/(?P<kind>[0-9a-zA-Z_]*)/edit/(?P<object_id>[0-9a-zA-Z_]*)$', 'gogogo.views.db.edit'),
+    # Generic model edit interface
+    (r'^db/(?P<kind>[0-9a-zA-Z_]*)/edit/(?P<object_id>[0-9a-zA-Z_-]*)$', 'gogogo.views.db.edit'),
+    
+    # Generic model add interface
+    (r'^db/(?P<kind>[0-9a-zA-Z_]*)/add$', 'gogogo.views.db.add'),
 
+	################################################
 	# Development tools
+	################################################
 
 	(r'^devtools/FindStopID$','gogogo.views.devtools.find_stop_id'),
 	(r'^devtools/MassAddressQuery.html$', 'django.views.generic.simple.direct_to_template',
@@ -45,8 +51,10 @@ urlpatterns = patterns(
     
     (r'^js/(?P<path>.*)$', 'django.views.static.serve',
          {'document_root': os.path.abspath(os.path.dirname(__file__) + '/js') }  ),
-         
+    
+    ################################################     
     # API     
+    ################################################
          
 	(r'^api/agency/list$' ,'gogogo.api.agency_list'),
 

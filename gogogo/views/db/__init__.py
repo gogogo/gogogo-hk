@@ -9,29 +9,13 @@ from ragendja.dbutils import get_object_or_404
 from django import forms
 from django.forms import ModelForm
 from ragendja.template import render_to_response
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 
 from django.core.urlresolvers import reverse as _reverse
 from gogogo.models.utils import createEntity , entityToText
 from gogogo.models.cache import updateCachedObject
 from datetime import datetime
-
-#def reverse(object):
-	#"""
-	#Return the link to the object
-	#"""
-	
-	#if isinstance(object,Agency):
-		#ret = _reverse('gogogo.views.transit.agency',args=[object.key().name()] )
-	#elif isinstance(object,Route):
-		#ret = _reverse('gogogo.views.transit.route',args=[object.agency.key().name(),object.key().name()] )
-	#elif isinstance(object,Trip):
-		#ret = _reverse('gogogo.views.transit.trip',args=[object.route.agency.key().name(),
-			#object.route.key().name(),
-			#object.key().name()] )
-	#else:
-		#raise ValueError("gogogo.views.db.reverse() do not support %s" % object.kind() )	
-
-	#return ret
+import logging
 
 class AgencyForm(ModelForm):
 	class Meta:
@@ -60,6 +44,35 @@ _supported_model = {
 	'trip' : (Trip,TripForm),
 }
 
+def add(request,kind):
+	"""
+	Add new entry to database
+	"""
+	
+	(model,model_form) = _supported_model[kind]
+	
+	if request.method == 'POST':
+		form = model_form(request.POST)
+		if form.is_valid():
+			instance = form.save()
+			logging.info(instance)
+			return HttpResponseRedirect(instance.get_absolute_url())
+	else:
+		form = model_form()
+		
+	message = ""
+
+	return render_to_response( 
+		request,
+		'gogogo/db/edit.html'
+		,{ "form" : form , 
+		   "kind" : kind,
+		   "message" : message,
+		   "history_link" : _reverse('gogogo.views.db.changelog.list') + "?kind=%s" % kind,
+		   "action" : _reverse('gogogo.views.db.add',args=[kind]) ,
+		   })		
+
+
 @staff_only
 def edit(request,kind,object_id):
 	"""
@@ -69,8 +82,16 @@ def edit(request,kind,object_id):
 	(model,model_form) = _supported_model[kind]
 	
 	message = ""
+
+	id = None
+	key_name = None
+	try:
+		id = int(object_id)
+	except ValueError:
+		key_name = object_id
 	
-	object = get_object_or_404(model,key_name = object_id)
+	object = get_object_or_404(model,key_name = key_name , id=id)
+		
 	
 	if request.method == 'POST':
 		form = model_form(request.POST,instance=object)
@@ -99,14 +120,19 @@ def edit(request,kind,object_id):
 	else:
 		form = model_form(instance=object)
 
+	view_object_link = None
+	if object : 
+		view_object_link = object.get_absolute_url()
+		
 	return render_to_response( 
 		request,
 		'gogogo/db/edit.html'
 		,{ "form" : form , 
 		   "object" : object,
+		   "kind" : kind,
 		   "message" : message,
 		   "history_link" : _reverse('gogogo.views.db.changelog.list') + "?kind=%s" % kind,
-		   "view_object_link" : object.get_absolute_url(),
+		   "view_object_link" : view_object_link,
 		   "action" : _reverse('gogogo.views.db.edit',args=[kind,object_id]) ,
 		   })		
 

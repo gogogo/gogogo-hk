@@ -1,14 +1,26 @@
 {% extends 'gogogo/base.html' %}
 {%load i18n%}
 
-{%block title%}{%trans "Change" %} {{object}} - Gogogo {%endblock%}
+{%block title%}
+{% if object %}
+{%trans "Change" %} {{object}} - Gogogo 
+{%else%}
+{%trans "Add" %} {{kind}} - Gogogo 
+{%endif%}
+{%endblock%}
 
 {%block content-header%}<div class="content-header">
 	<ul class="object-tools" >
 		<li><a href="{{history_link}}">{% trans "History"%}</a></li>
+		{% if view_object_link %}
 		<li><a href="{{view_object_link}}">{% trans "View" %}</a></li>
+		{% endif %}
 	</ul>
+	{% if object %}
 	{% trans "Change" %} {{object}}
+	{% else %}
+	{% trans "Add" %} {{kind}}
+	{% endif %}
 </div>{%endblock%}
 
 {% block content %}

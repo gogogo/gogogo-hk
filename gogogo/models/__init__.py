@@ -71,7 +71,7 @@ class Agency(db.Model):
 		
 	@permalink
 	def get_absolute_url(self):
-		return ('gogogo.views.transit.agency',[self.key().name()]) 
+		return ('gogogo.views.transit.agency',[self.key().id_or_name()]) 
 
 		
 class Stop(db.Model):
