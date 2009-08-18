@@ -51,6 +51,7 @@ fieldset.form  {
 }
 
 /* OBJECT TOOLS. Refer from global.css */
+/* For buttons like "Add" , "Edit" , "History" , "View" */
 .object-tools { 
 	font-size:10px; 
 	font-weight:bold;
@@ -63,7 +64,7 @@ fieldset.form  {
 }
 
 .form-row .object-tools { 
-	margin-top:5px; 
+	margin-top:5px;
 	margin-bottom:5px; 
 	#float:none; 
 	height:2em; 
@@ -98,3 +99,4 @@ fieldset.form  {
 
 .object-tools a.addlink:hover { background:#5b80b2 url(admin_media/img/admin/tooltag-add_over.gif) top right no-repeat; }
 
+/* End of object tools */

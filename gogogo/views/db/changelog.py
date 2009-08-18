@@ -47,7 +47,9 @@ def list(request):
 	for row in query :
 		count+=1
 		entity = createEntity(row)
-		entity['id'] = row.key().id()
+		#entity['id'] = row.key().id_or_name()
+		entity['type'] = Changelog.get_type_name(entity['type'])
+		entity['entry_name'] = unicode(row.reference)
 		result.append(entity)
 	
 	prev_offset = offset - limit

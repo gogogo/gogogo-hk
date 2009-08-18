@@ -16,6 +16,7 @@ from django.db.models import permalink # For permalink
 from utils import createEntity , trEntity
 from MLStringProperty import MLStringProperty
 # Utilities
+from TitledStringListProperty import TitledStringListField
 		
 def create_entity(model,request = None):
 	""" Create entity (a dict object) from model with: MLString translated. (based on Models._to_entity(self, entity) )
@@ -51,7 +52,7 @@ class Agency(db.Model):
 	
 	name = MLStringProperty(required=True)
 	
-	url = db.StringProperty()
+	url = db.StringProperty(default="")
 	
 	timezone = db.StringProperty()
 	
@@ -290,6 +291,21 @@ class Changelog(db.Model):
 	
 	def __unicode__(self):
 		return "%s %s %s" % (self.commit_date.isoformat() ,str(self.committer) , self.model_kind )
+		
+	def get_type_name(type):
+		"""
+		Get the name of a type
+		"""
+		if type == 0:
+			return "update"
+		elif type == 1:
+			return "add"
+		elif type =="2":
+			return "remove"
+		else:
+			return "Unknown"
+	
+	get_type_name = staticmethod(get_type_name)
 	
 	# The committer. Anonymouse is not allowed
 	committer = db.UserProperty(auto_current_user_add=True)
@@ -299,6 +315,9 @@ class Changelog(db.Model):
 	
 	# Comment of the submission
 	comment = db.TextProperty()
+	
+	# Type of change. 0 = update , 1 = add , 2 = remove
+	type = db.IntegerProperty(default=0)
 	
 	# Additional tag of the log
 	tag = db.TextProperty()

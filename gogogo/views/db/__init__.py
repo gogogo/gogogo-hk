@@ -15,12 +15,15 @@ from django.core.urlresolvers import reverse as _reverse
 from gogogo.models.utils import createEntity , entityToText
 from gogogo.models.cache import updateCachedObject
 from datetime import datetime
+from gogogo.models import TitledStringListField , MLStringProperty
 import logging
 
 class AgencyForm(ModelForm):
 	class Meta:
 		model = Agency
 		fields = ['name','phone','url','icon']
+		
+	name = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())
 		
 	log_message = forms.CharField(widget = forms.Textarea)
 
@@ -55,7 +58,23 @@ def add(request,kind):
 		form = model_form(request.POST)
 		if form.is_valid():
 			instance = form.save()
-			logging.info(instance)
+
+			old_rev = None
+			new_rev = entityToText(createEntity(instance))
+			
+			changelog = Changelog(
+				reference = instance,
+				commit_date = datetime.utcnow(),
+#				committer=request.user,
+				comment=form.cleaned_data['log_message'],
+				old_rev = old_rev,
+				new_rev = new_rev,
+				model_kind=kind,
+				type=1
+				)
+
+			changelog.save()
+			
 			return HttpResponseRedirect(instance.get_absolute_url())
 	else:
 		form = model_form()

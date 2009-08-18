@@ -70,6 +70,7 @@ def index(request):
 		,{ 
 			'page_title': _("Transit information"),
 			'pathbar' : pathbar,
+			'model_kind' : "agency",
 		   "agency_list" : agency_list,
 		   })		
 

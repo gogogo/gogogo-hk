@@ -2,10 +2,28 @@
 {%load i18n%}
 {% block content %}
 
+
+
+<div style="width:250px;height: 3em">
+<div style="float:left">
 {%trans "Transit information"%}
+</div>
+
+{% if user.is_authenticated %}
+<ul class="object-tools">
+<li>
+	<a href="{% url gogogo.views.db.add model_kind %}">{% trans "Add" %} </a>
+</li>
+</ul>
+{% endif %}
+
+</div>
+
+
 <ul>
 	{% for agency in agency_list %}
 	<li><a href="{%url gogogo.views.transit.agency agency_id=agency.key_name%}">{{agency.name}}</a></li>
    {% endfor %}	
 </ul>
+
 {% endblock %}

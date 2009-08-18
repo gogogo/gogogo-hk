@@ -12,6 +12,8 @@
 		<tr>
 			<td><a href="{%url gogogo.views.db.changelog.browse changelog.id%}">{{changelog.id}}</a></td>
 			<td>{{changelog.model_kind}}</td>
+			<td>{{changelog.type}}</td>
+			<td>{{changelog.entry_name}}</td>
 			<td>{{changelog.commit_date}}</td>
 			
 			{%if user.is_authenticated%}

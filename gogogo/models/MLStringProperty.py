@@ -13,10 +13,7 @@ class MLStringProperty(TitledStringListProperty):
 		Multi-language string property
 	"""
 	def __init__ (self,*args,**kwargs):
-		fields = []
-		for f in settings.LANGUAGES:
-			fields.append(f[1])
-		
+		fields = self.get_lang_list()
 		super(MLStringProperty,self).__init__(fields,*args,**kwargs)
 
 	def trans(value,lang=0):
@@ -50,3 +47,17 @@ class MLStringProperty(TitledStringListProperty):
 		return ret
 		
 	get_current_lang = staticmethod(get_current_lang)
+	
+	def get_lang_list():
+		"""
+		Get a list of language (with full name). The returned 
+		data can be used with TitledStringListProperty
+		"""
+		
+		fields = []
+		for f in settings.LANGUAGES:
+			fields.append(f[1])
+			
+		return fields
+
+	get_lang_list = staticmethod(get_lang_list)
