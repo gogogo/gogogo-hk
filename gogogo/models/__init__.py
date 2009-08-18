@@ -138,7 +138,7 @@ class Route(db.Model):
 	
 	agency = db.ReferenceProperty(Agency,required=True)
 	
-	short_name = db.StringProperty(required=True)
+	short_name = db.StringProperty()
 	
 	long_name = MLStringProperty()
 	

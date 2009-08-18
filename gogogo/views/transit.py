@@ -125,7 +125,8 @@ def agency(request,agency_id):
 	{
         'page_title': agency['name'] ,
         'pathbar' : pathbar,
-        'object_type' : 'agency',
+        'agency_kind' : 'agency',
+        'route_kind' : 'route',
         'agency' : agency,
         'showMap' : showMap,
         'trip_id_list' : trip_id_list,

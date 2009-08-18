@@ -37,7 +37,7 @@ urlpatterns = patterns(
     (r'^db/(?P<kind>[0-9a-zA-Z_]*)/edit/(?P<object_id>[0-9a-zA-Z_-]*)$', 'gogogo.views.db.edit'),
     
     # Generic model add interface
-    (r'^db/(?P<kind>[0-9a-zA-Z_]*)/add$', 'gogogo.views.db.add'),
+    (r'^db/(?P<kind>[0-9a-zA-Z_]+)/add$', 'gogogo.views.db.add'),
 
 	################################################
 	# Development tools

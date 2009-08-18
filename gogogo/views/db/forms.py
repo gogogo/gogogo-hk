@@ -11,6 +11,7 @@ from gogogo.models.utils import createEntity , entityToText
 from gogogo.models.cache import updateCachedObject
 from datetime import datetime
 from gogogo.models import TitledStringListField , MLStringProperty
+from gogogo.models.utils import id_or_name
 import logging
 
 class AgencyForm(ModelForm):
@@ -42,11 +43,19 @@ _supported_model = {
 	'trip' : (Trip,TripForm),
 }
 
+def _createModel(kind,parent = None):
+	value = id_or_name(parent)
+	if kind == "route":
+		return Route(agency = db.Key.from_path(Agency.kind() , value) )
+		
+	raise ValueError
+
 def add(request,kind):
 	"""
 	Add new entry to database
 	"""
 	
+	#TODO - Replace by a function call. Reference : _createModel()
 	(model,model_form) = _supported_model[kind]
 	
 	if request.method == 'POST':
@@ -71,6 +80,13 @@ def add(request,kind):
 			changelog.save()
 			
 			return HttpResponseRedirect(instance.get_absolute_url())
+	elif request.method == 'GET':
+		parent = None
+		if "parent" in request.GET:
+			parent = request.GET['parent']
+		instance = _createModel(kind,parent)
+		form = model_form(instance=instance)
+		
 	else:
 		form = model_form()
 		

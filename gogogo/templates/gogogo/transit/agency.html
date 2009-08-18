@@ -21,14 +21,17 @@
     	<td>{%trans "Phone"%}:</td>
     	<td> {{agency.phone}}</td>
     </tr>   
-    <tr><td colspan="2" align="right">
-    <ul class="object-tools" >
-    	<li><a href="{%url gogogo.views.db.report.submit object_type,agency.key_name%}" >Report</a></li>
-    <li><a href="{% url gogogo.views.db.edit object_type,agency.key_name%}" >Edit</a>
-    </ul>
-    </td></tr>
 </table>
 
+<div style="height: 1em; margin-bottom:1em">
+    <ul class="object-tools" >
+    {% if user.is_authenticated %}
+    	<li><a href="{%url gogogo.views.db.add route_kind%}?parent={{agency.id}}">{% trans "Add route" %}</a></li>
+    {%endif%}
+    	<li><a href="{%url gogogo.views.db.report.submit agency_kind,agency_id%}" >Report</a></li>
+    <li><a href="{% url gogogo.views.db.edit object_type,agency.id%}" >Edit</a>
+    </ul>
+</div>
 
 <p></p>
 {% if railway_list|length %}
