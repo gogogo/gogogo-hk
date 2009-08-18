@@ -5,6 +5,17 @@ import logging
 from MLStringProperty import MLStringProperty
 from ragendja.dbutils import KeyListProperty
 
+def id_or_name(id):
+	"""
+	Convert an ID used in javascript to id or key name in app engine
+	"""
+	try:
+		ret = int(id)
+	except ValueError:
+		ret = id
+		
+	return ret
+
 def createEntity(object):
 	"""  Create an entity from model instance object which is 
 	suitable for data import and export. 
