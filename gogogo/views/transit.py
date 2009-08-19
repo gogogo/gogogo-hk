@@ -189,15 +189,28 @@ def route(request,agency_id,route_id):
 	route_entity['type'] = Route.get_type_name(route_entity['type'])
 	
 	trip_list = []
+	
+	endpoint_id_list = {}
+	endpoint_list = []
+	
 	for trip_loader in route_loader.get_trip_list():
 		entity = trEntity(trip_loader.get_entity(),request)
 		entity['first'] = trEntity(trip_loader.first,request)		
 		entity['last'] = trEntity(trip_loader.last,request)
 		entity['stop_list'] = [ trEntity(stop,request) for stop in trip_loader.stop_entity_list ]
 		trip_list.append(entity)
+		
+		for type in ("first","last"):
+			stop = entity[type]
+			id = stop['id']
+			if  id not in endpoint_id_list:
+				endpoint_id_list[id] = True;
+				endpoint_list.append(stop['latlng'].lat)
+				endpoint_list.append(stop['latlng'].lon)
 
+	trip_id_list = [ trip['id'] for trip in trip_list]
 	pathbar = Pathbar(agency=(agency_entity,route_entity,))
-
+	
 	return render_to_response( 
 		request,
 		'gogogo/transit/route.html'
@@ -209,9 +222,9 @@ def route(request,agency_id,route_id):
 		   "route" : route_entity,
 		   "trip_list" : trip_list,
 		   #"travel_list" : travel_list,
-		   #"endpoint_list" : endpoint_list,
+		   "endpoint_list" : endpoint_list,
 		   
-		   #"trip_id_list" : trip_id_list
+		   "trip_id_list" : trip_id_list
 		   })		
 
 def trip(request,agency_id,route_id,trip_id):

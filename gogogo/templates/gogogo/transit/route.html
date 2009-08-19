@@ -14,16 +14,19 @@
 			map = new GMap2(document.getElementById("map"));
 			gogogo.mapSetup(map);
 			
-			var point;
-			{% for point in endpoint_list %}
-			point = new GLatLng({{point.lat}}, {{point.lng}});
-            map.addOverlay(new GMarker(point));
-            {% endfor %}
+			var stopManager = new gogogo.StopManager(map);
+			
+			var endpoint_list = "{{endpoint_list|join:","}}"
+			endpoint_list = endpoint_list.split(",");
+			for (var i =0 ; i < endpoint_list.length ; i+=2) {
+				var point = new GLatLng(endpoint_list[i] , endpoint_list[i+1]);
+            	map.addOverlay(new GMarker(point));	
+			}
             
-            var stopManager = new gogogo.StopManager(map);
-            
-            {% for trip in trip_id_list %}
-            	var trip = new gogogo.Trip("{{trip}}");
+            var trip_id_list = "{{trip_id_list|join:","}}";
+            trip_id_list = trip_id_list.split(",")
+            for (var i in trip_id_list){
+            	var trip = new gogogo.Trip(trip_id_list[i]);
 
 				$(trip).one("stopObjectListComplete",function (e){
 					var line = e.target.createPolyline();
@@ -33,8 +36,7 @@
             	trip.query(function(trip){
 					trip.queryStops(stopManager);
 				});
-				
-            {% endfor %}
+			}
 			
 		});
 	</script>
