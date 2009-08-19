@@ -74,7 +74,7 @@ def browse(request,id):
 	"""	
 	
 	entity = getCachedEntityOr404(Changelog,id = int(id))
-	entity['id'] = int(id)
+	#entity['id'] = int(id)
 
 	return render_to_response( 
 		request,

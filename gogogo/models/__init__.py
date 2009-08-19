@@ -132,9 +132,6 @@ class Route(db.Model):
 	class Meta:
 		verbose_name = _('Routes')
 		verbose_name_plural = _('Routes')
-
-	def __unicode__(self):
-		return unicode(self.short_name)
 	
 	agency = db.ReferenceProperty(Agency,required=True)
 	
@@ -144,6 +141,8 @@ class Route(db.Model):
 	
 	desc = db.TextProperty()
 	
+	# Reference : 
+	# http://code.google.com/intl/zh-TW/transit/spec/transit_feed_specification.html#routes_txt___Field_Definitions
 	type = db.IntegerProperty(choices=range(0,8))
 	
 	#As Link must not be empty, it is replaced by String Property
@@ -153,10 +152,32 @@ class Route(db.Model):
 	
 	text_color = db.StringProperty()
 
+	def __unicode__(self):
+		return unicode(self.short_name)
+
 	@permalink
 	def get_absolute_url(self):
 		return ('gogogo.views.transit.route',[self.agency.key().id_or_name(),self.key().id_or_name()]) 
-
+		
+	def get_type_name(type):
+		if type == 0:
+			return "Tram, Streetcar, Light rail"
+		elif type == 1:
+			return "Subway, Metro" #Any underground rail system within a metropolitan area
+		elif type == 2:
+			return "Rail" #Used for intercity or long-distance travel. 
+		elif type == 3:
+			return "Bus"
+		elif type == 4:
+			return "Ferry"
+		elif type == 5:
+			return "Cable car"
+		elif type == 6:
+			return "Gondola, Suspended cable car"
+		elif type == 7:
+			return "Funicular"
+			
+	get_type_name = staticmethod(get_type_name)
 
 class Shape(db.Model):
 	"""
@@ -288,25 +309,7 @@ class Changelog(db.Model):
 	"""
 	Record the changes of data modified by web interface
 	"""
-	
-	def __unicode__(self):
-		return "%s %s %s" % (self.commit_date.isoformat() ,str(self.committer) , self.model_kind )
-		
-	def get_type_name(type):
-		"""
-		Get the name of a type
-		"""
-		if type == 0:
-			return "update"
-		elif type == 1:
-			return "add"
-		elif type =="2":
-			return "remove"
-		else:
-			return "Unknown"
-	
-	get_type_name = staticmethod(get_type_name)
-	
+				
 	# The committer. Anonymouse is not allowed
 	committer = db.UserProperty(auto_current_user_add=True)
 	
@@ -337,6 +340,25 @@ class Changelog(db.Model):
 	# A masked changelog will not be shown to public. It is probably a spam or invalid commit
 	masked = db.BooleanProperty()
 
+	def __unicode__(self):
+		return "%s %s %s" % (self.commit_date.isoformat() ,str(self.committer) , self.model_kind )
+
+	def get_type_name(type):
+		"""
+		Get the name of a type
+		"""
+		if type == 0:
+			return "update"
+		elif type == 1:
+			return "add"
+		elif type =="2":
+			return "remove"
+		else:
+			return "Unknown"
+	
+	get_type_name = staticmethod(get_type_name)
+
+
 class Report(db.Model):
 	"""
 	Report of invalid information
@@ -363,4 +385,5 @@ class Report(db.Model):
 	# 3 : Spam , it is spam
 	# 4 : Fixed , it is fixed.
 	status = db.IntegerProperty(default=0)
+
 

@@ -45,7 +45,8 @@
 {% if user.is_staff %}
 <div class="objects-tool">
 		<ul class="object-tools" >
-    	<li><a href="{%url gogogo.views.db.edit object_type,route.id %}" >Edit</a></li>
+		<li><a href="{%url gogogo.views.db.report.submit route_kind,route.id%}" >Report</a></li>
+    	<li><a href="{%url gogogo.views.db.edit route_kind,route.id %}" >Edit</a></li>
     	</ul>
 </div>
 <p>
@@ -63,10 +64,12 @@
         <td>Agency: </td>
         <td><a href="{%url gogogo.views.transit.agency agency.id%}">{{agency.name}}</a></td>
     </tr>
+    <tr><td>Type:</td><td>{{route.type}}</td></tr>
+    <tr><td>URL:</td><td>{% if route.url %}<a href="{{route.url}}">Link</a>{%endif%}</td></tr>
     <tr>
-        <td>Travel : </td>
-        <td>{%for travel in travel_list %}
-        {{travel.0}} =&#62; {{travel.1}}<br>
+        <td>Travel: </td>
+        <td>{%for trip in trip_list %}
+        {{trip.first.name}} =&#62; {{trip.last.name}} ({{trip.headsign}})<br>
         {% endfor%}
         </td>
     </tr>
@@ -99,7 +102,7 @@
 		<tr>
 			{%for trip in trip_list %}
 			<td>
-				{%for stop in trip.stop_list.data %}
+				{%for stop in trip.stop_list %}
 				
 				<a href="{%url gogogo.views.transit.stop stop.key_name %}">{{stop.name}}</a><br>
 				

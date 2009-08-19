@@ -18,6 +18,7 @@ from gogogo.geo.LatLng import LatLng
 from widgets import Pathbar as _Pathbar
 from gogogo.models.StopList import StopList
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
+from gogogo.models.loader import RouteLoader,TripLoader
 from google.appengine.api import memcache
 
 
@@ -142,46 +143,59 @@ def route(request,agency_id,route_id):
 	It is the most expensive call in the system.
 	"""
 	
+	route_loader = RouteLoader(route_id)
+	route_loader.load()
+	
 	lang = MLStringProperty.get_current_lang(request)
 	
-	agency_entity = getCachedEntityOr404(Agency,id_or_name=agency_id)	
-	route_entity = getCachedEntityOr404(Route,id_or_name=route_id)
+	#agency_entity = getCachedEntityOr404(Agency,id_or_name=agency_id)	
+	#route_entity = getCachedEntityOr404(Route,id_or_name=route_id)
 	
 	#TODO - memcache	
-	gql = db.GqlQuery("SELECT * from gogogo_trip where route = :1",route_entity['instance'])
+	#gql = db.GqlQuery("SELECT * from gogogo_trip where route = :1",route_entity['instance'])
+	
+	#trip_list = []
+	#travel_list = []
+	#trip_id_list = []
+	
+	## Endpoint in all trip
+	#endpoint_list = []
+	
+	#for trip_record in gql:
+		#stop_list = StopList(trip_record)
+		
+		#travel_list.append( (MLStringProperty.trans(stop_list.first.name,lang),
+			#MLStringProperty.trans(stop_list.last.name,lang)))
+		
+		#pt = LatLng(stop_list.first.latlng.lat,stop_list.first.latlng.lon )
+		#if pt not in endpoint_list:
+			#endpoint_list.append( pt )
+		
+		#pt = LatLng(stop_list.last.latlng.lat,stop_list.last.latlng.lon )
+		#if pt not in endpoint_list:
+			#endpoint_list.append( pt )	
+		
+		#trip_entity = {
+			#'headsign' : MLStringProperty.trans(trip_record.headsign,lang),
+			#'id' : trip_record.key().id_or_name(),
+			#'stop_list' : stop_list.createTREntity(request)
+		#}
+		
+		#trip_id_list.append(trip_record.key().id_or_name())
+		#trip_list.append(trip_entity)
+	
+	agency_entity = trEntity(route_loader.get_agency(),request)
+	route_entity = trEntity(route_loader.get_entity(),request)
+	route_entity['type'] = Route.get_type_name(route_entity['type'])
 	
 	trip_list = []
-	travel_list = []
-	trip_id_list = []
-	
-	# Endpoint in all trip
-	endpoint_list = []
-	
-	for trip_record in gql:
-		stop_list = StopList(trip_record)
-		
-		travel_list.append( (MLStringProperty.trans(stop_list.first.name,lang),
-			MLStringProperty.trans(stop_list.last.name,lang)))
-		
-		pt = LatLng(stop_list.first.latlng.lat,stop_list.first.latlng.lon )
-		if pt not in endpoint_list:
-			endpoint_list.append( pt )
-		
-		pt = LatLng(stop_list.last.latlng.lat,stop_list.last.latlng.lon )
-		if pt not in endpoint_list:
-			endpoint_list.append( pt )	
-		
-		trip_entity = {
-			'headsign' : MLStringProperty.trans(trip_record.headsign,lang),
-			'id' : trip_record.key().id_or_name(),
-			'stop_list' : stop_list.createTREntity(request)
-		}
-		
-		trip_id_list.append(trip_record.key().id_or_name())
-		trip_list.append(trip_entity)
-	
-	agency_entity = trEntity(agency_entity,request)
-	route_entity = trEntity(route_entity,request)
+	for trip_loader in route_loader.get_trip_list():
+		entity = trEntity(trip_loader.get_entity(),request)
+		entity['first'] = trEntity(trip_loader.first,request)		
+		entity['last'] = trEntity(trip_loader.last,request)
+		entity['stop_list'] = [ trEntity(stop,request) for stop in trip_loader.stop_entity_list ]
+		trip_list.append(entity)
+
 	pathbar = Pathbar(agency=(agency_entity,route_entity,))
 
 	return render_to_response( 
@@ -190,14 +204,14 @@ def route(request,agency_id,route_id):
 		,{ 
 			'page_title': agency_entity['name'] + " - " + route_entity['long_name'],
 			'pathbar' : pathbar,
-        	'object_type' : 'route',
+        	'route_kind' : 'route',
         	"agency" : agency_entity,
 		   "route" : route_entity,
 		   "trip_list" : trip_list,
-		   "travel_list" : travel_list,
-		   "endpoint_list" : endpoint_list,
+		   #"travel_list" : travel_list,
+		   #"endpoint_list" : endpoint_list,
 		   
-		   "trip_id_list" : trip_id_list
+		   #"trip_id_list" : trip_id_list
 		   })		
 
 def trip(request,agency_id,route_id,trip_id):
