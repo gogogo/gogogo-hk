@@ -31,7 +31,7 @@ urlpatterns = patterns(
     
     	#Report
     (r'^db/report/list$', 'gogogo.views.db.report.list'),
-    (r'^db/(?P<kind>[a-z]*)/report/(?P<id>[0-9a-zA-Z_]*)$', 'gogogo.views.db.report.submit'),
+    (r'^db/(?P<kind>[a-z]+)/report/(?P<id>[0-9a-zA-Z_]+)$', 'gogogo.views.db.report.submit'),
     
     # Generic model edit interface
     (r'^db/(?P<kind>[0-9a-zA-Z_]*)/edit/(?P<object_id>[0-9a-zA-Z_-]*)$', 'gogogo.views.db.edit'),

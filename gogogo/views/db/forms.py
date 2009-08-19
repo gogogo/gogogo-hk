@@ -34,15 +34,25 @@ class RouteForm(ModelForm):
 class TripForm(ModelForm):
 	class Meta:
 		model = Trip
+		
+		#TODO - Reenable stop_list
 		exclude = ["stop_list"]
 	
 	headsign = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())	
+	log_message = forms.CharField(widget = forms.Textarea)
+
+class StopForm(ModelForm):
+	class Meta:
+		model = Stop
+		
+	name = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())		
 	log_message = forms.CharField(widget = forms.Textarea)
 
 _supported_model = {
 	'route' : (Route,RouteForm),
 	'agency' : (Agency,AgencyForm),
 	'trip' : (Trip,TripForm),
+	'stop': (Stop,StopForm),
 }
 
 def _getModelInfo(kind):
@@ -58,6 +68,8 @@ def _createModel(kind,parent = None):
 		return Agency()
 	elif kind == "trip":
 		return Trip(route = db.Key.from_path(Route.kind() , value))
+	elif kind == "stop":
+		return Stop()
 		
 	raise ValueError
 

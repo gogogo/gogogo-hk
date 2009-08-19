@@ -9,6 +9,8 @@ def id_or_name(id):
 	"""
 	Convert an ID used in javascript to id or key name in app engine
 	"""
+	if id == None:
+		return None
 	try:
 		ret = int(id)
 	except ValueError:

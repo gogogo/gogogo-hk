@@ -292,6 +292,11 @@ def stop(request,stop_id):
 
 	entity = trEntity(entity,request)		
 	pathbar = Pathbar(stop=entity)
+	
+	parent = None
+	if 'parent_station' in entity and entity['parent_station'] != None:
+		parent = getCachedEntityOr404(Stop,id_or_name = entity['parent_station'].id_or_name())
+		parent = trEntity(parent,request)
 
 	t = loader.get_template('gogogo/transit/stop.html')
 	c = RequestContext(
@@ -299,6 +304,8 @@ def stop(request,stop_id):
 	{
 		'page_title': entity['name'] ,
 		'pathbar' : pathbar,
+		'parent' : parent,
+		'stop_kind' : "stop",
 	   	"stop" : entity,
     })
     		

@@ -127,6 +127,10 @@ class Stop(db.Model):
 	def update_geohash(self):
 		self.geohash = str(Geohash( (self.latlng.lon , self.latlng.lat) ))
 
+	@permalink
+	def get_absolute_url(self):
+		return ('gogogo.views.transit.stop',[self.key().id_or_name()]) 
+
 
 class Route(db.Model):	
 	class Meta:

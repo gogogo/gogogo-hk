@@ -1,4 +1,5 @@
 {% extends 'gogogo/mapview.html' %}
+{% load i18n %}
 
 {% block content-header %}
 {% include 'gogogo/transit/content_header.html'%}
@@ -22,6 +23,17 @@
 {% endblock %}
 
 {% block left_column %}
+
+<div style="height: 1em; margin-bottom:1em">
+    <ul class="object-tools" >
+    {% if user.is_authenticated %}
+    	<li><a href="{%url gogogo.views.db.add stop_kind%}">{% trans "Add" %}</a></li>
+    {%endif%}
+    <li><a href="{%url gogogo.views.db.report.submit stop_kind,stop.id%}" >Report</a></li>
+    <li><a href="{% url gogogo.views.db.edit stop_kind,stop.id%}" >Edit</a>
+    </ul>
+</div>
+
 <table>
     <tr>
     	<td>Name: </td>
@@ -31,6 +43,11 @@
 		<td>URL:</td>
     	<td><a href="{{stop.url}}">{{stop.url}}</a></td>  
 	</tr>
+	<tr><td>Code:</td><td>{{stop.code}}</td></tr>
+	<tr><td>LatLng:</td><td>{{stop.latlng}}</td></tr>
+	<tr><td>Location Type :</td><td>{{stop.location_type}}</td></tr>
+	<tr><td>Parent Station :</td><td>{%if parent %}
+		<a href="{%url gogogo.views.transit.stop parent.id %}">{{parent.name}}</a>{% endif %}</td></tr>
    <tr>
    		<td colspan="2">{{stop.desc}}</td>
    </tr> 
