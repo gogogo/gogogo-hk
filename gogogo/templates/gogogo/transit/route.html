@@ -19,9 +19,17 @@
 			
 			var endpoint_list = "{{endpoint_list|join:","}}"
 			endpoint_list = endpoint_list.split(",");
+			var bounds = new GLatLngBounds();
 			for (var i =0 ; i < endpoint_list.length ; i+=2) {
 				var point = new GLatLng(endpoint_list[i] , endpoint_list[i+1]);
+				bounds.extend(point);
             	map.addOverlay(new GMarker(point));	
+			}
+			
+			if (!bounds.isEmpty()){
+				var center = bounds.getCenter();
+				var zoom = map.getBoundsZoomLevel(bounds);
+				map.setCenter(center,zoom);
 			}
             
             var trip_id_list = "{{trip_id_list|join:","}}";

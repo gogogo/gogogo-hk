@@ -202,6 +202,8 @@ def route(request,agency_id,route_id):
 		
 		for type in ("first","last"):
 			stop = entity[type]
+			if stop == None:
+				continue
 			id = stop['id']
 			if  id not in endpoint_id_list:
 				endpoint_id_list[id] = True;

@@ -53,6 +53,8 @@ def trEntity(entity,request):
 	"""
 	Translate an entity 
 	"""
+	if entity == None:
+		return None
 	ret = {}
 	ret.update(entity)
 	

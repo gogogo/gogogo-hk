@@ -70,7 +70,7 @@ class TripLoader(Loader):
 				first = db.get(trip.stop_list[0])
 				last = db.get(trip.stop_list[len(trip.stop_list)-1])
 			except IndexError:
-				self.last = self.first
+				last = first
 			
 			stop_entity_list = []
 			for key in trip.stop_list:
@@ -82,8 +82,15 @@ class TripLoader(Loader):
 					logging.error("Stop %s not found" % str(stop_id))
 		
 			cache = {}	
-			cache['first'] = createEntity(first)
-			cache['last'] = createEntity(last)
+			
+			if first != None:
+				cache['first'] = createEntity(first)
+			else:
+				cache['first'] = None
+			if last != None:	
+				cache['last'] = createEntity(last)
+			else:
+				cache['last'] = None
 			cache['trip'] = trip_entity
 			cache['stop_entity_list'] = stop_entity_list
 			
