@@ -1,0 +1,44 @@
+<div style="width:600px;height:350px">
+<input {{final_attrs}} >
+<div id="{{map_id}}" style="width:600px;height: 300px;margin-top: 1em"></div>
+</div>
+
+<script type="text/javascript">
+	var {{map_id}};
+		
+	$(document).ready(function(){
+			{{map_id}} = new GMap2(document.getElementById("{{map_id}}"));
+			gogogo.mapSetup({{map_id}});
+			
+			var pt = new GLatLng({{value}});
+			var options = {
+				"draggable" : true
+			};
+			
+			var marker = new GMarker(pt,options);
+			{{map_id}}.addOverlay(marker);	
+			var {{marker_id}} = marker;
+			{{map_id}}.setZoom(18);
+			{{map_id}}.panTo(pt);
+			
+			GEvent.addListener(marker, "dragend", function(latlng){
+				$("#{{id}}").val(latlng.lat() + "," + latlng.lng());
+			});
+			
+			$("#{{id}}").change(function(){
+				console.log($(this).text());
+				console.log($("#{{id}}").val())
+				latlng = $(this).val().split(",");
+				lat = parseFloat(latlng[0]);
+				lng = parseFloat(latlng[1]);
+				console.log(lat,lng);
+				if (lat != NaN && lng != NaN){
+					var pt = new GLatLng(lat,lng);
+					{{marker_id}}.setLatLng(pt);
+					{{map_id}}.panTo(pt);
+				}
+			});
+			
+			
+	});
+</script>

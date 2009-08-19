@@ -12,6 +12,7 @@ from gogogo.models.cache import updateCachedObject
 from datetime import datetime
 from gogogo.models import TitledStringListField , MLStringProperty
 from gogogo.models.utils import id_or_name
+from gogogo.models.widgets import LatLngInputWidget
 import logging
 
 class AgencyForm(ModelForm):
@@ -45,7 +46,10 @@ class StopForm(ModelForm):
 	class Meta:
 		model = Stop
 		
+		exclude = ["geohash"]
+		
 	name = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())		
+	latlng = forms.CharField(widget = LatLngInputWidget)
 	log_message = forms.CharField(widget = forms.Textarea)
 
 _supported_model = {
@@ -73,6 +77,14 @@ def _createModel(kind,parent = None):
 		
 	raise ValueError
 
+def updateModel(kind,model):
+	"""
+	Update model
+	"""
+	
+	if kind == "stop":
+		model.update_geohash()
+
 def add(request,kind):
 	"""
 	Add new entry to database
@@ -83,7 +95,9 @@ def add(request,kind):
 	if request.method == 'POST':
 		form = model_form(request.POST)
 		if form.is_valid():
-			instance = form.save()
+			instance = form.save(commit=False)
+			updateModel(kind,instance)
+			instance.save()
 
 			old_rev = None
 			new_rev = entityToText(createEntity(instance))
@@ -150,6 +164,7 @@ def edit(request,kind,object_id):
 		if form.is_valid():
 			old_rev = entityToText(createEntity(object))
 			new_object = form.save(commit = False)
+			updateModel(kind,new_object)
 			new_rev = entityToText(createEntity(new_object))
 			
 			changelog = Changelog(
@@ -161,6 +176,7 @@ def edit(request,kind,object_id):
 				new_rev = new_rev,
 				model_kind=kind,
 				)
+			
 			
 			db.put([new_object,changelog])
 			updateCachedObject(new_object)
