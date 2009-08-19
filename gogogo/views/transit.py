@@ -142,28 +142,13 @@ def route(request,agency_id,route_id):
 	It is the most expensive call in the system.
 	"""
 	
-	agency_record = get_object_or_404(Agency,key_name=agency_id)
-	record = get_object_or_404(Route,key_name=route_id)
-
 	lang = MLStringProperty.get_current_lang(request)
 	
-	agency_entity = {
-		'key_name': agency_record.key().name(),
-		'name' : MLStringProperty.trans(agency_record.name,lang),
-	}
+	agency_entity = getCachedEntityOr404(Agency,id_or_name=agency_id)	
+	route_entity = getCachedEntityOr404(Route,id_or_name=route_id)
 	
-	route_entity = {
-		'key_name' : record.key().name(),
-		'long_name' : MLStringProperty.trans(record.long_name,lang),
-		'short_name' : record.short_name,
-		'desc' : record.desc,
-		
-		# Reduce the no. of database access
-		'agency' : agency_id
-		#'agency' : record.agency.key().name()
-	}
-	
-	gql = db.GqlQuery("SELECT * from gogogo_trip where route = :1",record)
+	#TODO - memcache	
+	gql = db.GqlQuery("SELECT * from gogogo_trip where route = :1",route_entity['instance'])
 	
 	trip_list = []
 	travel_list = []
@@ -188,49 +173,25 @@ def route(request,agency_id,route_id):
 		
 		trip_entity = {
 			'headsign' : MLStringProperty.trans(trip_record.headsign,lang),
-			'key_name' : trip_record.key().name(),
+			'id' : trip_record.key().id_or_name(),
 			'stop_list' : stop_list.createTREntity(request)
 		}
 		
-		trip_id_list.append(trip_record.key().name())
+		trip_id_list.append(trip_record.key().id_or_name())
 		trip_list.append(trip_entity)
 	
-	#for trip_record in gql:
-		#stop_list = []
-		#try:
-			#first_stop = db.get(trip_record.stop_list[0])
-			#last_stop = db.get(trip_record.stop_list[len(trip_record.stop_list)-1])
-			#travel_list.append( (MLStringProperty.trans(first_stop.name,lang),MLStringProperty.trans(last_stop.name,lang)))
-			
-			#pt = LatLng(first_stop.latlng.lat,first_stop.latlng.lon )
-			#if pt not in endpoint_list:
-				#endpoint_list.append( pt )
-			
-			#pt = LatLng(last_stop.latlng.lat,last_stop.latlng.lon )
-			#if pt not in endpoint_list:
-				#endpoint_list.append( pt )
-		#except IndexError:
-			#pass
-			
-		#for key in trip_record.stop_list:
-			#stop = db.get(key)
-			#stop_list.append( (key.name() , MLStringProperty.trans(stop.name,lang) ) )
-		#trip_entity = {
-			#'headsign' : MLStringProperty.trans(trip_record.headsign,lang),
-			#'key_name' : trip_record.key().name(),
-			#'stop_list' : stop_list
-		#}
-		#trip_list.append(trip_entity)
-
-	pathbar = Pathbar(agency=(agency_entity,route_entity))
+	agency_entity = trEntity(agency_entity,request)
+	route_entity = trEntity(route_entity,request)
+	pathbar = Pathbar(agency=(agency_entity,route_entity,))
 
 	return render_to_response( 
 		request,
 		'gogogo/transit/route.html'
 		,{ 
-			'page_title': route_entity['long_name'],
+			'page_title': agency_entity['name'] + " - " + route_entity['long_name'],
 			'pathbar' : pathbar,
         	'object_type' : 'route',
+        	"agency" : agency_entity,
 		   "route" : route_entity,
 		   "trip_list" : trip_list,
 		   "travel_list" : travel_list,

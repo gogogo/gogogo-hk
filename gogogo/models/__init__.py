@@ -155,7 +155,7 @@ class Route(db.Model):
 
 	@permalink
 	def get_absolute_url(self):
-		return ('gogogo.views.transit.route',[self.agency.key().name(),self.key().name()]) 
+		return ('gogogo.views.transit.route',[self.agency.key().id_or_name(),self.key().id_or_name()]) 
 
 
 class Shape(db.Model):

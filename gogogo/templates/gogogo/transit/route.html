@@ -45,7 +45,7 @@
 {% if user.is_staff %}
 <div class="objects-tool">
 		<ul class="object-tools" >
-    	<li><a href="{%url gogogo.views.db.edit object_type,route.key_name %}" >Edit</a></li>
+    	<li><a href="{%url gogogo.views.db.edit object_type,route.id %}" >Edit</a></li>
     	</ul>
 </div>
 <p>
@@ -61,7 +61,7 @@
 	</tr>
     <tr>
         <td>Agency: </td>
-        <td><a href="{%url gogogo.views.transit.agency route.agency%}">{{route.agency}}</a></td>
+        <td><a href="{%url gogogo.views.transit.agency agency.id%}">{{agency.name}}</a></td>
     </tr>
     <tr>
         <td>Travel : </td>
@@ -93,7 +93,7 @@
 	<table>
 		<tr>
 			{%for trip in trip_list %}
-			<td><a href="{%url gogogo.views.transit.trip route.agency route.key_name trip.key_name %}">{{trip.headsign}}</a></td>
+			<td><a href="{%url gogogo.views.transit.trip route.agency route.id trip.id %}">{{trip.headsign}}</a></td>
 			{%endfor %}
 		</tr>
 		<tr>
