@@ -9,7 +9,7 @@ urlpatterns = patterns(
 	
 	#Transit information (for general user)
 	
-	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_-]+)/(?P<route_id>[0-9a-zA-Z_-]+)/(?P<trip_id>[ -0-9a-zA-Z_]+)$', 'gogogo.views.transit.trip'),	
+	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_-]+)/(?P<route_id>[0-9a-zA-Z_-]+)/(?P<trip_id>[0-9a-zA-Z_-]+)$', 'gogogo.views.transit.trip'),	
 	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_-]+)/(?P<route_id>[0-9a-zA-Z_-]+)$', 'gogogo.views.transit.route'),
 
 	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.agency'),

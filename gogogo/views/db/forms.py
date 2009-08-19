@@ -35,7 +35,8 @@ class TripForm(ModelForm):
 	class Meta:
 		model = Trip
 		exclude = ["stop_list"]
-		
+	
+	headsign = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())	
 	log_message = forms.CharField(widget = forms.Textarea)
 
 _supported_model = {
@@ -44,10 +45,19 @@ _supported_model = {
 	'trip' : (Trip,TripForm),
 }
 
+def _getModelInfo(kind):
+	if kind in _supported_model:
+		return _supported_model[kind]
+	raise ValueError
+
 def _createModel(kind,parent = None):
 	value = id_or_name(parent)
 	if kind == "route":
 		return Route(agency = db.Key.from_path(Agency.kind() , value) )
+	elif kind == "agency":
+		return Agency()
+	elif kind == "trip":
+		return Trip(route = db.Key.from_path(Route.kind() , value))
 		
 	raise ValueError
 
@@ -56,8 +66,7 @@ def add(request,kind):
 	Add new entry to database
 	"""
 	
-	#TODO - Replace by a function call. Reference : _createModel()
-	(model,model_form) = _supported_model[kind]
+	(model,model_form) = _getModelInfo(kind)
 	
 	if request.method == 'POST':
 		form = model_form(request.POST)
@@ -110,7 +119,7 @@ def edit(request,kind,object_id):
 	Edit model
 	"""
 	
-	(model,model_form) = _supported_model[kind]
+	(model,model_form) = _getModelInfo(kind)
 	
 	message = ""
 

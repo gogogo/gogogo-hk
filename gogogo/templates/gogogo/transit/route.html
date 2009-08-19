@@ -1,4 +1,5 @@
 {% extends 'gogogo/transit/base.html' %}
+{% load i18n %}
 
 {% block js %}
 	{{block.super}}
@@ -47,6 +48,9 @@
 {% if user.is_staff %}
 <div class="objects-tool">
 		<ul class="object-tools" >
+    	{% if user.is_authenticated %}
+    	<li><a href="{%url gogogo.views.db.add trip_kind%}?parent={{route.id}}">{% trans "Add trip" %}</a></li>
+    	{%endif%}
 		<li><a href="{%url gogogo.views.db.report.submit route_kind,route.id%}" >Report</a></li>
     	<li><a href="{%url gogogo.views.db.edit route_kind,route.id %}" >Edit</a></li>
     	</ul>
@@ -98,7 +102,7 @@
 	<table>
 		<tr>
 			{%for trip in trip_list %}
-			<td><a href="{%url gogogo.views.transit.trip route.agency route.id trip.id %}">{{trip.headsign}}</a></td>
+			<td><a href="{%url gogogo.views.transit.trip agency.id route.id trip.id %}">{{trip.headsign}}</a></td>
 			{%endfor %}
 		</tr>
 		<tr>

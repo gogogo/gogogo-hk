@@ -218,6 +218,7 @@ def route(request,agency_id,route_id):
 			'page_title': agency_entity['name'] + " - " + route_entity['long_name'],
 			'pathbar' : pathbar,
         	'route_kind' : 'route',
+        	'trip_kind' : 'trip',
         	"agency" : agency_entity,
 		   "route" : route_entity,
 		   "trip_list" : trip_list,
@@ -232,27 +233,32 @@ def trip(request,agency_id,route_id,trip_id):
 	Browse the information of a trip
 	"""
 
-	trip_record = get_object_or_404(Trip,key_name=trip_id)
-	agency_record = get_object_or_404(Agency,key_name=agency_id)
-	route_record = get_object_or_404(Route,key_name=route_id)
+	trip_entity = getCachedEntityOr404(Trip,id_or_name=trip_id)
+	trip_record = trip_entity['instance']
+	agency_entity = getCachedEntityOr404(Agency,id_or_name=agency_id)
+	route_entity = getCachedEntityOr404(Route,id_or_name=route_id)
 	
-	lang = MLStringProperty.get_current_lang(request)
+	# lang = MLStringProperty.get_current_lang(request)
 	
-	trip_entity = {
-		'key_name' : trip_record.key().name(),
-		'short_name' : MLStringProperty.trans(trip_record.short_name,lang),
-		'headsign' : MLStringProperty.trans(trip_record.headsign,lang),
-	}
+	#trip_entity = {
+		#'key_name' : trip_record.key().name(),
+		#'short_name' : MLStringProperty.trans(trip_record.short_name,lang),
+		#'headsign' : MLStringProperty.trans(trip_record.headsign,lang),
+	#}
 	
-	agency_entity = {
-		'key_name': agency_record.key().name(),
-		'name' : MLStringProperty.trans(agency_record.name,lang),
-	}
+	#agency_entity = {
+		#'key_name': agency_record.key().name(),
+		#'name' : MLStringProperty.trans(agency_record.name,lang),
+	#}
 	
-	route_entity = {
-		'key_name' : route_record.key().name(),
-		'long_name' : MLStringProperty.trans(route_record.long_name,lang),
-	}
+	#route_entity = {
+		#'key_name' : route_record.key().name(),
+		#'long_name' : MLStringProperty.trans(route_record.long_name,lang),
+	#}
+	
+	trip_entity = trEntity(trip_entity,request)
+	agency_entity = trEntity(agency_entity,request)
+	route_entity = trEntity(route_entity,request)
 	
 	shape_entity = None
 	if trip_record.shape:

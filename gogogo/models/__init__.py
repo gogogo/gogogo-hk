@@ -271,9 +271,9 @@ class Trip(db.Model):
 	
 	@permalink
 	def get_absolute_url(self):
-		return ('gogogo.views.transit.trip',[self.route.agency.key().name(),
-			self.route.key().name(),
-			self.key().name()]) 
+		return ('gogogo.views.transit.trip',[self.route.agency.key().id_or_name(),
+			self.route.key().id_or_name(),
+			self.key().id_or_name()]) 
 	
 class Cluster(db.Model):
 	

@@ -29,7 +29,7 @@
     	<li><a href="{%url gogogo.views.db.add route_kind%}?parent={{agency.id}}">{% trans "Add route" %}</a></li>
     {%endif%}
     	<li><a href="{%url gogogo.views.db.report.submit agency_kind,agency_id%}" >Report</a></li>
-    <li><a href="{% url gogogo.views.db.edit object_type,agency.id%}" >Edit</a>
+    <li><a href="{% url gogogo.views.db.edit agency_kind,agency.id%}" >Edit</a>
     </ul>
 </div>
 
