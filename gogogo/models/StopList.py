@@ -3,6 +3,8 @@ from gogogo.models import *
 class StopList:
 	"""
 	Process Trip.stop_list to extract stop information.
+	
+	#TODO - Depcreate
 	"""
 
 	def __init__(self,trip):		

@@ -178,6 +178,13 @@ class Route(db.Model):
 			return "Funicular"
 			
 	get_type_name = staticmethod(get_type_name)
+	
+	def get_choices(cls):
+		ret = []
+		for i in range(0,8):
+			ret.append( (i,cls.get_type_name(i)) )
+		return ret
+	get_choices = classmethod(get_choices)
 
 class Shape(db.Model):
 	"""

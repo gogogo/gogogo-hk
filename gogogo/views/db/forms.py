@@ -27,7 +27,8 @@ class RouteForm(ModelForm):
 	class Meta:
 		model = Route
 		fields = ['agency','short_name','long_name','desc','type','url','color','text_color']
-		
+	
+	type = forms.ChoiceField(Route.get_choices())	
 	log_message = forms.CharField(widget = forms.Textarea)
 
 class TripForm(ModelForm):
@@ -142,8 +143,7 @@ def edit(request,kind,object_id):
 			
 			db.put([new_object,changelog])
 			updateCachedObject(new_object)
-			
-			#TODO - Update cache
+			#TODO - Update loader cache
 			
 			message = "The form is successfully saved. <a href='%s'>View.</a> " % object.get_absolute_url()
 

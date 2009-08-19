@@ -21,9 +21,23 @@ import logging
 _default_cache_time = 3600
 
 class Loader:
+	"""
+	Abstract based class for all Loader class.
+	
+	Sub-class must provide following attributes:
+	
+	cache_key_prefix = The prefix of cache key 
+	"""
 	
 	def get_entity(self):
 		return self.entity
+	
+	def get_cache_key(self):
+		return self.cache_key_prefix + str(self.id)
+		
+	def remove_cache(self):
+		cache_key = self.get_cache_key()
+		memcache.delete(cache_key)
 
 class TripLoader(Loader):
 	"""
@@ -32,6 +46,7 @@ class TripLoader(Loader):
 	"""
 	def __init__(self,id):
 		self.id = id_or_name(id)
+		self.cache_key_prefix = "gogogo_trip_loader_"
 
 	def load(self):
 		"""
@@ -41,7 +56,7 @@ class TripLoader(Loader):
 		getCachedEntityOr404 instead.
 		"""
 		
-		cache_key = "gogogo_trip_loader_%s" % str(self.id)
+		cache_key = self.get_cache_key()
 		
 		cache = memcache.get(cache_key)
 		
@@ -90,6 +105,7 @@ class RouteLoader(Loader):
 
 	def __init__(self,id):
 		self.id = id_or_name(id)
+		self.cache_key_prefix = "gogogo_route_loader_"
 
 	def load(self):
 		"""
@@ -99,7 +115,7 @@ class RouteLoader(Loader):
 		getCachedEntityOr404 instead.
 		"""
 		
-		cache_key = "gogogo_route_loader_%s" % str(self.id)
+		cache_key = self.get_cache_key()
 		
 		cache = memcache.get(cache_key)
 		
