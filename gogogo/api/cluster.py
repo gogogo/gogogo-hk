@@ -22,7 +22,7 @@ from google.appengine.api import memcache
 
 def search(request,lat0,lng0,lat1,lng1):
 	"""
-	Shape searching
+	Cluster searching
 
 	"""
 	

@@ -13,6 +13,7 @@ from gogogo.geo.geohash import Geohash
 
 from . import ApiResponse
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
+from gogogo.models.utils import createEntity, trEntity
 import logging
 
 _default_cache_time = 3600
@@ -21,7 +22,6 @@ def search(request,lat0,lng0,lat1,lng1):
 	"""
 		Search stop (api/stop/search)
 		
-		@TODO - Memcache support
 	"""
 	lat0 = float(lat0)
 	lng0 = float(lng0)
@@ -46,22 +46,30 @@ def search(request,lat0,lng0,lat1,lng1):
 	hash0 = str(Geohash( (minlng,minlat) ))
 	hash1 = str(Geohash( (maxlng,maxlat) ))
 
-	result = []
+	lang = MLStringProperty.get_current_lang(request)
+
+	cache_key = "gogogo_stop_%d_search_%s_%s" % (lang,hash0,hash1)
+
+	cache = memcache.get(cache_key)
 	
-	lang = MLStringProperty.get_current_lang(request)	
+	if cache == None:
+		result = []
 	
-	query = Stop.all().filter("geohash >=" , hash0).filter("geohash <=" , hash1)
+		query = Stop.all().filter("geohash >=" , hash0).filter("geohash <=" , hash1)
+		
+		for stop in query:
+			entity = createEntity(stop)
+			entity = trEntity(entity,request)
+			del entity['instance']
+			del entity['geohash']
+			del entity['key_name']
+			result.append(entity)
+		
+		cache = {}
+		cache['result'] = result	
+		memcache.add(cache_key, cache, _default_cache_time)
 	
-	for stop in query:
-		#TODO: Check again for real lat/lng value
-		entity = {
-			"id" : stop.key().name(),
-			"name" : MLStringProperty.trans(stop.name,lang),
-			"url" : stop.url,
-			"latlng" : stop.latlng,
-			"agency" : stop.agency,
-		}
-		result.append(entity)
+	result = cache['result']
 	
 	return ApiResponse(data=result)
 
