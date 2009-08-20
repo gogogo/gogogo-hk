@@ -18,7 +18,7 @@ from gogogo.geo.LatLng import LatLng
 from widgets import Pathbar as _Pathbar
 from gogogo.models.StopList import StopList
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
-from gogogo.models.loader import RouteLoader,TripLoader
+from gogogo.models.loaders import RouteLoader,TripLoader
 from google.appengine.api import memcache
 
 

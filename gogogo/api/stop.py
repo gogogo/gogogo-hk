@@ -113,7 +113,6 @@ def markerwin(request,id):
 	if 'parent_station' in cache:
 		parent_station = trEntity(cache['parent_station'],request)
 		
-		
 	t = loader.get_template('gogogo/api/stop-markerwin.html')
 	c = Context(
 	{
