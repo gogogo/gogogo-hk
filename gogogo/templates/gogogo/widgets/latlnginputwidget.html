@@ -26,8 +26,6 @@
 			});
 			
 			$("#{{id}}").change(function(){
-				console.log($(this).text());
-				console.log($("#{{id}}").val())
 				latlng = $(this).val().split(",");
 				lat = parseFloat(latlng[0]);
 				lng = parseFloat(latlng[1]);
