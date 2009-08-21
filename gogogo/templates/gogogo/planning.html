@@ -112,7 +112,8 @@
 		/// For temporary use
 		var directions = new GDirections(map,  document.getElementById("planningOutput"));
 		GEvent.addListener(directions,"error",function() {
-			console.log("error",directions.getStatus());
+			planningOutput.empty();
+			planningOutput.append("GDirection error " + directions.getStatus().code);
 		});	
 
 		$("#planButton").click(function() {
