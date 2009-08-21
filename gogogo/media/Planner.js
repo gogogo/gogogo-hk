@@ -21,9 +21,6 @@ gogogo.Planner = function() {
 	/// Array of address point (start , end)
 	this.points = [new gogogo.Address() , new gogogo.Address() ]
 	
-	/// Processing suggestion request
-	this.processing = false;
-	
 	this._bindCallback(0);
 	this._bindCallback(1);
 }
@@ -38,25 +35,9 @@ gogogo.Planner.prototype._bindCallback = function(index){
 	var index = index;
 
 	$(address).bind("clarify",function(event,response) { // Handle clarify event
-		planner.processing = false;
 		$(planner).trigger("clarifyAddress",[index,address,response]);
 	});
-	
-	$(address).bind("locationChanged",function() {
-		if (planner.processing) {
-						
-			if (index == 0 
-				&& planner.points[1].location == undefined ) {
 
-				planner.points[1].queryLocation();
-
-			} else { // index == 1
-				$(planner).trigger("tripReady");
-				planner.processing = false;
-			}
-			
-		}
-	});
 }
 
 /**
@@ -73,20 +54,22 @@ gogogo.Planner.prototype.getAddress = function(index){
  * @param start  
  */
 
-gogogo.Planner.prototype.suggest = function(start,end) {
+gogogo.Planner.prototype.suggest = function(start,end,callback) {
 
-	this.processing = true;
 	this.points[0].setAddress(start);
 	this.points[1].setAddress(end);
+	var planner = this;
 	
-	if (this.points[0].getLocation() == undefined ) {
-		this.points[0].queryLocation();
-	} else if (this.points[1].getLocation() == undefined ) {
-		this.points[1].queryLocation();
-	} else {
-		$(this).trigger("tripReady");
-		this.processing = false;
-	}
+	planner.points[0].queryLocation(function(location){
+		planner.points[1].queryLocation(function(location) {
+			//@TODO - Implement the real trip planner code
+			if (callback != undefined) {
+				callback(planner.points[0].getAddress(), planner.points[1].getAddress());	
+			}
+		});
+		
+	});
+
 
 }
 

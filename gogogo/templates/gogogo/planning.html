@@ -37,12 +37,12 @@
 		function panTo(index) {
 			var address = planner.getAddress(index);
 			address.setAddress($(addressList[index]).val());
-			if (address.getLocation() == undefined){
-				address.queryLocation();
-			} else {
-				map.panTo(address.getLocation());
-			}
-		}
+			address.clearQueryLocation();
+			address.queryLocation(function(location) {
+					map.setZoom(16);
+					map.panTo(location);
+				});
+		}	
 		
 		$.each(addressList,function(i,input){
 
@@ -58,7 +58,31 @@
 				panTo(i);
 			});
 		});
+		
+		function clarify(placemarks,target) {
+			var output = planningOutput;
+			output.empty();
+			output.append("<div> Do you mean ? </div>");
+			
+			$(placemarks).each(  function(i,place){
 				
+				var div = output.append("<div></div>");
+				div.append(i + ". ");
+				
+				var lnk = $("<a class='link_button'>" + place.address + " </a>");
+				
+				div.append(lnk);
+				var addr = place.address;
+				var point = new GLatLng(place.Point.coordinates[1],place.Point.coordinates[0]);
+								
+				$(lnk).click(function() {						
+					target.setAddress(addr);
+					target.setLocation(point);
+					output.empty();
+				});
+				
+			});			
+		}		
 		
 		$(planner).bind("clarifyAddress",function(event,index,address,response){
 		
@@ -80,27 +104,7 @@
 				output.append("Address unknown " + planner.getAddress(index) );
 				
 			} else {
-				output.append("<div> Do you mean ? </div>");
-				
-				$(response.Placemark).each(  function(i,place){
-					
-					var div = output.append("<div></div>");
-					div.append(i + ". ");
-					
-					var lnk = $("<a class='link_button'>" + place.address + " </a>");
-					
-					div.append(lnk);
-					var target = address;
-					var addr = place.address;
-					var point = place.point;
-					
-					$(lnk).click(function() {						
-						target.setAddress(addr);
-						//setAddress(index,place.address);
-						target.setLocation(point);
-					});
-					
-				});
+				clarify(response.Placemark,address);
 			}
 			
 		});
@@ -109,16 +113,11 @@
 		var directions = new GDirections(map,  document.getElementById("planningOutput"));
 		GEvent.addListener(directions,"error",function() {
 			console.log("error",directions.getStatus());
-		});
-		
-		$(planner).bind("tripReady",function(event,data) {
-			planningOutput.empty();
-			query = "from:" + $(addressList[0]).val() + " to: " + $(addressList[1]).val();
-			directions.load(query);
-		});
+		});	
 
 		$("#planButton").click(function() {
 			
+			/// Check for input address. Prompt user if the input is empty
 			$.each(addressList,function(i,input){
 				if ($(input).val() == ""){
 					$(input).focus();
@@ -126,9 +125,15 @@
 					planningOutput.append("Please input the address");
 					return false;
 				}
+				var address = planner.getAddress(i);
+				address.clearQueryLocation();
 			});
 			
-			planner.suggest ($("#startAddress").val() , $("#endAddress").val());
+			planner.suggest ($("#startAddress").val() , $("#endAddress").val(),function(start,end){
+				planningOutput.empty();
+				query = "from:" + $(addressList[0]).val() + " to: " + $(addressList[1]).val();
+				directions.load(query);
+			});
 		});
 			
 	});
