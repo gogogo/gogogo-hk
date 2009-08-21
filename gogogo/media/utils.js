@@ -1,9 +1,16 @@
 
 /** Replacement of $.extend
- * https://developer.mozilla.org/en/Core_JavaScript_1.5_Guide/Inheritance
+ * 
  */
 
 function extend(child, supertype)
 {
-   child.prototype.__proto__ = supertype.prototype;
+	// https://developer.mozilla.org/en/Core_JavaScript_1.5_Guide/Inheritance
+   // child.prototype.__proto__ = supertype.prototype; 
+   // Do not work in IE8
+   
+   var c = function() {};
+    c.prototype = supertype.prototype;
+    child.prototype = new c();
+
 }
