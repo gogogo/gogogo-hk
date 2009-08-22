@@ -24,7 +24,7 @@ def createEntity(object):
 
 	Opertions:
 	- Convert all ReferenceProperty to the key_name/key
-	- set 'key_name' attribute
+	- set 'id' attribute (= id_or_name()
 	- set 'instance' attribute , the reference to the model instance
 	
 	@return A dict object contains the entity of the model instance. The fields are not translated , use trEntity to translate to user's locale
@@ -46,7 +46,10 @@ def createEntity(object):
 				logging.info("KeyListProperty is not supported")
 				del entity[prop.name]
 			
-	entity['key_name'] = object.key().id_or_name() #TODO Deprecate
+	#entity['key_name'] = object.key().id_or_name()
+	
+	# The client side do not know the different between id and key_name, they just 
+	# "id" as the unique identifier of an entry
 	entity['id'] = object.key().id_or_name()
 	entity['instance'] = object
 	return entity
@@ -77,13 +80,13 @@ def entityToText(entity):
 	"""
 	Convert entity to text object. (For debugging and changelog generation)
 	"""
-	bad_word = ['key_name' , 'instance']
+	banned = ['id' , 'key_name' , 'instance']
 	
-	text = u"key_name : %s\n" % entity['key_name']
+	text = u"id : %s\n" % entity['id']
 	
 	fields = []
 	for prop in entity:
-		if prop not in bad_word:
+		if prop not in banned:
 			if isinstance(prop,list):
 				fields.append(u"%s: %s" % (prop,u','.join(entity[prop])) )
 			else:

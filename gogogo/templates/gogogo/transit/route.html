@@ -118,7 +118,7 @@
 			<td>
 				{%for stop in trip.stop_list %}
 				
-				<a href="{%url gogogo.views.transit.stop stop.key_name %}">{{stop.name}}</a><br>
+				<a href="{%url gogogo.views.transit.stop stop.id %}">{{stop.name}}</a><br>
 				
 				{%endfor %}
 			</td>

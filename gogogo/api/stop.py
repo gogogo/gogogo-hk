@@ -62,7 +62,6 @@ def search(request,lat0,lng0,lat1,lng1):
 			entity = trEntity(entity,request)
 			del entity['instance']
 			del entity['geohash']
-			del entity['key_name']
 			result.append(entity)
 		
 		cache = {}

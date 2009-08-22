@@ -5,7 +5,7 @@
 <lu>
 {% for trip in trip_list %}
 <li>
-<a href="{%url gogogo.views.transit.trip trip.agency_id trip.route_id trip.key_name %}">{{trip.headsign}}</a>
+<a href="{%url gogogo.views.transit.trip trip.agency_id trip.route_id trip.id %}">{{trip.headsign}}</a>
 </li>
 {% endfor %}
 </lu>
