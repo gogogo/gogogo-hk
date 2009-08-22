@@ -52,6 +52,8 @@ class Pathbar(_Pathbar):
 def index(request):
 	"""
 	Show transit information
+	
+	@TODO - Memcache
 	"""
 
 	pathbar = Pathbar()

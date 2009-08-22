@@ -11,96 +11,59 @@ from ragendja.template import render_to_response
 from gogogo.models import *
 #from gogogo.views.db import reverse as db_reverse
 from django.core.urlresolvers import reverse
+from gogogo.models.cache import getCachedEntityOr404
+from google.appengine.api import memcache
+
+# Shorter cache time for db object
+_default_cache_time = 300
 
 def list(request):
-	"""
-	List all agency
-	"""
-	query = Agency.all()
+    """
+    List all agency
+    """
+    
+    lang = MLStringProperty.get_current_lang(request)
+    cache_key = "gogogo_db_agency_list_%d" % lang
+    cache = memcache.get(cache_key)
+
+    if cache == None:
+        query = Agency.all(keys_only=True)
 	
-	agency_list = []
-	for row in query:
-		entity = create_entity(row,request)
-		entity['key_name'] = row.key().name()
-		agency_list.append(entity)
-	
-	t = loader.get_template('gogogo/agency/list.html')
-	c = RequestContext(
-		request,
-	{
+        result = []
+        for key in query:
+            entity = getCachedEntityOr404(Agency,key = key)
+            result.append(trEntity(entity,request))
+
+        cache = {}
+        cache['result'] = result
+        memcache.add(cache_key, cache, _default_cache_time)
+        
+    agency_list = cache['result']
+           
+    t = loader.get_template('gogogo/db/agency/list.html')
+    c = RequestContext(
+        request,
+    {
         'page_title': _("Agency List"),
         'agency_list' : agency_list
     })
-    		
-	return HttpResponse(t.render(c))
+            
+    return HttpResponse(t.render(c))
 
 def browse(request,id):
-	"""
-	Browse the information of an agency
-	"""
-	try:
-		key = db.Key.from_path(Agency.kind(),id)
-	
-		record = db.get(key)
-	except (db.BadArgumentError,db.BadValueError):
-		raise Http404
-	
-	if record == None:
-		raise Http404
-		
-	agency = create_entity(record,request)
-	agency['key_name'] = record.key().name()
-	t = loader.get_template('gogogo/agency/browse.html')
-	c = RequestContext(
-		request,
-	{
+    """
+    Browse the information of an agency
+    """
+
+    agency = getCachedEntityOr404(Agency,id_or_name=id)
+
+    t = loader.get_template('gogogo/db/agency/browse.html')
+    c = RequestContext(
+        request,
+    {
         'page_title': agency['name'] ,
         'agency' : agency
     })
-    		
-	return HttpResponse(t.render(c))
+            
+    return HttpResponse(t.render(c))
 
-class AgencyForm(ModelForm):
-	class Meta:
-		model = Agency
-		fields = ['name','phone','url','icon']
-
-@staff_only
-def edit(request,id):
-	"""
-	Edit agency information (staff only)
-	"""
-
-	try:
-		key = db.Key.from_path(Agency.kind(),id)
-	
-		record = db.get(key)
-	except (db.BadArgumentError,db.BadValueError):
-		raise Http404
-	
-	if record == None:
-		raise Http404
-	
-	message = ""
-	
-	if request.method == 'POST':
-		form = AgencyForm(request.POST,instance=record)
-		if form.is_valid():
-			form.save()
-			message = "The form is successfully saved. <a href='%s'>View.</a> " % record.get_absolute_url()
-
-	else:
-		form = AgencyForm(instance=record)
-
-	agency = create_entity(record,request)
-	agency['key_name'] = record.key().name()
-	
-	return render_to_response( 
-		request,
-		'gogogo/db/edit.html'
-		,{ "form" : form , 
-		   "agency" : agency,
-		   "message" : message,
-		   "action" : reverse('gogogo.views.db.agency.edit',args=(id,)) ,
-		   })		
-	
