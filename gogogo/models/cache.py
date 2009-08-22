@@ -48,7 +48,10 @@ def getCachedObjectOr404(model = None,key=None,key_name=None,id = None , id_or_n
 	object = memcache.get(cache_key)
 	
 	if object == None:
-		object = get_object_or_404(model, key=key,key_name=key_name, id = id)
+		if key:
+			object = get_object_or_404(model,key)
+		else:
+			object = get_object_or_404(model,key_name=key_name, id = id)
 		if not memcache.add(cache_key, object, _default_cache_time):
 			logging.error("Memcache set %s failed." % cache_key)
 
