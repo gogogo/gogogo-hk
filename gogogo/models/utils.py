@@ -4,6 +4,7 @@ from google.appengine.ext import db
 import logging
 from MLStringProperty import MLStringProperty
 from ragendja.dbutils import KeyListProperty
+from gogogo.geo import LatLng
 
 def id_or_name(id):
 	"""
@@ -93,3 +94,6 @@ def entityToText(entity):
 				fields.append(u"%s: %s" % (prop,entity[prop]) )
 			
 	return text + u"\n".join(fields)
+
+def latlngFromGeoPt(pt):
+    return LatLng(pt.lat,pt.lon)

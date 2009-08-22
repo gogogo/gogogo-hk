@@ -13,64 +13,58 @@ from gogogo.geo.geohash import Geohash
 
 from . import ApiResponse
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
-from gogogo.models.utils import createEntity, trEntity
+from gogogo.models.utils import createEntity, trEntity , latlngFromGeoPt
+from gogogo.geo import LatLng , LatLngBounds
+
 import logging
 
 _default_cache_time = 3600
 
 def search(request,lat0,lng0,lat1,lng1):
-	"""
-		Search stop (api/stop/search)
-		
-	"""
-	lat0 = float(lat0)
-	lng0 = float(lng0)
-	lat1 = float(lat1)
-	lng1 = float(lng1)
-	
-	if lat0 < lat1:
-		minlat = lat0
-		maxlat = lat1
-	else:
-		minlat = lat1
-		maxlat = lat0
-	
-	if lng0 < lng1:
-		minlng = lng0
-		maxlng = lng1
-	else:
-		minlng = lng1
-		maxlng = lng0
-		
-	#TODO: Check the distance. Prevent to dump the database that will spend too much bandwidth
-	hash0 = str(Geohash( (minlng,minlat) ))
-	hash1 = str(Geohash( (maxlng,maxlat) ))
+    """
+        Search stop (api/stop/search)
+        
+    """
+    lat0 = float(lat0)
+    lng0 = float(lng0)
+    lat1 = float(lat1)
+    lng1 = float(lng1)
 
-	lang = MLStringProperty.get_current_lang(request)
+    sw = LatLng(lat0,lng0)
+    ne = LatLng(lat1,lng1)
+    bounds = LatLngBounds(sw,ne)
+        
+    #TODO: Check the distance. Prevent to dump the database that will spend too much bandwidth
+    hash0 = str(Geohash( (sw.lng,sw.lat) ))
+    hash1 = str(Geohash( (ne.lng,ne.lat) ))
 
-	cache_key = "gogogo_stop_%d_search_%s_%s" % (lang,hash0,hash1)
+    lang = MLStringProperty.get_current_lang(request)
 
-	cache = memcache.get(cache_key)
-	
-	if cache == None:
-		result = []
-	
-		query = Stop.all().filter("geohash >=" , hash0).filter("geohash <=" , hash1)
-		
-		for stop in query:
-			entity = createEntity(stop)
-			entity = trEntity(entity,request)
-			del entity['instance']
-			del entity['geohash']
-			result.append(entity)
-		
-		cache = {}
-		cache['result'] = result	
-		memcache.add(cache_key, cache, _default_cache_time)
-	
-	result = cache['result']
-	
-	return ApiResponse(data=result)
+    cache_key = "gogogo_stop_search_%d_%s_%s" % (lang,hash0,hash1)
+
+    cache = memcache.get(cache_key)
+
+    if cache == None:
+        result = []
+
+        query = Stop.all().filter("geohash >=" , hash0).filter("geohash <=" , hash1)
+        
+        for stop in query:
+            pt = latlngFromGeoPt(stop.latlng)
+            if bounds.containsLatLng(pt):
+                entity = createEntity(stop)
+                entity = trEntity(entity,request)
+                del entity['instance']
+                del entity['geohash']
+                result.append(entity)
+        
+        cache = {}
+        cache['result'] = result	
+        memcache.add(cache_key, cache, _default_cache_time)
+
+    result = cache['result']
+
+    return ApiResponse(data=result)
 
 def markerwin(request,id):
 	"""
