@@ -80,7 +80,7 @@ LOGIN_URL = '/account/login/'
 LOGOUT_URL = '/account/logout/'
 LOGIN_REDIRECT_URL = '/'
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     #This will add jquery to your COMBINE_MEDIA['combined-%(LANGUAGE_CODE)s.js'] automatically
     'jquery',
     
@@ -101,7 +101,7 @@ INSTALLED_APPS = (
     'gogogo',
 
            
-)
+]
 
 # List apps which should be left out from app settings and urlsauto loading
 IGNORE_APP_SETTINGS = IGNORE_APP_URLSAUTO = (
@@ -114,6 +114,34 @@ IGNORE_APP_SETTINGS = IGNORE_APP_URLSAUTO = (
 from ragendja.settings_post import *
 
 DEFAULT_CHARSET="utf-8"
+
+###########
+# gaebar #
+###########
+
+GAEBAR_LOCAL_URL = 'http://localhost:8000'
+
+GAEBAR_SERVERS = {
+  u'Deployment': u'http://test.gogogo.hk', 
+#  u'Staging': u'http://myappstaging.appspot.com', 
+  u'Local Test': u'http://localhost:8000',
+}
+
+GAEBAR_MODELS = (
+     (
+          'gogogo.models', 
+          ('Agency','Stop','Route','Trip','Changelog','Cluster'),
+     ),
+)
+
+try:
+    GAEBAR_SECRET_KEY = settings_private.GAEBAR_SECRET_KEY
+except AttributeError:
+    ENABLE_GAEBAR = False
+else:
+    ENABLE_GAEBAR = True # Enable gaebar only if the secret key is set
+    INSTALLED_APPS.append("gaebar")
+
 
 ###########
 # Gogogo #
