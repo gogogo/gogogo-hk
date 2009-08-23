@@ -130,7 +130,7 @@ GAEBAR_SERVERS = {
 GAEBAR_MODELS = (
      (
           'gogogo.models', 
-          (u'Agency',u'Stop',u'Route',u'Trip',u'Changelog',u'Cluster'),
+          ('Agency','Stop','Route','Trip','Changelog','Cluster'),
      ),
 )
 

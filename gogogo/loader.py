@@ -9,6 +9,8 @@ sys.path.insert(0 , os.path.abspath(os.path.dirname(__file__) + "/../common/appe
 sys.path.insert(0 , os.path.abspath(os.path.dirname(__file__) + "/../"))
 import main
 import gogogo.models
+import logging
+from gogogo.models import *
 
 def convert_key_name_to_key(model,key_name):
 	ret = None
@@ -55,11 +57,12 @@ class StopLoader(bulkloader.Loader):
 	def __init__(self):
 		bulkloader.Loader.__init__(self, 'gogogo_stop',
                                [
-#                               ('agency', db.Key),
                                ('key_name',str),
+                               ('agency',lambda x: convert_key_name_to_key(Agency,x) ),
                                ('code',str),	
                                ('name', lambda x: unicode(x,'utf-8').split(u'|') ),
                                ('desc', lambda x: unicode(x,'utf-8').split(u'|') ),
+                               ('address', lambda x: unicode(x,'utf-8').split(u'|') ),
                                ('lat',str),
                                ('lng',str),
                                ('zone_id',str),

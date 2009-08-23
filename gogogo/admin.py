@@ -8,8 +8,8 @@ class AgencyAdmin(admin.ModelAdmin):
         (None, {
             'fields': ('name', 'url', 'timezone', 
             'phone',
-            'icon'
-            
+            'icon',
+            'no_service'
             )
         }),
 
@@ -34,6 +34,7 @@ class StopAdmin(admin.ModelAdmin):
             'fields': (
             	'code', 
             	'name',
+            	'address',
             	'desc',
             	'latlng',
             	'geohash',
@@ -41,7 +42,7 @@ class StopAdmin(admin.ModelAdmin):
             	'location_type',
             	'parent_station',
             	'inaccuracy',
-            	)
+                )
         }),
     )
     

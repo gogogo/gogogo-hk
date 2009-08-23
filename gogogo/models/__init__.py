@@ -62,6 +62,11 @@ class Agency(db.Model):
 	#desc = MLStringProperty() - Later will implement a text input for multiple language handling
 
 	icon = db.StringProperty()
+	
+	# An agency with "no_service" means that the agency do not provide
+	# any transportation service. It is just used to manage facilities
+	# (stop) on map.
+	no_service = db.BooleanProperty(default=False)
 
 	class Meta:
 		verbose_name = _('Transport Agency')
@@ -88,6 +93,9 @@ class Stop(db.Model):
 	name = MLStringProperty(required=True)
 	
 	desc = MLStringProperty()
+	
+	# The address of the stop
+	address = MLStringProperty()
 
 	# Geo position of the stop. It is not indexed. Instead, it should use geohash
 	latlng = db.GeoPtProperty()
@@ -106,6 +114,10 @@ class Stop(db.Model):
 	location_type = db.IntegerProperty(choices=set([0,1]))
 	
 	parent_station = db.SelfReferenceProperty()
+	
+	# Tag of the stop for advanced feature.
+	# e.g Stop with facility for disabled person
+	tags = db.StringProperty()
 
 	# nearby stop list
 	#near = KeyListProperty(Stop)

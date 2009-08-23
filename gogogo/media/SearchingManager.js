@@ -7,7 +7,7 @@ gogogo.SearchingManager = function (map){
 	this.map = map;
 	
 	/// The min zooming for searching 
-	this.minZoom = 16;
+	this.minZoom = 17;
 	
 	/// Auto refresh when the map is moved.
 	this.autoRefresh = true;

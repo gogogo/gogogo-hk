@@ -71,7 +71,7 @@ for modelstuple in settings.GAEBAR_MODELS:
 	model_package = modelstuple[0]
 	model_classes = modelstuple[1]
 	for model_class in model_classes:
-		__import__(model_package, globals(), locals(), str(model_classes))
+		__import__(model_package, globals(), locals(), model_classes)
 
 
 
@@ -445,14 +445,10 @@ def backup_rows(request):
 	kind_map = db._kind_map
 
 	model_classes = []
-	current_model_name="" 
 	for model_name in kind_map:
 		model_classes.append(kind_map[model_name])
-		if model_name.rsplit('_', 1)[-1] == current_model.lower() or model_name == current_model.lower():
-			if current_model_name=="" or kind_map[model_name].all().count(1) >0:
-				current_model_name = model_name 
 		
-	Model = kind_map[current_model_name]
+	Model = kind_map[current_model]
 		
 	fields = Model.fields()
 	
