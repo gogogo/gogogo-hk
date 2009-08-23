@@ -32,6 +32,7 @@ class StopAdmin(admin.ModelAdmin):
 	fieldsets = (
         (None, {
             'fields': (
+                'agency',
             	'code', 
             	'name',
             	'address',

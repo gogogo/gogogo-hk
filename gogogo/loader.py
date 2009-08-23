@@ -13,22 +13,17 @@ import logging
 from gogogo.models import *
 
 def convert_key_name_to_key(model,key_name):
-	ret = None
-	if key_name:
-		object = model.get_by_key_name(key_name)
-		if object:
-			ret = object.key()
-	return ret
+    if key_name == None or key_name == "":
+        return None
+    return db.Key.from_path(model.kind(),key_name)    
 
 def convert_key_name_list_to_key_list(model,value):
-	input = unicode(value,'utf-8').split(u',')
-	ret = []
-	for key_name in input:
-		if len(key_name) > 0:
-			object = model.get_by_key_name(key_name)
-			if object:
-				ret.append(object.key())
-	return ret
+    input = unicode(value,'utf-8').split(u',')
+    ret = []
+    for key_name in input:
+        if len(key_name) > 0:
+            ret.append(convert_key_name_to_key(model,key_name))
+    return ret
 
 def convert_to_list(value,sep,type):
 	ret = value.split(sep)
@@ -68,7 +63,7 @@ class StopLoader(bulkloader.Loader):
                                ('zone_id',str),
                                ('url',str),
                                ('location_type',int),
-                               ('parent_station',lambda x: convert_key_name_to_key(gogogo.models.Stop,x) ),
+                               ('parent_station',lambda x: convert_key_name_to_key(Stop,x) ),
                                ])                               
 
 class RouteLoader(bulkloader.Loader):
