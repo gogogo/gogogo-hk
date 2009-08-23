@@ -96,4 +96,10 @@ def entityToText(entity):
 	return text + u"\n".join(fields)
 
 def latlngFromGeoPt(pt):
+    """
+    Construct LatLng object db.GeoPt instance
+    """
     return LatLng(pt.lat,pt.lon)
+
+
+

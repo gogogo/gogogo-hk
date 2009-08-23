@@ -13,6 +13,7 @@ from gogogo.geo.geohash import Geohash
 
 from . import ApiResponse
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
+
 import logging
 import math
 
@@ -23,6 +24,7 @@ from google.appengine.api import memcache
 def search(request,lat0,lng0,lat1,lng1):
 	"""
 	Cluster searching
+	Deprecated
 
 	"""
 	
@@ -72,3 +74,35 @@ def search(request,lat0,lng0,lat1,lng1):
 	
 	return ApiResponse(data=result)
 
+def block(request):
+
+    if "prefix" not in request.GET:
+        return ApiResponse(error="Prefix missing")
+        
+    prefix = request.GET['prefix']
+
+    if len(prefix) <= 4:
+        return ApiResponse(error="The query range is too large")
+
+    cache_key = "gogogo_cluster_block_%s" % (prefix)
+    cache = memcache.get(cache_key)
+
+    if cache == None:           
+        query = Cluster.all(keys_only=True).filter("geohash >=" , prefix ).filter("geohash <=" , prefix + 'z')
+        
+        result = []
+        for key in query:
+            entity = getCachedEntityOr404(Cluster,key = key)
+            del entity['instance']
+            del entity['geohash']
+            entity['radius'] = "%0.3f" % entity['radius']
+            result.append(entity)
+        
+        cache = {}
+        cache['result'] = result
+        
+        memcache.add(cache_key, cache, _default_cache_time)
+        
+    result = cache['result']
+    
+    return ApiResponse(data=result)

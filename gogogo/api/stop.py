@@ -23,6 +23,7 @@ _default_cache_time = 3600
 def search(request,lat0,lng0,lat1,lng1):
     """
         Search stop (api/stop/search)
+        Deprecated
         
     """
     lat0 = float(lat0)
@@ -65,6 +66,41 @@ def search(request,lat0,lng0,lat1,lng1):
     result = cache['result']
 
     return ApiResponse(data=result)
+
+def block(request):
+    if "prefix" not in request.GET:
+        return ApiResponse(error="Prefix missing")
+        
+    prefix = request.GET['prefix']
+
+    if len(prefix) <= 4:
+        return ApiResponse(error="The query range is too large")
+
+    lang = MLStringProperty.get_current_lang(request)
+
+    cache_key = "gogogo_stop_block_%d_%s" % (lang,prefix)
+    cache = memcache.get(cache_key)
+
+    if cache == None:           
+        query = Stop.all(keys_only=True).filter("geohash >=" , prefix ).filter("geohash <=" , prefix + 'z')
+        
+        result = []
+        for key in query:
+            entity = getCachedEntityOr404(Stop,key = key)
+            entity = trEntity(entity,request)
+            del entity['instance']
+            del entity['geohash']           
+            result.append(entity)
+        
+        cache = {}
+        cache['result'] = result
+        
+        memcache.add(cache_key, cache, _default_cache_time)
+        
+    result = cache['result']
+    
+    return ApiResponse(data=result)
+    
 
 def markerwin(request,id):
 	"""

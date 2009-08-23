@@ -12,20 +12,37 @@ gogogo.SearchingManager = function (map){
 	/// Auto refresh when the map is moved.
 	this.autoRefresh = true;
 
+    /// Deprecated
 	this.lastBounds = new GLatLngBounds();
+	
+	/// Store previous queryed geohas prefix
+	this.geohash_prefix_list = new Object();
 
 	var manager = this;
 			
 	GEvent.addListener(map, "moveend", function(){
 		if (manager.autoRefresh 
 			&& manager.map.getZoom() >= manager.minZoom) {
-				
+			
+			/// @TODO - Fix for user who own an extremely large monitor?
+			var prefix = hashBounds(manager.map.getBounds(), 6);
+			
+			for (var i = 0 ; i < prefix.length ;i++) {
+			    if (manager.geohash_prefix_list[prefix[i]] == undefined){
+			        manager.geohash_prefix_list[prefix[i]] = true;
+			        manager.search(prefix[i]);
+                }
+            }
+			
+			/*
+			
 			var bounds = manager.getBounds();
 			
 			if (!bounds.equals(manager.lastBounds)){
 				manager.refresh(bounds);	
 				manager.lastBounds = bounds;
 			}
+			*/
 		}
 	});	
 }

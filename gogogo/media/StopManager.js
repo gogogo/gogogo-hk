@@ -25,6 +25,7 @@ extend(gogogo.StopManager,gogogo.SearchingManager);
 
 /** Refresh the stop list from gogogo server.
  * 
+ * Deprecated 
  */
 
 gogogo.StopManager.prototype.refresh = function(bounds) {	
@@ -32,6 +33,33 @@ gogogo.StopManager.prototype.refresh = function(bounds) {
 	var api = "/api/stop/search/" + 
 		bounds.getSouthWest().lat() + "," + bounds.getSouthWest().lng() + "," +
 		bounds.getNorthEast().lat() + "," + bounds.getNorthEast().lng();
+	
+	manager = this;
+	
+	var cache = jQuery.ajaxSettings.cache;
+	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
+	$.getJSON(api, null , function(data) {
+		if (data.stat == "ok") {
+			$.each(data.data, function(i, item){
+				if (manager.stops[item.id] == undefined ) {
+					var stop = new gogogo.Stop(item.id);
+					stop.updateFromJson(item);
+					var marker = stop.createMarker();
+                 
+                	manager.markermanager.addMarker(marker,manager.minZoom);
+                	manager.stops[item.id] = stop;
+				}
+			});
+			manager.markermanager.refresh();
+		}
+	});
+	jQuery.ajaxSettings.cache = cache;	
+		
+}
+
+gogogo.StopManager.prototype.search = function(prefix) {	
+
+	var api = "/api/stop/block?prefix=" + prefix;
 	
 	manager = this;
 	
