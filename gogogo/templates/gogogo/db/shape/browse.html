@@ -9,7 +9,7 @@
 	var stopManager;
 	
 	$(document).ready(function(){
-		var shape = new gogogo.Shape("{{shape.key_name}}")
+		var shape = new gogogo.Shape("{{shape.id}}")
 		
 		shape.query(function(){
 			var overlay = shape.createOverlay();
@@ -35,7 +35,7 @@
 <table>
     <tr>
     	<td>Name: </td>
-    	<td>{{shape.key_name}}</td>
+    	<td>{{shape.id}}</td>
     </tr>
 </table>
 {% endblock %}

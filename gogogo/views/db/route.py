@@ -43,7 +43,7 @@ def search(request):
 	
 	for row in gql:
 		entity = create_entity(row,request)
-		entity['key_name'] = row.key().name()
+		entity['id'] = row.key().id_or_name()
 		entity['agency'] = row.agency.key().name()
 		result.append(entity)
 
@@ -80,7 +80,7 @@ def edit(request,id):
 		form = Form(instance=record)
 
 	agency = create_entity(record,request)
-	agency['key_name'] = record.key().name()
+	agency['id'] = record.key().id_or_name()
 	
 	return render_to_response( 
 		request,

@@ -9,6 +9,10 @@ handlers:
 - url: /media
   static_dir: _generated_media
 
+# Static: Gaebar
+- url: /gaebar/static
+  static_dir: gaebar/static
+
 - url: /remote_api
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin

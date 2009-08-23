@@ -25,7 +25,7 @@ def browse(request,id):
 	c = RequestContext(
 		request,
 	{
-        'page_title': entity['key_name'] ,
+        'page_title': entity['id'] ,
         'shape' : entity
     })
     		

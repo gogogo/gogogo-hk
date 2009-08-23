@@ -25,6 +25,8 @@ settings.add_app_media('combined-%(LANGUAGE_CODE)s.js',
     #Marker Clusterer v1.0
     # http://gmaps-utility-library.googlecode.com/svn/trunk/markerclusterer/1.0/src/markerclusterer_packed.js
     'gogogo/markerclusterer_v1.0_packed.js',
+    
+    'gogogo/geohash.js',
         
     #Gogogo javascript
     setting_converter,

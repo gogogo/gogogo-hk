@@ -4,12 +4,13 @@ from ragendja.urlsauto import urlpatterns
 from ragendja.auth.urls import urlpatterns as auth_patterns
 #from myapp.forms import UserRegistrationForm
 from django.contrib import admin
+from django.conf import settings
 
 admin.autodiscover()
 
 handler500 = 'ragendja.views.server_error'
 
-urlpatterns = auth_patterns + patterns('',
+site_patterns = patterns('',
 	(r'^i18n/', include('django.conf.urls.i18n')),
 
     ('^admin/(.*)', admin.site.root),
@@ -25,5 +26,12 @@ urlpatterns = auth_patterns + patterns('',
  #   url(r'^account/register/$', 'registration.views.register',
  #       kwargs={'form_class': UserRegistrationForm},
  #       name='registration_register'),
- 
-) + urlpatterns
+)
+
+if settings.ENABLE_GAEBAR:
+    gaebar_patterns = patterns('',
+        url(r'^gaebar/', include('gaebar.urls')),
+        )
+    urlpatterns = auth_patterns + site_patterns + gaebar_patterns  + urlpatterns    
+else:
+    urlpatterns = auth_patterns + site_patterns + urlpatterns

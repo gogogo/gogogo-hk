@@ -61,7 +61,6 @@ class ApiResponse(HttpResponse):
 		
 		return text.getvalue()
 
-
 def agency_list(request):
 	"""
 	Handle api/agency/list

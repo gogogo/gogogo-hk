@@ -36,22 +36,24 @@ class Pathbar(_Pathbar):
 		if agency:
 			try:
 				self.append(agency[0]['name'] , 
-					'gogogo.views.transit.agency' , [agency[0]['key_name']])
+					'gogogo.views.transit.agency' , [agency[0]['id']])
 				self.append(agency[1]['long_name'] , 
 					'gogogo.views.transit.route' , 
-						[agency[0]['key_name'] , agency[1]['key_name']])
+						[agency[0]['id'] , agency[1]['id']])
 				self.append(agency[2]['headsign'] , 
 					'gogogo.views.transit.trip' , 
-						[agency[0]['key_name'] , agency[1]['key_name'],agency[2]['key_name']])					
+						[agency[0]['id'] , agency[1]['id'],agency[2]['id']])					
 			except IndexError:
 				pass
 				
 		elif stop:
-			self.append(stop['name'] , 'gogogo.views.transit.stop', [ stop['key_name']]  )		
+			self.append(stop['name'] , 'gogogo.views.transit.stop', [ stop['id']]  )		
 
 def index(request):
 	"""
 	Show transit information
+	
+	@TODO - Memcache
 	"""
 
 	pathbar = Pathbar()
@@ -62,7 +64,7 @@ def index(request):
 	agency_list = []
 	for row in query:
 		entity = create_entity(row,request)
-		entity['key_name'] = row.key().id_or_name()
+		entity['id'] = row.key().id_or_name()
 		agency_list.append(entity)
 
 	return render_to_response( 
@@ -288,7 +290,7 @@ def stop(request,stop_id):
 	"""
 	Browse stop information
 	"""	
-	entity = getCachedEntityOr404(Stop,key_name = stop_id)
+	entity = getCachedEntityOr404(Stop,id_or_name = stop_id)
 
 	entity = trEntity(entity,request)		
 	pathbar = Pathbar(stop=entity)

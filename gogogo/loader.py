@@ -9,24 +9,21 @@ sys.path.insert(0 , os.path.abspath(os.path.dirname(__file__) + "/../common/appe
 sys.path.insert(0 , os.path.abspath(os.path.dirname(__file__) + "/../"))
 import main
 import gogogo.models
+import logging
+from gogogo.models import *
 
 def convert_key_name_to_key(model,key_name):
-	ret = None
-	if key_name:
-		object = model.get_by_key_name(key_name)
-		if object:
-			ret = object.key()
-	return ret
+    if key_name == None or key_name == "":
+        return None
+    return db.Key.from_path(model.kind(),key_name)    
 
 def convert_key_name_list_to_key_list(model,value):
-	input = unicode(value,'utf-8').split(u',')
-	ret = []
-	for key_name in input:
-		if len(key_name) > 0:
-			object = model.get_by_key_name(key_name)
-			if object:
-				ret.append(object.key())
-	return ret
+    input = unicode(value,'utf-8').split(u',')
+    ret = []
+    for key_name in input:
+        if len(key_name) > 0:
+            ret.append(convert_key_name_to_key(model,key_name))
+    return ret
 
 def convert_to_list(value,sep,type):
 	ret = value.split(sep)
@@ -55,17 +52,18 @@ class StopLoader(bulkloader.Loader):
 	def __init__(self):
 		bulkloader.Loader.__init__(self, 'gogogo_stop',
                                [
-#                               ('agency', db.Key),
                                ('key_name',str),
+                               ('agency',lambda x: convert_key_name_to_key(Agency,x) ),
                                ('code',str),	
                                ('name', lambda x: unicode(x,'utf-8').split(u'|') ),
                                ('desc', lambda x: unicode(x,'utf-8').split(u'|') ),
+                               ('address', lambda x: unicode(x,'utf-8').split(u'|') ),
                                ('lat',str),
                                ('lng',str),
                                ('zone_id',str),
                                ('url',str),
                                ('location_type',int),
-                               ('parent_station',lambda x: convert_key_name_to_key(gogogo.models.Stop,x) ),
+                               ('parent_station',lambda x: convert_key_name_to_key(Stop,x) ),
                                ])                               
 
 class RouteLoader(bulkloader.Loader):

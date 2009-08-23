@@ -21,7 +21,7 @@ class StopList:
 		for key in trip.stop_list:
 			stop = db.get(key)
 			self.data.append( { 
-				"key_name" : key.name(),
+				"id" : key.id_or_name(),
 				"object"	: stop
 			})
 
@@ -35,7 +35,7 @@ class StopList:
 		data = []
 		for stop in self.data:
 			entity = {
-				'key_name' : stop['key_name'],
+				'id' : stop['id'],
 				'name' : MLStringProperty.trans(stop['object'].name,lang  )
 			}
 			data.append(entity)

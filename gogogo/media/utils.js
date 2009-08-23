@@ -14,3 +14,30 @@ function extend(child, supertype)
     child.prototype = new c();
 
 }
+
+/** Convert a GLatLngBounds object into an array of geohash with 
+ * assigned prefix length
+ * 
+ */
+
+function hashBounds(bounds,prefix_len) {
+    var points = [];
+    var hashs = new Object();
+    var sw = bounds.getSouthWest();
+    var ne = bounds.getNorthEast();
+    points.push(sw)
+    points.push(new GLatLng(ne.lat(),sw.lng())  )
+    points.push(ne)
+    points.push(new GLatLng(sw.lat(),ne.lng())  )
+    
+    for (var i =0 ; i < points.length ;i++) {
+        var h = encodeGeoHash(points[i].lat() , points[i].lng() );
+        hashs[h.substr(0,prefix_len)] = true;
+    }
+    
+    var ret = []
+    for (var h in hashs){
+        ret.push(h);
+    }
+    return ret;
+}
