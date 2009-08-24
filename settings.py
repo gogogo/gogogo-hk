@@ -123,14 +123,14 @@ GAEBAR_LOCAL_URL = 'http://localhost:8000'
 
 GAEBAR_SERVERS = {
   u'Deployment': u'http://test.gogogo.hk', 
-#  u'Staging': u'http://myappstaging.appspot.com', 
-  u'Local Test': u'http://localhost:8000',
+  u'Staging': u'http://gogogo-staging.appspot.com', 
+  u'Local Test': u'http://localhost:8080',
 }
 
 GAEBAR_MODELS = (
      (
           'gogogo.models', 
-          ('Agency','Stop','Route','Trip','Changelog','Cluster'),
+          (u'Agency',u'Stop',u'Route',u'Trip',u'Changelog',u'Cluster'),
      ),
 )
 
