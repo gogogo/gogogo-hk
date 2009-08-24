@@ -4,8 +4,12 @@ from django.core.urlresolvers import reverse
 from django import forms
 from django.forms.widgets import Input
 from django.utils.safestring import mark_safe
+from django.forms.util import flatatt
+from django.utils.encoding import StrAndUnicode, force_unicode
+from django.template import Context, loader , RequestContext
 
 from gogogo.models.cache import getCachedObjectOr404
+
 import cgi
 
 class Pathbar:
@@ -63,3 +67,27 @@ class ReferenceLinkField(forms.Field):
 		if instance is None:
 			raise db.BadValueError(self.error_messages['invalid_choice'])
 		return instance
+
+class LatLngInputWidget(forms.Widget):	
+    def __init__(self, attrs=None):
+        super(LatLngInputWidget, self).__init__(attrs)
+
+    def render(self, name, value, attrs=None):
+        if value is None: value = ''
+        
+        final_attrs = self.build_attrs(attrs, name=name)
+        if value != '':
+            final_attrs['value'] = force_unicode(value)
+        
+        t = loader.get_template('gogogo/widgets/latlnginputwidget.html')	
+        c = Context({
+            'final_attrs': mark_safe(flatatt(final_attrs)),
+            'value' : value,
+            'id' : final_attrs['id'],
+            'map_id' : "map_%s" % final_attrs['id'],
+            'model_manager' : "model_manager_%s" % final_attrs['id'],
+            'cluster_manager' : "cluster_manager_%s" % final_attrs['id'],
+            'marker_id' : "marker_%s" % final_attrs['id']
+        })
+            
+        return mark_safe(	t.render(c) )

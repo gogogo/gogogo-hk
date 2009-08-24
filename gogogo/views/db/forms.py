@@ -12,7 +12,7 @@ from gogogo.models.cache import updateCachedObject
 from datetime import datetime
 from gogogo.models import TitledStringListField , MLStringProperty
 from gogogo.models.utils import id_or_name
-from gogogo.models.widgets import LatLngInputWidget
+from gogogo.views.widgets import LatLngInputWidget
 import logging
 
 class AgencyForm(ModelForm):

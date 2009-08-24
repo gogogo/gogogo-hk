@@ -5,10 +5,14 @@
 
 <script type="text/javascript">
 	var {{map_id}};
+	var {{cluster_manager}};
+	var {{model_manager}}
 		
 	$(document).ready(function(){
 			{{map_id}} = new GMap2(document.getElementById("{{map_id}}"));
 			gogogo.mapSetup({{map_id}});
+			{{model_manager}} = new gogogo.ModelManager();
+			{{cluster_manager}} = new gogogo.ClusterManager({{map_id}},{{model_manager}});
 			
 			var pt = new GLatLng({{value}});
 			var options = {
@@ -29,7 +33,6 @@
 				latlng = $(this).val().split(",");
 				lat = parseFloat(latlng[0]);
 				lng = parseFloat(latlng[1]);
-				console.log(lat,lng);
 				if (lat != NaN && lng != NaN){
 					var pt = new GLatLng(lat,lng);
 					{{marker_id}}.setLatLng(pt);
