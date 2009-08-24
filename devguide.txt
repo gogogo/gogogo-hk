@@ -1,19 +1,35 @@
+-----------
+Indentation
+-----------
+
+Indentation should be 4 spaces per level. DO NOT USE TABS.
+
+For Vim users, this may be useful in your .vimrc (to highlight all tabs in the indentation):
+
+au BufRead,BufNewFile *.py highlight PythonTabIndents ctermbg=red guibg=red
+au BufRead,BufNewFile *.py match PythonTabIndents /^\s*    /
+
+(Some existing code have tabs as indentation. Convert them back to spaces as
+necessary during the course of development, but otherwise leave them intact)
 
 ----------
 Debugging
 ----------
 
-Pring debug message:
+Print debug message:
 
 Add the following lines to setting_private.py
 
+"""
 import logging
 logging.basicConfig(
     level = logging.DEBUG,
     format = '%(asctime)s %(levelname)s %(message)s',
 )
+"""
 
 In your code:
 
 import logging
 logging.debugging("Message")
+
