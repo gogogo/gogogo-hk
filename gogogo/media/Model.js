@@ -21,7 +21,7 @@ gogogo.Model = function(id){
 	/// Store the detailed information of the model.
 	this.info = Object(); 
 	
-	// The ID of the stop
+	// The ID of the model
 	this.id = id;
 }
 
@@ -58,7 +58,7 @@ gogogo.Model.prototype.query = function(callback) {
 	
 	this.querying = true;
 	
-	api = "/api/" + this.modelType + "/get/" + this.id;
+	api = "/api/" + this.modelType + "/get?id=" + this.id;
 	var cache = jQuery.ajaxSettings.cache;
 	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
 	

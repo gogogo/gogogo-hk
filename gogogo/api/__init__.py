@@ -75,26 +75,30 @@ def agency_list(request):
 	return ApiResponse(data=result)
 
 
-def trip_get(request,id):
+def trip_get(request):
+    if "id" not in request.GET:
+        return ApiResponse(error="ID missing")
+        
+    id = request.GET['id']
 
-	try:
-		cache_key = "gogogo__trip_get_%s" % id #Prefix of memecache key
-		cache = memcache.get(cache_key)
-		
-		if cache == None:
-			entity = getCachedEntityOr404(Trip,key_name = id)
-			entity['color'] = entity['instance'].route.color
-			
-			cache = {}
-			cache['entity'] = entity
-			
-			memcache.add(cache_key, cache, _default_cache_time)
-		
-		entity = cache['entity']
-		entity = trEntity(entity,request)
-		del entity['instance']		
-			
-		return ApiResponse(data=entity)
-	except Http404:
-		return ApiResponse(error="Trip not found")
+    try:
+        cache_key = "gogogo__trip_get_%s" % id #Prefix of memecache key
+        cache = memcache.get(cache_key)
+        
+        if cache == None:
+            entity = getCachedEntityOr404(Trip,id_or_name = id)
+            entity['color'] = entity['instance'].route.color
+            
+            cache = {}
+            cache['entity'] = entity
+            
+            memcache.add(cache_key, cache, _default_cache_time)
+        
+        entity = cache['entity']
+        entity = trEntity(entity,request)
+        del entity['instance']		
+            
+        return ApiResponse(data=entity)
+    except Http404:
+        return ApiResponse(error="Trip not found")
 	

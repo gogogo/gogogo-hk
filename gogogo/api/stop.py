@@ -160,13 +160,17 @@ def markerwin(request,id):
     		
 	return HttpResponse(t.render(c))
 
-def get(request,id):
-	try:
-		entity = getCachedEntityOr404(Stop,key_name = id)
-		entity = trEntity(entity,request)
-		logging.info(entity)
-		del entity['instance']
-		return ApiResponse(data=entity)
-	except Http404:
-		return ApiResponse(error="Stop not found")
+def get(request):
+    if "id" not in request.GET:
+        return ApiResponse(error="ID missing")
+        
+    id = request.GET['id']
+        
+    try:
+        entity = getCachedEntityOr404(Stop,id_or_name = id)
+        entity = trEntity(entity,request)
+        del entity['instance']
+        return ApiResponse(data=entity)
+    except Http404:
+        return ApiResponse(error="Stop not found")
 	

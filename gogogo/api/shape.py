@@ -19,14 +19,19 @@ _default_cache_time = 3600
 
 from google.appengine.api import memcache
 			
-def get(request,id):
-	try:
-		entity = getCachedEntityOr404(Shape,id_or_name = id)
-	
-		del entity['owner']
-		del entity['instance']
-		return ApiResponse(data=entity)
-	except Http404:
-		return ApiResponse(error="Shape not found")
+def get(request):
+    if "id" not in request.GET:
+        return ApiResponse(error="ID missing")
+        
+    id = request.GET['id']
+        
+    try:
+        entity = getCachedEntityOr404(Shape,id_or_name = id)
+
+        del entity['owner']
+        del entity['instance']
+        return ApiResponse(data=entity)
+    except Http404:
+        return ApiResponse(error="Shape not found")
 	
 
