@@ -57,7 +57,7 @@ gogogo.StopManager.prototype.refresh = function(bounds) {
 		
 }
 
-gogogo.StopManager.prototype.search = function(prefix) {	
+gogogo.StopManager.prototype._search = function(prefix,callback) {	
 
 	var api = "/api/stop/block?prefix=" + prefix;
 	
@@ -67,6 +67,7 @@ gogogo.StopManager.prototype.search = function(prefix) {
 	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
 	$.getJSON(api, null , function(data) {
 		if (data.stat == "ok") {
+		    var list = [];
 			$.each(data.data, function(i, item){
 				if (manager.stops[item.id] == undefined ) {
 					var stop = new gogogo.Stop(item.id);
@@ -76,7 +77,11 @@ gogogo.StopManager.prototype.search = function(prefix) {
                 	manager.markermanager.addMarker(marker,manager.minZoom);
                 	manager.stops[item.id] = stop;
 				}
+				list.push(manager.stops[item.id]);
 			});
+            if (callback){
+                callback(list);
+            }			
 			manager.markermanager.refresh();
 		}
 	});

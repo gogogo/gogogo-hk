@@ -47,7 +47,7 @@ gogogo.ClusterManager.prototype.refresh = function(bounds){
 	jQuery.ajaxSettings.cache = cache;		
 }
 
-gogogo.ClusterManager.prototype.search = function(prefix){
+gogogo.ClusterManager.prototype._search = function(prefix,callback){
 	
 	var cache = jQuery.ajaxSettings.cache;
 	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
@@ -58,6 +58,7 @@ gogogo.ClusterManager.prototype.search = function(prefix){
 	
 	$.getJSON(api, null , function(data) {
 		if (data.stat == "ok") {
+		    var list = [];
 			$.each(data.data, function(i, item){
 				
 				if (manager.clusters[item.id] == undefined ) {
@@ -70,7 +71,11 @@ gogogo.ClusterManager.prototype.search = function(prefix){
 					});
 
 				}
+				list.push(manager.clusters[item.id]);
 			});
+            if (callback){
+                callback(list);
+            }			
 		}
 	});
 

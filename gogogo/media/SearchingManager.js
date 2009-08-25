@@ -1,6 +1,12 @@
 /** Map Items Searching Manager
  * 
  * @constructor 
+ * 
+ * All the subclass should implement the following function
+ * 
+ * _search(prefix,callback) - Search items in specific region. 
+ * The result should be passed to callback, then SearchingManager
+ * will store the result. And allow user to query by search()
  */
 
 gogogo.SearchingManager = function (map){
@@ -24,14 +30,11 @@ gogogo.SearchingManager = function (map){
 		if (manager.autoRefresh 
 			&& manager.map.getZoom() >= manager.minZoom) {
 			
-			/// @TODO - Fix for user who own an extremely large monitor?
+			/// @FIXME - Fix for user who own an extremely large monitor?
 			var prefix = hashBounds(manager.map.getBounds(), 6);
 			
 			for (var i = 0 ; i < prefix.length ;i++) {
-			    if (manager.geohash_prefix_list[prefix[i]] == undefined){
-			        manager.geohash_prefix_list[prefix[i]] = true;
-			        manager.search(prefix[i]);
-                }
+			    manager.search(prefix[i]);
             }
 			
 			/*
@@ -72,4 +75,27 @@ gogogo.SearchingManager.prototype.getBounds = function() {
 	var ne2 = gogogo.SearchingManager.ceil(ne1);
 
 	return new GLatLngBounds(sw2,ne2);
+}
+
+/**
+ * Search items in specific region. 
+ * 
+ * @param prefix The prefix of the region (geohash)
+ * @param callback A callback function that will be involved for every element found in the region
+ */
+
+gogogo.SearchingManager.prototype.search = function(prefix,callback) {
+        
+    if (this.geohash_prefix_list[prefix] == undefined){
+	    this.geohash_prefix_list[prefix] = [];
+	    var geohash_prefix_list = this.geohash_prefix_list[prefix];
+	    
+		this._search(prefix,function(list) {
+		   geohash_prefix_list = list;
+		   if (callback)
+                callback(list);
+        });
+    } else if (callback){
+        callback(this.geohash_prefix_list[prefix]);
+    }
 }
