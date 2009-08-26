@@ -46,6 +46,8 @@ gogogo.Stop.prototype.createMarker = function(){
         var stop = this;
 
         GEvent.addListener(marker,'infowindowopen',function(){
+			var cache = jQuery.ajaxSettings.cache;
+			jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter			
             $('#markerwin').load(
                 '/api/stop/markerwin/' + stop.id, null,
                 function(){
@@ -58,6 +60,8 @@ gogogo.Stop.prototype.createMarker = function(){
                     );
                 }
             );
+            jQuery.ajaxSettings.cache = cache;	
+            
         });
 
         GEvent.addListener(marker,"click",function(){
