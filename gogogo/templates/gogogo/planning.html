@@ -4,6 +4,15 @@
 {% block content-header %}
 {% endblock %}
 
+{% block css %}
+{{block.super}}
+	<style type="text/css">
+	.default {
+		color: #cccccc;
+	}
+	</style>
+{% endblock %}
+
 {% block js %}
 {{block.super}}
 	<script type="text/javascript">
@@ -11,135 +20,179 @@
 	var planner;
 	var modelManager;
 	var clusterManager;
-	
+
+	var start_addr_default = {%trans "'From:'"%};
+	var end_addr_default   = {%trans "'To:'"%};
+	var empty_prompt       = {%trans "'Please input the address.'"%};
+	var suggest_prompt     = {%trans "'Do you mean?'"%};
+
+	function _default(f) {
+		var d;
+		if (f === '#startAddress') d = start_addr_default;
+		if (f === '#endAddress')   d = end_addr_default;
+
+		if ($(f).val() === '') $(f).val(d);
+		if ($(f).val() === d)  $(f).addClass('default');
+	}
+
+	function _empty(f) {
+		var d;
+		if (f === '#startAddress') d = start_addr_default;
+		if (f === '#endAddress')   d = end_addr_default;
+
+		if ($(f).val() === d) {
+			$(f).removeClass('default');
+			$(f).val('');
+		}
+	}
+
 	$(document).ready(function() {
     	layout.sizePane("west",230);
-    	
-		stopManager = new gogogo.StopManager(map);	
-		
+
+		stopManager = new gogogo.StopManager(map);
+
 		modelManager = new gogogo.ModelManager();
-		
+
 		clusterManager = new gogogo.ClusterManager(map,modelManager);
-		
-		
+
+
 		planner = new gogogo.Planner();
 		var planningOutput = $("#planningOutput");
-		
+
 		var addressList = ["#startAddress" , "#endAddress"];
 		var panButtonList = ["#planStartAddress" , "#planEndAddress"];
-		
+
 		/// Set the focus to start or end address input
 		function setFocus(index) {
-			$(addressList[index]).focus();		
+			$(addressList[index]).focus();
 		}
-		
+
 		/// Pan to the input address
 		function panTo(index) {
 			var address = planner.getAddress(index);
 			address.setAddress($(addressList[index]).val());
 			address.clearQueryLocation();
 			address.queryLocation(function(location) {
-					map.setZoom(16);
+					map.setZoom(17);
 					map.panTo(location);
 				});
-		}	
-		
+		}
+
 		$.each(addressList,function(i,input){
 
 			var address = planner.getAddress(i);
-			
+
 			$(address).bind("addressChanged" , function(e) {
 				$(input).val(e.target.getAddress() );
 			})
 		});
-		
+
 		$.each(panButtonList,function(i,btn){
 			$(btn).click(function(){
 				panTo(i);
 			});
 		});
-		
+
 		function clarify(placemarks,target) {
 			var output = planningOutput;
 			output.empty();
-			output.append("<div> Do you mean ? </div>");
-			
+			output.append("<div>" + suggest_prompt + "</div>");
+
 			$(placemarks).each(  function(i,place){
-				
+
 				var div = output.append("<div></div>");
 				div.append(i + ". ");
-				
+
 				var lnk = $("<a class='link_button'>" + place.address + " </a>");
-				
+
 				div.append(lnk);
 				var addr = place.address;
 				var point = new GLatLng(place.Point.coordinates[1],place.Point.coordinates[0]);
-								
-				$(lnk).click(function() {						
+
+				$(lnk).click(function() {
 					target.setAddress(addr);
 					target.setLocation(point);
 					output.empty();
 				});
-				
-			});			
-		}		
-		
+
+			});
+		}
+
 		$(planner).bind("clarifyAddress",function(event,index,address,response){
-		
-			
+
+
 			var output = planningOutput;
-			
+
 			output.empty();
-			
+
 			if (address.getAddress() == undefined || address.getAddress() == "") {
-				
+
 				setFocus(index);
 				output.empty();
-				output.append("Please input address");
-			
+				output.append(empty_prompt);
+
 			} else if (response.Status.code != 200 ) {
-				
+
 				setFocus(index);
-				
+
 				output.append("Address unknown " + planner.getAddress(index) );
-				
+
 			} else {
 				clarify(response.Placemark,address);
 			}
-			
+
 		});
-		
+
 		/// For temporary use
 		var directions = new GDirections(map,  document.getElementById("planningOutput"));
 		GEvent.addListener(directions,"error",function() {
 			planningOutput.empty();
 			planningOutput.append("GDirection error " + directions.getStatus().code);
-		});	
+		});
 
 		$("#planButton").click(function() {
-			
+
 			/// Check for input address. Prompt user if the input is empty
 			$.each(addressList,function(i,input){
-				if ($(input).val() == ""){
+				if ($(input).val() == ""
+				||  $(input).val() == start_addr_default
+				||  $(input).val() == end_addr_default
+				){
 					$(input).focus();
 					planningOutput.empty();
-					planningOutput.append("Please input the address");
+					planningOutput.append(empty_prompt);
 					return false;
 				}
 				var address = planner.getAddress(i);
 				address.clearQueryLocation();
 			});
-			
+
 			planner.suggest ($("#startAddress").val() , $("#endAddress").val(),function(start,end){
 				planningOutput.empty();
 				query = "from:" + $(addressList[0]).val() + " to: " + $(addressList[1]).val();
 				directions.load(query);
 			});
 		});
-			
+
+		$('#startAddress').blur(function(){
+			_default('#startAddress');
+		});
+		$('#endAddress').blur(function(){
+			_default('#endAddress');
+		});
+
+		$('#startAddress').focus(function(){
+			_empty('#startAddress');
+		});
+		$('#endAddress').focus(function(){
+			_empty('#endAddress');
+		});
+
+		_default('#startAddress');
+		_default('#endAddress');
 	});
-	
-	
+
+
 	</script>
 {% endblock %}
 
@@ -147,7 +200,7 @@
 <b>The page is under constructing. To view stop on map ,  zoom to level 15 or above.  </b><p></p>
 
 <div>
-	<input id="startAddress" type="text" name="start" style="width:150px;margin-right:2px"/> 
+	<input id="startAddress" type="text" name="start" style="width:150px;margin-right:2px"/>
 	<button id="planStartAddress">{%trans "Go"%}</button>
 	<input id="endAddress" type="text" name="end" style="width:150px;margin-right:2px;margin-top:5px;margin-bottom:5px" />
 	<button id="planEndAddress">{%trans "Go"%}</button>
