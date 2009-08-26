@@ -1,15 +1,15 @@
 
 /** Stop
- * 
- * @constructor 
- * @base gogogo.Model 
+ *
+ * @constructor
+ * @base gogogo.Model
  */
 
 gogogo.Stop = function(id){
-	gogogo.Model.call(this,id);
-	
-	this.marker = undefined;
-	
+    gogogo.Model.call(this,id);
+
+    this.marker = undefined;
+
 }
 
 extend(gogogo.Stop , gogogo.Model)
@@ -24,11 +24,11 @@ gogogo.Stop.prototype.modelType = "stop";
 
 gogogo.Stop.prototype.updateFromJson = function(json){
 
-	gogogo.Model.prototype.updateFromJson.call(this,json);
-	
-	if (json.latlng != undefined) {
-		this.latlng = new GLatLng(json.latlng[0], json.latlng[1]);
-	}
+    gogogo.Model.prototype.updateFromJson.call(this,json);
+
+    if (json.latlng != undefined) {
+        this.latlng = new GLatLng(json.latlng[0], json.latlng[1]);
+    }
 }
 
 /**
@@ -36,24 +36,35 @@ gogogo.Stop.prototype.updateFromJson = function(json){
  */
 
 gogogo.Stop.prototype.createMarker = function(){
-	if (this.marker == undefined) {
-		var option = {
-			"title": this.name
-		};
-		this.marker = new GMarker(this.latlng,option);
-		
-		var marker = this.marker;
-		var stop = this;
-		
-		GEvent.addListener(marker,"click",function(){
-			html="<object id='markerwin' type='text/html' data='/api/stop/markerwin/" + stop.id + "'> \
-			<p>Loading...</p>\
-			</object>"
-			marker.openInfoWindowHtml(html);
-			
-		});
-	}
-	
-	return this.marker;
+    if (this.marker == undefined) {
+        var option = {
+            "title": this.name
+        };
+        this.marker = new GMarker(this.latlng,option);
+
+        var marker = this.marker;
+        var stop = this;
+
+        GEvent.addListener(marker,'infowindowopen',function(){
+            $('#markerwin').load(
+                '/api/stop/markerwin/' + stop.id, null,
+                function(){
+                    var win = map.getInfoWindow();
+                    var content = $('#markerwin');
+                    win.reset(
+                        win.getPoint(), win.getTabs(),
+                        new GSize(content.width(), content.height()),
+                        null, null
+                    );
+                }
+            );
+        });
+
+        GEvent.addListener(marker,"click",function(){
+            marker.openInfoWindowHtml('<div id="markerwin">Loading...</div>');
+        });
+    }
+
+    return this.marker;
 }
 
