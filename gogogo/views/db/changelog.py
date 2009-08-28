@@ -73,11 +73,12 @@ def browse(request,id):
 	Browse a changelog
 	"""	
 	
-	entity = getCachedEntityOr404(Changelog,id = int(id))
+	entity = getCachedEntityOr404(Changelog,id_or_name = id)
 	#entity['id'] = int(id)
 
 	return render_to_response( 
 		request,
 		'gogogo/db/changelog/browse.html',
-			{ "changelog" : entity
+			{ "changelog" : entity,
+            "reference_link" : entity['instance'].reference.get_absolute_url()
 		   })		

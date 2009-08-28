@@ -29,7 +29,7 @@ class Pathbar:
 		
 class ReferenceLinkWidget(Input):
 	"""
-	Render the link to a database object 
+	Render the link to a database object(Use with ReferenceLinkField)
 	"""
 	
 	input_type = 'hidden'

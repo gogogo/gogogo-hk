@@ -23,7 +23,7 @@ def createEntity(object):
 	"""  Create an entity from model instance object which is 
 	suitable for data import and export. 
 
-	Opertions:
+	Operations:
 	- Convert all ReferenceProperty to the key_name/key
 	- set 'id' attribute (= id_or_name()
 	- set 'instance' attribute , the reference to the model instance

@@ -21,7 +21,7 @@ from TitledStringListProperty import TitledStringListField
 def create_entity(model,request = None):
 	""" Create entity (a dict object) from model with: MLString translated. (based on Models._to_entity(self, entity) )
 
-
+    Deprecated function. Please use createEntity.
 	"""
 	entity = {}
 	code_index = -1
@@ -67,6 +67,12 @@ class Agency(db.Model):
 	# any transportation service. It is just used to manage facilities
 	# (stop) on map.
 	no_service = db.BooleanProperty(default=False)
+    
+    # A "free_transfer" agency means that passengers are free to transfer
+    # from a trip to another trip within the stop. It also imply that
+    # the fare is depended on station pairs, how passenger get there doesn't
+    # matter
+	free_transfer = db.BooleanProperty(default=False)
 
 	class Meta:
 		verbose_name = _('Transport Agency')
