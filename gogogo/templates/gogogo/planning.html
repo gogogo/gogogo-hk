@@ -26,6 +26,8 @@
 	var empty_prompt       = {%trans "'Please input the address.'"%};
 	var suggest_prompt     = {%trans "'Do you mean?'"%};
 
+	var addressList = ["#startAddress" , "#endAddress"];
+	var planningOutput;
 	function _default(f) {
 		var d;
 		if (f === '#startAddress') d = start_addr_default;
@@ -45,6 +47,20 @@
 			$(f).val('');
 		}
 	}
+	
+	function checkEmpty(index) {
+		input = addressList[index];
+		if ($(input).val() == ""
+			||  $(input).val() == start_addr_default
+			||  $(input).val() == end_addr_default
+			){
+			$(input).focus();
+			planningOutput.empty();
+			planningOutput.append(empty_prompt);
+			return true;
+		}
+		return false;
+	}
 
 	$(document).ready(function() {
     	layout.sizePane("west",230);
@@ -56,10 +72,10 @@
 		clusterManager = new gogogo.ClusterManager(map,modelManager);
 
 
-		planner = new gogogo.Planner();
-		var planningOutput = $("#planningOutput");
+		planningOutput = $("#planningOutput");
+        planner = new gogogo.Planner(map,planningOutput);
 
-		var addressList = ["#startAddress" , "#endAddress"];
+		
 		var panButtonList = ["#planStartAddress" , "#planEndAddress"];
 
 		/// Set the focus to start or end address input
@@ -69,12 +85,15 @@
 
 		/// Pan to the input address
 		function panTo(index) {
+			if (checkEmpty(index))
+				return;
 			var address = planner.getAddress(index);
 			address.setAddress($(addressList[index]).val());
 			address.clearQueryLocation();
 			address.queryLocation(function(location) {
 					map.setZoom(17);
 					map.panTo(location);
+					planningOutput.empty();
 				});
 		}
 
@@ -84,11 +103,19 @@
 
 			$(address).bind("addressChanged" , function(e) {
 				$(input).val(e.target.getAddress() );
-			})
+			});
+			
+			$(address).bind("unknown" , function(e) {
+				setFocus(i);
+				planningOutput.empty();
+				planningOutput.append("Address unknown : " + address.getAddress() );
+			});
+		
 		});
 
 		$.each(panButtonList,function(i,btn){
 			$(btn).click(function(){
+				planner.clearWaitingActions();
 				panTo(i);
 			});
 		});
@@ -97,6 +124,8 @@
 			var output = planningOutput;
 			output.empty();
 			output.append("<div>" + suggest_prompt + "</div>");
+			
+			target.createClarifyMarkers();
 
 			$(placemarks).each(  function(i,place){
 
@@ -112,6 +141,7 @@
 				$(lnk).click(function() {
 					target.setAddress(addr);
 					target.setLocation(point);
+					target.clearClarifyMarkers();
 					output.empty();
 				});
 
@@ -120,26 +150,7 @@
 
 		$(planner).bind("clarifyAddress",function(event,index,address,response){
 
-
-			var output = planningOutput;
-
-			output.empty();
-
-			if (address.getAddress() == undefined || address.getAddress() == "") {
-
-				setFocus(index);
-				output.empty();
-				output.append(empty_prompt);
-
-			} else if (response.Status.code != 200 ) {
-
-				setFocus(index);
-
-				output.append("Address unknown " + planner.getAddress(index) );
-
-			} else {
-				clarify(response.Placemark,address);
-			}
+			clarify(response.Placemark,address);
 
 		});
 
@@ -151,20 +162,12 @@
 		});
 
 		$("#planButton").click(function() {
-
+			planner.clearWaitingActions();
+			
 			/// Check for input address. Prompt user if the input is empty
 			$.each(addressList,function(i,input){
-				if ($(input).val() == ""
-				||  $(input).val() == start_addr_default
-				||  $(input).val() == end_addr_default
-				){
-					$(input).focus();
-					planningOutput.empty();
-					planningOutput.append(empty_prompt);
+				if (checkEmpty(i))
 					return false;
-				}
-				var address = planner.getAddress(i);
-				address.clearQueryLocation();
 			});
 
 			planner.suggest ($("#startAddress").val() , $("#endAddress").val(),function(start,end){

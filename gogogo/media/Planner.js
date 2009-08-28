@@ -15,11 +15,14 @@
  * 
  */
 
-gogogo.Planner = function() {
+gogogo.Planner = function(map,output) {
 	this.geocoder = new GClientGeocoder();
+    
+    this.map = map;
+    this.output = output;
 	
 	/// Array of address point (start , end)
-	this.points = [new gogogo.Address() , new gogogo.Address() ]
+	this.points = [new gogogo.Address(map) , new gogogo.Address(map) ]
 	
 	this._bindCallback(0);
 	this._bindCallback(1);
@@ -47,6 +50,18 @@ gogogo.Planner.prototype._bindCallback = function(index){
 
 gogogo.Planner.prototype.getAddress = function(index){
 	return this.points[index];
+}
+
+/** Clear all the actions that waiting for user's input
+ * 
+ */
+
+gogogo.Planner.prototype.clearWaitingActions = function() {
+    for (var i = 0 ; i < 2; i++){
+        this.points[i].clearQueryLocation();
+        this.points[i].clearClarifyMarkers();
+    }
+	
 }
 
 /**
