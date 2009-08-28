@@ -130,7 +130,8 @@
 			$(placemarks).each(  function(i,place){
 
 				var div = output.append("<div></div>");
-				div.append(i + ". ");
+				//div.append(i + ". ");
+				div.append("<img src=\"" + gogogo.Address.getMarkerIconFile(i) + "\">");
 
 				var lnk = $("<a class='link_button'>" + place.address + " </a>");
 

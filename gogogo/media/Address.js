@@ -13,6 +13,8 @@ gogogo.Address = function(map,output) {
 	 
 	this.location ;  // The location of address (GLatLng)
     
+    // If more than one address is found on queryLocation , 
+    // it will store all the address returned.
     this._possibleAddress = [];
     
     var options = { borderPadding: 50, trackMarkers: false };
@@ -129,6 +131,16 @@ gogogo.Address.prototype.clearQueryLocation = function() {
 	$(this).unbind("_queryLocation");
 }
 
+
+gogogo.Address.getMarkerIconFile = function(index){
+    var icon = site_data.settings.MEDIA_URL + 
+        "gogogo/markers/iconb" + 
+        (index + 1 )+ 
+        ".png";
+            
+    return icon;
+}
+
 /** Create markers for available choice of address
  * 
  */
@@ -139,9 +151,17 @@ gogogo.Address.prototype.createClarifyMarkers = function(){
     $(address._possibleAddress).each(function (i,item){
         var textAddr = item[0];
         var point = item[1];
+        
+        var icon = new GIcon();
+        icon.image = gogogo.Address.getMarkerIconFile(i);
+        icon.iconSize = new GSize(20, 34);
+        icon.iconAnchor = new GPoint(10, 30);
+        
         var option = {
-            "title": address.text
+            "title": address.text,
+            "icon" : icon
         };
+        
         marker = new GMarker(point,option);
         bounds.extend(point);
         
