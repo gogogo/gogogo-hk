@@ -14,37 +14,24 @@ gogogo.ClusterManager = function(map,modelManager){
 
 extend(gogogo.ClusterManager,gogogo.SearchingManager);
 
-/** Deprecated */
-gogogo.ClusterManager.prototype.refresh = function(bounds){
-	
-	var cache = jQuery.ajaxSettings.cache;
-	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
+/** Create GOverlay objects
+ * 
+ * @param items An array of items returned by _search()
+ * 
+ */
 
-	var api = "/api/cluster/search/" + 
-		bounds.getSouthWest().lat() + "," + bounds.getSouthWest().lng() + "," +
-		bounds.getNorthEast().lat() + "," + bounds.getNorthEast().lng();
-
+gogogo.ClusterManager.prototype._createOverlays = function(items) {
+	var ret = []
 	var manager = this;
-	
-	$.getJSON(api, null , function(data) {
-		if (data.stat == "ok") {
-			$.each(data.data, function(i, item){
-				
-				if (manager.clusters[item.id] == undefined ) {
-					manager.clusters[item.id] = item;
-					
-					manager.modelManager.queryShape(item.shape,function(shape){
-						var overlay = shape.createOverlay();
-						manager.map.addOverlay(overlay);
-						
-					});
-
-				}
-			});
-		}
+	$(items).each(function(i,item){		
+		manager.modelManager.queryShape(item.shape,function(shape){
+			var overlay = shape.createOverlay();
+			manager.map.addOverlay(overlay);
+			ret.push(overlay);
+		});
 	});
-
-	jQuery.ajaxSettings.cache = cache;		
+	
+	return ret;
 }
 
 gogogo.ClusterManager.prototype._search = function(prefix,callback){
@@ -64,12 +51,6 @@ gogogo.ClusterManager.prototype._search = function(prefix,callback){
 				if (manager.clusters[item.id] == undefined ) {
 					manager.clusters[item.id] = item;
 					
-					manager.modelManager.queryShape(item.shape,function(shape){
-						var overlay = shape.createOverlay();
-						manager.map.addOverlay(overlay);
-						
-					});
-
 				}
 				list.push(manager.clusters[item.id]);
 			});
