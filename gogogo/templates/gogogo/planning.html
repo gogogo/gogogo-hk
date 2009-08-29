@@ -164,12 +164,17 @@
 
 		$("#planButton").click(function() {
 			planner.clearWaitingActions();
-			
+			var notEmpty = true;
 			/// Check for input address. Prompt user if the input is empty
 			$.each(addressList,function(i,input){
-				if (checkEmpty(i))
+				if (checkEmpty(i)){
+                    notEmpty = false;
 					return false;
+                }
 			});
+            
+            if (!notEmpty)
+                return;
 
 			planner.suggest ($("#startAddress").val() , $("#endAddress").val(),function(start,end){
 				planningOutput.empty();

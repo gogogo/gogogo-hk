@@ -74,12 +74,37 @@ gogogo.Address.prototype.setLocation = function(pt) {
 	$(this).trigger("locationChanged");
 }
 
+/** Return TRUE if the input address is a latlng pair
+ * 
+ */
+gogogo.Address.prototype.parseLatLngAddress = function (ret) {
+    var res = false;
+    var items = this.text.split(",");
+    if (items.length == 2) {
+        res = true;
+        for (var i = 0 ; i < 2 ; i++) {
+            ret[i] = parseFloat(items[i]);
+            if (ret[i] == NaN){
+                res = false;
+                break;
+            }
+        }
+    }   
+        
+    return res;
+}
+
 /** Query the location from assigned text address
  * 
  * @param callback The callback to be involved. 
  */
 gogogo.Address.prototype.queryLocation = function(callback) {
 	var address = this;
+    
+    var latlng = [];
+    if (this.location == undefined && this.parseLatLngAddress(latlng) ){
+        this.setLocation( new GLatLng(latlng[0],latlng[1])) ;
+    }
 	
 	if (this.location != undefined){
 		if (callback != undefined) {
@@ -97,18 +122,12 @@ gogogo.Address.prototype.queryLocation = function(callback) {
 			callback(address.location);
 		});
 	}
-			
-	if (this.text == undefined || this.text == ""){
-		// Request for clarify
-		$(address).trigger("clarify");
-		return;
-	}
 
     this._possibleAddress = []
 	gogogo.Address.geocoder.getLocations(this.text, function(response) {
 				
 		if (response.Status.code == 200 && response.Placemark.length == 1) {
-			pt = new GLatLng(response.Placemark[0].Point.coordinates[1], 
+			var pt = new GLatLng(response.Placemark[0].Point.coordinates[1], 
 										   response.Placemark[0].Point.coordinates[0]);
 			address.setLocation ( pt );
 			
@@ -217,9 +236,26 @@ gogogo.Address.prototype._createMarker = function() {
     icon.iconAnchor = new GPoint(10, 30);
     
     var option = {
-        "icon" : icon
+        "icon" : icon,
+        "draggable" : true
     };
     
     marker = new GMarker(point,option);   
+    
+    var address = this;
+    
+    GEvent.addListener(marker, "dragend", function(latlng){
+        
+        gogogo.Address.geocoder.getLocations(latlng, function(response) {
+            if (response.Status.code == 200 ){
+                address.setAddress(response.Placemark[0].address);
+            } else {
+                address.setAddress(latlng.lat() + ","  + latlng.lng());
+            }
+            address.setLocation(latlng);
+        });
+        
+    });
+    
     return marker; 
 }
