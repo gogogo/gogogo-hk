@@ -30,6 +30,7 @@ def get(request):
 
         del entity['owner']
         del entity['instance']
+        del entity['owner_kind']
         return ApiResponse(data=entity)
     except Http404:
         return ApiResponse(error="Shape not found")

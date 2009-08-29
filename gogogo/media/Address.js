@@ -1,17 +1,23 @@
-/** Address
+/** Address query and marker management class
  * 
  * @constructor
+ * 
+ * @param map A GMap instance
+ * @param name The name of the address (e.g "A" , "B")
  */
 
-gogogo.Address = function(map,output) {
+gogogo.Address = function(map,name) {
     
     this.map = map;
     
-    this.output = output;
+    this.name = name;
 	
 	this.text; // The text address
 	 
 	this.location ;  // The location of address (GLatLng)
+    
+    // Marker of the address in map
+    this.locationMarker;
     
     // If more than one address is found on queryLocation , 
     // it will store all the address returned.
@@ -57,6 +63,14 @@ gogogo.Address.prototype.getLocation = function(){
 
 gogogo.Address.prototype.setLocation = function(pt) {
 	this.location = pt;
+    
+    if (this.locationMarker == undefined) {
+        this.locationMarker = this._createMarker();
+        this.map.addOverlay(this.locationMarker);
+    } else {
+        this.locationMarker.setLatLng(this.location);
+    }
+    
 	$(this).trigger("locationChanged");
 }
 
@@ -131,6 +145,9 @@ gogogo.Address.prototype.clearQueryLocation = function() {
 	$(this).unbind("_queryLocation");
 }
 
+/** Get the location of icon file for clarify marker with index 
+ * 
+ */
 
 gogogo.Address.getMarkerIconFile = function(index){
     var icon = site_data.settings.MEDIA_URL + 
@@ -176,6 +193,33 @@ gogogo.Address.prototype.createClarifyMarkers = function(){
     }
 }
 
+/** Clear all the clarify markers
+ * 
+ */
+
 gogogo.Address.prototype.clearClarifyMarkers = function() {
     this.markermanager.clearMarkers();
+}
+
+/**
+ * Create a marker to indicate the location of the address
+ */
+
+gogogo.Address.prototype._createMarker = function() {
+    var point = this.getLocation();
+    if (point == undefined)
+        return null;
+    
+    var icon = new GIcon();
+    icon.image = site_data.settings.MEDIA_URL + 
+        "gogogo/markers/paleblue_Marker" + this.name + ".png";
+    icon.iconSize = new GSize(20, 34);
+    icon.iconAnchor = new GPoint(10, 30);
+    
+    var option = {
+        "icon" : icon
+    };
+    
+    marker = new GMarker(point,option);   
+    return marker; 
 }

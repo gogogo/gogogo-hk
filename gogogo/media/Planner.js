@@ -22,7 +22,7 @@ gogogo.Planner = function(map,output) {
     this.output = output;
 	
 	/// Array of address point (start , end)
-	this.points = [new gogogo.Address(map) , new gogogo.Address(map) ]
+	this.points = [new gogogo.Address(map,"A") , new gogogo.Address(map,"B") ]
 	
 	this._bindCallback(0);
 	this._bindCallback(1);
