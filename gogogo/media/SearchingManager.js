@@ -23,30 +23,29 @@ gogogo.SearchingManager = function (map){
 	
 	/// Store previous queryed geohas prefix
 	this.geohash_prefix_list = new Object();
+	
+	/// Store previous created GOverlay objects
+	this.overlays = new Object();
 
 	var manager = this;
 			
 	GEvent.addListener(map, "moveend", function(){
-		if (manager.autoRefresh 
-			&& manager.map.getZoom() >= manager.minZoom) {
-			
-			/// @FIXME - Fix for user who own an extremely large monitor?
-			var prefix = hashBounds(manager.map.getBounds(), 6);
-			
-			for (var i = 0 ; i < prefix.length ;i++) {
-			    manager.search(prefix[i]);
-            }
-			
-			/*
-			
-			var bounds = manager.getBounds();
-			
-			if (!bounds.equals(manager.lastBounds)){
-				manager.refresh(bounds);	
-				manager.lastBounds = bounds;
-			}
-			*/
-		}
+	     if (manager.autoRefresh 
+		    && manager.map.getZoom() >= manager.minZoom) {
+		    
+		    /// @FIXME - Fix for user who own an extremely large monitor?
+		    var prefix = hashBounds(manager.map.getBounds(), 6);
+		    
+            $(prefix).each( function(i,prefix){
+                manager.search(prefix,function (result){
+                    if (manager.overlays[prefix] == undefined
+                        && manager._createOverlays != undefined
+                        ) {
+                          manager.overlays[prefix] = manager._createOverlays(result);
+                        }
+                });		
+    	    });
+	    }
 	});	
 }
 
@@ -59,7 +58,6 @@ gogogo.SearchingManager.floor = function(pt) {
 	var f = 50;
 	return new GLatLng( Math.floor(pt.lat() * f ) / f , Math.floor(pt.lng() * f ) / f )
 }
-
 
 /**
  *  Returns the truncated rectangular region of the map view in geographical coordinates.

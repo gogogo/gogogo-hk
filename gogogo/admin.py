@@ -24,7 +24,7 @@ class AgencyAdmin(admin.ModelAdmin):
     	
     def Agency_ID(self,obj):
     	#return obj.aid
-    	return obj.key().name()
+    	return obj.key().id_or_name()
 
 admin.site.register(Agency, AgencyAdmin)
 

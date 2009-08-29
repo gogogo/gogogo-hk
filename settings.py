@@ -142,6 +142,13 @@ else:
     ENABLE_GAEBAR = True # Enable gaebar only if the secret key is set
     INSTALLED_APPS.append("gaebar")
 
+GAE_BACKUP_MODELS = (
+     (
+          'gogogo.models', 
+          ('gogogo_agency','gogogo_stop','gogogo_route','gogogo_trip','gogogo_changelog',
+    'gogogo_shape','gogogo_cluster'),
+     ),
+)
 
 ###########
 # Gogogo #

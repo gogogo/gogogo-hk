@@ -3,11 +3,23 @@
  * @constructor
  */
 
-gogogo.Address = function(text) {
+gogogo.Address = function(map,output) {
+    
+    this.map = map;
+    
+    this.output = output;
 	
-	this.text = text; // The text address
+	this.text; // The text address
 	 
 	this.location ;  // The location of address (GLatLng)
+    
+    // If more than one address is found on queryLocation , 
+    // it will store all the address returned.
+    this._possibleAddress = [];
+    
+    var options = { borderPadding: 50, trackMarkers: false };
+	
+	this.markermanager = new MarkerManager(map,options);
 }
 
 gogogo.Address.geocoder = new GClientGeocoder();
@@ -48,7 +60,7 @@ gogogo.Address.prototype.setLocation = function(pt) {
 	$(this).trigger("locationChanged");
 }
 
-/** Query the location 
+/** Query the location from assigned text address
  * 
  * @param callback The callback to be involved. 
  */
@@ -78,6 +90,7 @@ gogogo.Address.prototype.queryLocation = function(callback) {
 		return;
 	}
 
+    this._possibleAddress = []
 	gogogo.Address.geocoder.getLocations(this.text, function(response) {
 				
 		if (response.Status.code == 200 && response.Placemark.length == 1) {
@@ -85,10 +98,24 @@ gogogo.Address.prototype.queryLocation = function(callback) {
 										   response.Placemark[0].Point.coordinates[0]);
 			address.setLocation ( pt );
 			
-		} else {			
+		} else {
+            if (response.Status.code != 200 ) {
+
+                /// The address is unknwon
+                $(address).trigger("unknown",response);
+                
+            } else {
+                
+                $(response.Placemark).each(  function(i,place){
+                    var point = new GLatLng(place.Point.coordinates[1],place.Point.coordinates[0]);
+                    var textAddr = place.address;
+                    address._possibleAddress.push([textAddr,point]);
+                });
+                
 			/// Request for clarify.
 			$(address).trigger("clarify",response);
 
+            }
 		}
 	});	
 	
@@ -102,4 +129,53 @@ gogogo.Address.prototype.queryLocation = function(callback) {
 
 gogogo.Address.prototype.clearQueryLocation = function() {
 	$(this).unbind("_queryLocation");
+}
+
+
+gogogo.Address.getMarkerIconFile = function(index){
+    var icon = site_data.settings.MEDIA_URL + 
+        "gogogo/markers/iconb" + 
+        (index + 1 )+ 
+        ".png";
+            
+    return icon;
+}
+
+/** Create markers for available choice of address
+ * 
+ */
+gogogo.Address.prototype.createClarifyMarkers = function(){
+    var address = this;
+    var bounds = new GLatLngBounds();
+    
+    $(address._possibleAddress).each(function (i,item){
+        var textAddr = item[0];
+        var point = item[1];
+        
+        var icon = new GIcon();
+        icon.image = gogogo.Address.getMarkerIconFile(i);
+        icon.iconSize = new GSize(20, 34);
+        icon.iconAnchor = new GPoint(10, 30);
+        
+        var option = {
+            "title": address.text,
+            "icon" : icon
+        };
+        
+        marker = new GMarker(point,option);
+        bounds.extend(point);
+        
+        // Visible for all the level
+        address.markermanager.addMarker(marker,1); 
+    });
+    
+    if (!bounds.isEmpty()){
+        var center = bounds.getCenter();
+        var zoom = map.getBoundsZoomLevel(bounds);
+        map.setCenter(center,zoom);
+    }
+}
+
+gogogo.Address.prototype.clearClarifyMarkers = function() {
+    this.markermanager.clearMarkers();
 }
