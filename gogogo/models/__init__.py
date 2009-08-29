@@ -415,4 +415,48 @@ class Report(db.Model):
 	# 4 : Fixed , it is fixed.
 	status = db.IntegerProperty(default=0)
 
+class FareTrip(db.Model):
+    """
+    The fare of a trip
+    """
+    # Reference to the trip
+    trip = db.ReferenceProperty(Trip)
+    
+    # The name of the fare type
+    name = MLStringProperty()
+    
+    # TRUE if it is the default fare type used in shortest path calculation
+    default = db.BooleanProperty(default = False)
+
+ 
+    #The payment_method field indicates when the fare must be paid. 
+    # Valid values for this field are:
+    # 0 - Fare is paid on board.
+    # 1 - Fare must be paid before boarding.
+    payment_method = db.IntegerProperty(default = 0 ,choices=set([0,1]))
+    
+    fares = NumberListProperty(float)
+
+class FareStop(db.Model):
+    """
+    For fare depends on station pairs, how passengers get there doesn't matter.    
+    """
+    agency = db.ReferenceProperty(Agency)
+    
+    # The name of the fare type
+    name = MLStringProperty()
+    
+    # TRUE if it is the default fare type used in shortest path calculation
+    default = db.BooleanProperty(default = False)
+
+class FarePair(db.Model):
+    pair = db.ReferenceProperty(FareStop,collection_name="pairs")
+
+    # Start stop
+    start = db.ReferenceProperty(Stop,collection_name="fair_pair_start")
+    
+    # End point stop list
+    end = db.ReferenceProperty(Stop,collection_name="fair_pair_end")
+    
+    fare = db.FloatProperty()
 

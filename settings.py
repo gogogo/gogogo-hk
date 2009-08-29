@@ -144,9 +144,12 @@ else:
 
 GAE_BACKUP_MODELS = (
      (
-          'gogogo.models', 
-          ('gogogo_agency','gogogo_stop','gogogo_route','gogogo_trip','gogogo_changelog',
-    'gogogo_shape','gogogo_cluster'),
+         'gogogo.models', 
+        ('gogogo_agency','gogogo_stop','gogogo_route','gogogo_trip','gogogo_changelog',
+        'gogogo_shape','gogogo_cluster',
+        'gogogo_faretrip',
+        'gogogo_fairpair'
+        ),
      ),
 )
 

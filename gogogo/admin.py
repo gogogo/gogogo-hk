@@ -112,3 +112,18 @@ class ReportAdmin(admin.ModelAdmin):
 	pass
 	
 admin.site.register(Report, ReportAdmin)		
+
+class FareTripAdmin(admin.ModelAdmin):
+    pass
+    
+admin.site.register(FareTrip, FareTripAdmin)
+
+class FareStopAdmin(admin.ModelAdmin):
+    pass
+    
+admin.site.register(FareStop, FareStopAdmin)
+
+class FarePairAdmin(admin.ModelAdmin):
+    pass
+    
+admin.site.register(FarePair, FarePairAdmin)
