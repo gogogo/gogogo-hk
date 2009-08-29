@@ -23,11 +23,13 @@ extend(gogogo.ClusterManager,gogogo.SearchingManager);
 gogogo.ClusterManager.prototype._createOverlays = function(items) {
 	var ret = []
 	var manager = this;
-	$(items).each(function(i,item){		
+	$(items).each(function(i,item){		            
 		manager.modelManager.queryShape(item.shape,function(shape){
+            if (!shape.error) {
 			var overlay = shape.createOverlay();
 			manager.map.addOverlay(overlay);
 			ret.push(overlay);
+            }
 		});
 	});
 	

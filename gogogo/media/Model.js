@@ -17,6 +17,9 @@ gogogo.Model = function(id){
 	
 	// TRUE if it is querying the complete information of the model object from server
 	this.querying = false;
+    
+    // TRUE if there has any error in fetching the data
+    this.error = false;
 	
 	/// Store the detailed information of the model.
 	this.info = Object(); 
@@ -49,7 +52,7 @@ gogogo.Model.prototype.query = function(callback) {
 		
 	if (this.querying) {
 		if (callback!=undefined){
-			$(this).one("complete" , function(e,response){
+			$(this).one("query-finished" , function(e,response){
 				callback(model,response);
 			});
 		}
@@ -64,12 +67,15 @@ gogogo.Model.prototype.query = function(callback) {
 	
 	$.getJSON(api, null , function(response) {	
 		if (response.stat == "ok"){
-			
+			model.error = false;
 			model.updateFromJson(response.data);
 			model.complete = true;
-			
-			$(model).trigger("complete",response);
-		}
+		} else {
+            model.error = true;
+            model.complete = false;
+        }
+        
+        $(model).trigger("query-finished",response);        
 		
 		if (callback!=undefined)
 			callback(model,response);
