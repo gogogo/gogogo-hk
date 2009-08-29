@@ -11,6 +11,8 @@ admin.autodiscover()
 handler500 = 'ragendja.views.server_error'
 
 site_patterns = patterns('',
+    url(r'^account/logout', 'django.contrib.auth.views.logout', {'next_page': settings.LOGIN_URL}),
+#    url(r'^account/logout', 'django.contrib.auth.views.logout', {'next_page': '/'}),
 	(r'^i18n/', include('django.conf.urls.i18n')),
 
     ('^admin/(.*)', admin.site.root),
