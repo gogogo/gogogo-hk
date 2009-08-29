@@ -64,12 +64,16 @@ def _getModelInfo(kind):
 		return _supported_model[kind]
 	raise ValueError
 
-def _createModel(kind,parent = None):
+def _createModel(kind,parent = None,form = None):
 	value = id_or_name(parent)
+	key_name = None
 	if kind == "route":
 		return Route(agency = db.Key.from_path(Agency.kind() , value) )
 	elif kind == "agency":
-		return Agency()
+		if form:
+			key_name = MLStringProperty.to_key_name(form.cleaned_data["name"])
+            
+		return Agency(key_name = key_name)
 	elif kind == "trip":
 		return Trip(route = db.Key.from_path(Route.kind() , value))
 	elif kind == "stop":
@@ -94,8 +98,13 @@ def add(request,kind):
 	
 	if request.method == 'POST':
 		form = model_form(request.POST)
+        
 		if form.is_valid():
-			instance = form.save(commit=False)
+			instance = _createModel(kind,form = form)
+			form = model_form(request.POST,instance = instance)
+
+			instance = form.save(commit=False)		
+			
 			updateModel(kind,instance)
 			instance.save()
 
