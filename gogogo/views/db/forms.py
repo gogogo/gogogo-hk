@@ -59,10 +59,27 @@ _supported_model = {
 	'stop': (Stop,StopForm),
 }
 
+def next_key_name(model_class,key_name):
+    """
+    Get the next available key
+    """
+    if key_name == None:
+        raise ValueError("key_name = None")
+    
+    entity = model_class.get(db.Key.from_path(model_class.kind() , key_name))
+    if not entity:
+        return key_name
+    else:
+        count = 0
+        while True:
+            count += 1
+            new_key_name = key_name + "-" + str(count)
+            entity = model_class.get(db.Key.from_path(model_class.kind() , new_key_name))
+            if not entity:
+                return new_key_name 
+
 def _getModelInfo(kind):
-	if kind in _supported_model:
-		return _supported_model[kind]
-	raise ValueError
+    return _supported_model[kind]
 
 def _createModel(kind,parent = None,form = None):
 	value = id_or_name(parent)
@@ -71,7 +88,7 @@ def _createModel(kind,parent = None,form = None):
 		return Route(agency = db.Key.from_path(Agency.kind() , value) )
 	elif kind == "agency":
 		if form:
-			key_name = MLStringProperty.to_key_name(form.cleaned_data["name"])
+			key_name = next_key_name(Agency,MLStringProperty.to_key_name(form.cleaned_data["name"]))
             
 		return Agency(key_name = key_name)
 	elif kind == "trip":

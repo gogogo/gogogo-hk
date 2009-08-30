@@ -12,7 +12,7 @@ urlpatterns = patterns(
 	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_-]+)/(?P<route_id>[0-9a-zA-Z_-]+)/(?P<trip_id>[0-9a-zA-Z_-]+)$', 'gogogo.views.transit.trip'),	
 	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_-]+)/(?P<route_id>[0-9a-zA-Z_-]+)$', 'gogogo.views.transit.route'),
 
-	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_]*)$', 'gogogo.views.transit.agency'),
+	(r'^transit/agency/(?P<agency_id>[0-9a-zA-Z_-]+)$', 'gogogo.views.transit.agency'),
 	(r'^transit/stop/(?P<stop_id>[0-9a-zA-Z_-]*)$', 'gogogo.views.transit.stop'),
 	(r'^transit$', 'gogogo.views.transit.index'),
 
@@ -31,7 +31,7 @@ urlpatterns = patterns(
     
     	#Report
     (r'^db/report/list$', 'gogogo.views.db.report.list'),
-    (r'^db/(?P<kind>[a-z]+)/report/(?P<id>[0-9a-zA-Z_]+)$', 'gogogo.views.db.report.submit'),
+    (r'^db/(?P<kind>[a-z]+)/report/(?P<id>[0-9a-zA-Z_-]+)$', 'gogogo.views.db.report.submit'),
     
     # Generic model edit interface
     (r'^db/(?P<kind>[0-9a-zA-Z_]*)/edit/(?P<object_id>[0-9a-zA-Z_-]*)$', 'gogogo.views.db.edit'),

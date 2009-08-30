@@ -40,12 +40,14 @@ class MLStringProperty(TitledStringListProperty):
         """
         Convert the property into a key_name for bigtable.
         """
-        pattern = re.compile("[a-z0-9]*")
+        pattern0 = re.compile(" +")
+        pattern1 = re.compile("[a-z0-9_-]*")
         ret = None
         for item in value:
-            m =  pattern.findall(item.lower())
+            item = pattern0.sub("-",item)
+            m =  pattern1.findall(item.lower())
             key_name = "".join(m)
-            key_name.lstrip("_") # Remove leading "_". Avoid "__*__" format
+            key_name.strip("_") # Remove leading and trailing "_". Avoid "__*__" format
             try:
                 if key_name[0].isdigit():
                     key_name = "_" + key_name # Add single "_"
