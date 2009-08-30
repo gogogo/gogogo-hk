@@ -9,6 +9,28 @@ from ragendja.dbutils import get_object
 from gogogo.geo.geohash import Geohash
 import re
 
+def to_key_name(value):
+    """
+    Convert a string to a format that suitable for used in key_name field
+    for model instance    
+
+    """
+    pattern0 = re.compile(" +")
+    pattern1 = re.compile("[a-z0-9_-]*")
+
+    value = pattern0.sub("-",value)
+    m =  pattern1.findall(value.lower())
+    key_name = "".join(m)
+    key_name.strip("_") # Remove leading and trailing "_". Avoid "__*__" format
+    try:
+        if key_name[0].isdigit():
+            key_name = "_" + key_name # Add single "_"
+    except:
+        pass
+        
+    return key_name
+    
+
 class MLStringProperty(TitledStringListProperty):
     """
         Multi-language string property
@@ -40,20 +62,9 @@ class MLStringProperty(TitledStringListProperty):
         """
         Convert the property into a key_name for bigtable.
         """
-        pattern0 = re.compile(" +")
-        pattern1 = re.compile("[a-z0-9_-]*")
         ret = None
         for item in value:
-            item = pattern0.sub("-",item)
-            m =  pattern1.findall(item.lower())
-            key_name = "".join(m)
-            key_name.strip("_") # Remove leading and trailing "_". Avoid "__*__" format
-            try:
-                if key_name[0].isdigit():
-                    key_name = "_" + key_name # Add single "_"
-            except:
-                pass
-            
+            key_name = to_key_name(item)
             if len(key_name) >= 3: # The key name should at last contains 3 char
                 ret = key_name
                 break

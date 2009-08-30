@@ -10,7 +10,8 @@ from django.core.urlresolvers import reverse as _reverse
 from gogogo.models.utils import createEntity , entityToText
 from gogogo.models.cache import updateCachedObject
 from datetime import datetime
-from gogogo.models import TitledStringListField , MLStringProperty
+from gogogo.models import TitledStringListField
+from gogogo.models.MLStringProperty import MLStringProperty , to_key_name
 from gogogo.models.utils import id_or_name
 from gogogo.views.widgets import LatLngInputWidget
 import logging
@@ -25,12 +26,13 @@ class AgencyForm(ModelForm):
 	log_message = forms.CharField(widget = forms.Textarea)
 
 class RouteForm(ModelForm):
-	class Meta:
-		model = Route
-		fields = ['agency','short_name','long_name','desc','type','url','color','text_color']
-	
-	type = forms.ChoiceField(Route.get_choices())	
-	log_message = forms.CharField(widget = forms.Textarea)
+    class Meta:
+        model = Route
+        fields = ['agency','short_name','long_name','desc','type','url','color','text_color']
+
+    short_name = forms.CharField(required = True)
+    type = forms.ChoiceField(Route.get_choices())	
+    log_message = forms.CharField(widget = forms.Textarea)
 
 class TripForm(ModelForm):
 	class Meta:
@@ -82,21 +84,38 @@ def _getModelInfo(kind):
     return _supported_model[kind]
 
 def _createModel(kind,parent = None,form = None):
-	value = id_or_name(parent)
-	key_name = None
-	if kind == "route":
-		return Route(agency = db.Key.from_path(Agency.kind() , value) )
-	elif kind == "agency":
-		if form:
-			key_name = next_key_name(Agency,MLStringProperty.to_key_name(form.cleaned_data["name"]))
+    value = id_or_name(parent)
+    key_name = None
+    if kind == "route":
+        agency = None
+        if form:
+            key_name = next_key_name(Route,to_key_name(form.cleaned_data["short_name"]))
+            agency = form.cleaned_data["agency"]
+        if parent:
+            agency = db.Key.from_path(Agency.kind() , value)
+        return Route(key_name = key_name , agency = agency)
+    elif kind == "agency":
+        if form:
+            key_name = next_key_name(Agency,MLStringProperty.to_key_name(form.cleaned_data["name"]))
             
-		return Agency(key_name = key_name)
-	elif kind == "trip":
-		return Trip(route = db.Key.from_path(Route.kind() , value))
-	elif kind == "stop":
-		return Stop()
-		
-	raise ValueError
+        return Agency(key_name = key_name)
+    elif kind == "trip":
+        route = None
+        if form:
+            route = form.cleaned_data["route"]
+            key_name = next_key_name(Trip, 
+                route.key().name() + 
+                "_to_" + 
+                MLStringProperty.to_key_name(form.cleaned_data["headsign"]) )
+        
+        if parent:
+            route = db.Key.from_path(Route.kind() , value)
+        
+        return Trip(route = route , key_name = key_name)
+    elif kind == "stop":
+        return Stop()
+        
+    raise ValueError
 
 def updateModel(kind,model):
 	"""
