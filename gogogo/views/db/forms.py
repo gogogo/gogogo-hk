@@ -66,7 +66,7 @@ def next_key_name(model_class,key_name):
     Get the next available key
     """
     if key_name == None:
-        raise ValueError("key_name = None")
+        return key_name # Use numeric key
     
     entity = model_class.get(db.Key.from_path(model_class.kind() , key_name))
     if not entity:

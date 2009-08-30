@@ -21,12 +21,15 @@ def to_key_name(value):
     value = pattern0.sub("-",value)
     m =  pattern1.findall(value.lower())
     key_name = "".join(m)
-    key_name.strip("_") # Remove leading and trailing "_". Avoid "__*__" format
+    key_name = key_name.strip("_") # Remove leading and trailing "_". Avoid "__*__" format
     try:
         if key_name[0].isdigit():
             key_name = "_" + key_name # Add single "_"
     except:
         pass
+        
+    if len(key_name) > 100: # Set the upper limit of key length to 100
+        key_name = key_name [0:100]
         
     return key_name
     
