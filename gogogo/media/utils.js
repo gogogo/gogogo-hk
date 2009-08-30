@@ -15,29 +15,55 @@ function extend(child, supertype)
 
 }
 
+/** Create geohash on a given point and prefix length
+ * 
+ */
+
+function hashLatLng(pt , prefix_len) {
+    var hash = encodeGeoHash(pt.lat() , pt.lng() );
+    return hash.substr(0,prefix_len);
+}
+
 /** Convert a GLatLngBounds object into an array of geohash with 
  * assigned prefix length
  * 
  */
 
-function hashBounds(bounds,prefix_len) {
-    var points = [];
-    var hashs = new Object();
+function hashBounds(bounds,prefix_len) {    
     var sw = bounds.getSouthWest();
     var ne = bounds.getNorthEast();
-    points.push(sw)
-    points.push(new GLatLng(ne.lat(),sw.lng())  )
-    points.push(ne)
-    points.push(new GLatLng(sw.lat(),ne.lng())  )
+        
+    var hashSW = hashLatLng(sw,prefix_len);
+    //var hashNE = encodeGeoHash(ne.lat() , ne.lng() )
+    var hashNW = hashLatLng(new GLatLng(ne.lat() , sw.lng() ) , prefix_len);
+    var hashSE = hashLatLng(new GLatLng(sw.lat() , ne.lng() ) , prefix_len);
+    var ret = [];
     
-    for (var i =0 ; i < points.length ;i++) {
-        var h = encodeGeoHash(points[i].lat() , points[i].lng() );
-        hashs[h.substr(0,prefix_len)] = true;
+    var x = 1;
+    var y = 1;
+    var hash0 = hashSW;
+        
+    while (hash0 != hashNW) {
+        y++;
+        hash0 = calculateAdjacent(hash0 , "top");
+    }   
+        
+    hash0 = hashSW;
+    while (hash0 != hashSE){
+        x++;
+        hash0 = calculateAdjacent(hash0 , "right");
     }
     
-    var ret = []
-    for (var h in hashs){
-        ret.push(h);
+    hash0 = hashSW;
+    for (var i = 0 ; i < y;i++){
+        var hash1 = hash0
+        for (var j = 0 ; j < x ;j++) {
+            ret.push(hash1);
+            hash1 = calculateAdjacent(hash1 , "right");
+        }
+        
+        hash0 = calculateAdjacent(hash0 , "top");
     }
+    
     return ret;
 }
