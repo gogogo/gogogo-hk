@@ -143,13 +143,18 @@ else:
     INSTALLED_APPS.append("gaebar")
 
 GAE_BACKUP_MODELS = (
+    (
+        'django.contrib.auth.models',
+        ('auth_user',)
+    ),
      (
          'gogogo.models', 
         ('gogogo_agency','gogogo_stop','gogogo_route','gogogo_trip','gogogo_changelog',
         'gogogo_shape','gogogo_cluster',
         'gogogo_faretrip',
         'gogogo_farestop',
-        'gogogo_farepair'
+        'gogogo_farepair',
+        'gogogo_transfer'
         ),
      ),
 )

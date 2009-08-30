@@ -453,10 +453,27 @@ class FarePair(db.Model):
     pair = db.ReferenceProperty(FareStop,collection_name="pairs")
 
     # Start stop
-    start = db.ReferenceProperty(Stop,collection_name="fair_pair_start")
+    from_stop = db.ReferenceProperty(Stop,collection_name="fair_pair_from")
     
     # End point stop list
-    end = db.ReferenceProperty(Stop,collection_name="fair_pair_end")
+    to_stop = db.ReferenceProperty(Stop,collection_name="fair_pair_to")
     
     fare = db.FloatProperty()
 
+class Transfer(db.Model):
+    """
+    For agency with free transfer service, there may have 2 stations
+    that is connected and allow passengers to changes their trip freely.
+    
+    If such service is existed, it should record the station pair in this 
+    model.
+    """
+    
+    agency = db.ReferenceProperty(Agency)
+    
+    from_stop = db.ReferenceProperty(Stop,collection_name="transfer_from_stop")
+    
+    to_stop = db.ReferenceProperty(Stop,collection_name="transfer_to_stop")
+    
+    max_transfer_time = db.IntegerProperty(default=-1)
+    

@@ -127,3 +127,8 @@ class FarePairAdmin(admin.ModelAdmin):
     pass
     
 admin.site.register(FarePair, FarePairAdmin)
+
+class TransferAdmin(admin.ModelAdmin):
+    pass
+    
+admin.site.register(Transfer, TransferAdmin)
