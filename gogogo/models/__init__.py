@@ -441,16 +441,25 @@ class FareStop(db.Model):
     """
     For fare depends on station pairs, how passengers get there doesn't matter.    
     """
-    agency = db.ReferenceProperty(Agency)
+    
+    agency = db.ReferenceProperty(Agency,required=True)
     
     # The name of the fare type
-    name = MLStringProperty()
+    name = MLStringProperty(required=True)
     
     # TRUE if it is the default fare type used in shortest path calculation
     default = db.BooleanProperty(default = False)
+    
+    def gen_key_name(self):
+        """
+       Generate a key name
+        """
+        prefix = str(self.agency.key().id_or_name())
+        
+        return prefix + "-" + MLStringProperty.to_key_name(self.name)
 
 class FarePair(db.Model):
-    pair = db.ReferenceProperty(FareStop,collection_name="pairs")
+    owner = db.ReferenceProperty(FareStop,collection_name="pair")
 
     # Start stop
     from_stop = db.ReferenceProperty(Stop,collection_name="fair_pair_from")

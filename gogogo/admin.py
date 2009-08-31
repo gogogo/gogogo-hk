@@ -2,6 +2,8 @@ from django.contrib import admin
 from django import forms
 from ragendja.forms import *
 from gogogo.models import *
+from gogogo.models.utils import copyModel
+from gogogo.views.db.forms import next_key_name
 
 class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -120,7 +122,19 @@ class FareTripAdmin(admin.ModelAdmin):
 admin.site.register(FareTrip, FareTripAdmin)
 
 class FareStopAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('FareStop_Name',)
+
+    def FareStop_Name(self,obj):
+        agency_id = str(obj.agency.key().id_or_name())
+        return "[%s] - %s" % (agency_id , str(obj.key().id_or_name()))
+    
+    def save_model(self,request,obj,form,change):
+        if change:
+            return admin.ModelAdmin.save_model(self,request,obj,form,change)
+        else:            
+            new_obj = copyModel(obj,key_name = next_key_name(FareStop,obj.gen_key_name()) )
+            new_obj.save()
+            
     
 admin.site.register(FareStop, FareStopAdmin)
 
