@@ -101,5 +101,24 @@ def latlngFromGeoPt(pt):
     """
     return LatLng(pt.lat,pt.lon)
 
-
+def copyModel(object, **kwargs):
+    """
+    Copy a model instance
+    
+    @param kwargs Argument passed to the model constructor funtion for new copied model
+    """
+    model_class = db._kind_map[object.kind()]
+    
+    entity = {}
+    
+    for prop in object.properties().values():
+        datastore_value = prop.get_value_for_datastore(object)
+        entity[prop.name] = datastore_value
+        
+    entity.update(kwargs)
+        
+    return model_class(**entity)
+        
+        
+            
 
