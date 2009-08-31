@@ -9,7 +9,8 @@ class AgencyAdmin(admin.ModelAdmin):
             'fields': ('name', 'url', 'timezone', 
             'phone',
             'icon',
-            'no_service'
+            'no_service',
+            'free_transfer'
             )
         }),
 

@@ -71,5 +71,7 @@ urlpatterns = patterns(
 	(r'^api/cluster/search/(?P<lat0>[0-9]+\.*[0-9]*),(?P<lng0>[0-9]+\.*[0-9]*),(?P<lat1>[0-9]+\.*[0-9]*),(?P<lng1>[0-9]+\.*[0-9]*)$' 
 		,'gogogo.api.cluster.search'),		
     (r'^api/cluster/block$','gogogo.api.cluster.block'),
+    
+    (r'^api/plan$','gogogo.api.plan.plan'),
 
 )

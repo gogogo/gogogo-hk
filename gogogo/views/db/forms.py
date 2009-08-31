@@ -89,8 +89,8 @@ def _createModel(kind,parent = None,form = None):
     if kind == "route":
         agency = None
         if form:
-            key_name = next_key_name(Route,to_key_name(form.cleaned_data["short_name"]))
             agency = form.cleaned_data["agency"]
+            key_name = next_key_name(Route,to_key_name(str(agency.key().id_or_name()) + "-" + form.cleaned_data["short_name"]))
         if parent:
             agency = db.Key.from_path(Agency.kind() , value)
         return Route(key_name = key_name , agency = agency)
