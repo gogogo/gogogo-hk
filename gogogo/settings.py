@@ -16,12 +16,12 @@ gogogo.DEFAULT_LOCATION = [%f,%f];
 
 settings.add_app_media('combined-%(LANGUAGE_CODE)s.js',
     setting_converter,
-    'gogogo/jquery-ui-1.7.1.custom.min.js',
-    'gogogo/jquery.layout.js',
 )
 
 settings.add_app_media('combined-%(LANGUAGE_CODE)s-gogogo.js',
     
+    'gogogo/jquery-ui-1.7.1.custom.min.js',
+    'gogogo/jquery.layout.js',
     #Marker Manager v1.1  
     # http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/1.1/src/markermanager_packed.js
     'gogogo/markermanager_1.1_packed.js', 
