@@ -62,7 +62,7 @@ class TransitGraph(Graph):
             trip_list.append(trip)
             self.trip_table[trip.key().id_or_name()] = trip
         
-        # Fetch all the database record issue fewer DB access call than filter("agency  in"
+        # Fetch all the database record make fewer DB access call than filter("agency  in")
         query = Stop.all()
         for stop in query:
             self.stop_table[stop.key().id_or_name()] = stop

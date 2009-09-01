@@ -14,7 +14,7 @@ from gogogo.models.NumberListProperty import NumberListProperty
 from django.db.models import permalink # For permalink
 
 from utils import createEntity , trEntity
-from MLStringProperty import MLStringProperty
+from MLStringProperty import MLStringProperty , to_key_name
 # Utilities
 from TitledStringListProperty import TitledStringListField
 		
@@ -271,7 +271,7 @@ class Trip(db.Model):
 		verbose_name_plural = _('Trips')
 
 	def __unicode__(self):
-		return unicode(self.key().name())
+		return unicode(self.key().id_or_name())
 
 	route = db.ReferenceProperty(Route)
 
@@ -450,13 +450,20 @@ class FareStop(db.Model):
     # TRUE if it is the default fare type used in shortest path calculation
     default = db.BooleanProperty(default = False)
     
-    def gen_key_name(self):
+    def gen_key_name(agency,name):
         """
        Generate a key name
         """
-        prefix = str(self.agency.key().id_or_name())
+        prefix = str(agency.key().id_or_name())
         
-        return prefix + "-" + MLStringProperty.to_key_name(self.name)
+        return prefix + "-" + MLStringProperty.to_key_name(name)
+        
+    gen_key_name = staticmethod(gen_key_name)
+        
+    def __unicode__(self):
+        if not self.is_saved():
+            return u"|".join(self.name)
+        return unicode(self.key().id_or_name())
 
 class FarePair(db.Model):
     owner = db.ReferenceProperty(FareStop,collection_name="pair")
@@ -467,7 +474,33 @@ class FarePair(db.Model):
     # End point stop list
     to_stop = db.ReferenceProperty(Stop,collection_name="fair_pair_to")
     
-    fare = db.FloatProperty()
+    fare = db.FloatProperty(default = 0.0)
+
+    def gen_key_name(owner,from_stop,to_stop):
+        """
+       Generate a key name
+        """
+        if isinstance(owner,db.Key):
+            prefix = str(owner.id_or_name())
+        else:
+            prefix = str(agency.key().id_or_name())
+            
+        if isinstance(from_stop,db.Key):
+            from_stop_str = str(from_stop.id_or_name())
+        else:
+            from_stop_str = str(from_stop.key().id_or_name())
+            
+        if isinstance(to_stop,db.Key):
+            to_stop_str = str(to_stop.id_or_name())
+        else:
+            to_stop_str = str(to_stop.key().id_or_name())
+        
+        return to_key_name(prefix + "-" + from_stop_str + "-to-" + to_stop_str)
+        
+    gen_key_name = staticmethod(gen_key_name)
+    
+    def __unicode__(self):
+		return unicode(self.key().id_or_name())
 
 class Transfer(db.Model):
     """

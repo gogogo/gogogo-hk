@@ -69,6 +69,7 @@ def next_key_name(model_class,key_name):
         return key_name # Use numeric key
     
     entity = model_class.get(db.Key.from_path(model_class.kind() , key_name))
+
     if not entity:
         return key_name
     else:
