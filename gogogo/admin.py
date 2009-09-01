@@ -3,6 +3,7 @@ from django import forms
 from ragendja.forms import *
 from gogogo.models import *
 from gogogo.models.utils import copyModel
+from gogogo.models.forms import StopForm
 from gogogo.views.db.forms import next_key_name
 
 class AgencyAdmin(admin.ModelAdmin):
@@ -32,33 +33,37 @@ class AgencyAdmin(admin.ModelAdmin):
 admin.site.register(Agency, AgencyAdmin)
 
 class StopAdmin(admin.ModelAdmin):	
-	fieldsets = (
-        (None, {
-            'fields': (
-                'agency',
-            	'code', 
-            	'name',
-            	'address',
-            	'desc',
-            	'latlng',
-            	'geohash',
-            	'url',
-            	'location_type',
-            	'parent_station',
-            	'inaccuracy',
-                )
-        }),
-    )
+    #fieldsets = (
+        #(None, {
+            #'fields': (
+                #'agency',
+                #'code',  
+                #'name',
+                #'address',
+                #'desc',
+                #'latlng',
+                #'geohash',
+                #'url',
+                #'location_type',
+                #'parent_station',
+                #'inaccuracy',
+                #)
+        #}),
+    #)
     
-	search_fields = ('name',)
-	
-	list_display = ('Stop_ID','Stop_Name',)
-	
-	def Stop_ID(self,obj):
-		return obj.key().name()
-	
-	def Stop_Name(self,obj):
-		return u' | '.join(obj.name)
+    form = StopForm
+
+    search_fields = ('name',)
+
+    list_display = ('Stop_ID','Stop_Name',)
+
+    change_form_template = "gogogo/admin/change_form.html"
+
+    def Stop_ID(self,obj):
+        return obj.key().name()
+
+    def Stop_Name(self,obj):
+        return u' | '.join(obj.name)
 
 admin.site.register(Stop, StopAdmin)
 
@@ -132,8 +137,9 @@ class FareStopAdmin(admin.ModelAdmin):
         if change:
             return admin.ModelAdmin.save_model(self,request,obj,form,change)
         else:            
-            new_obj = copyModel(obj,key_name = next_key_name(FareStop,obj.gen_key_name()) )
+            new_obj = copyModel(obj,key_name = next_key_name(FareStop,FareStop.gen_key_name(obj.agency,obj.name)) )
             new_obj.save()
+            #return admin.ModelAdmin.save_model(self,request,new_obj,form,change)
             
     
 admin.site.register(FareStop, FareStopAdmin)

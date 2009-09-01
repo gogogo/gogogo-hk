@@ -7,7 +7,6 @@ from django.http import Http404
 from django.template import Context, loader , RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django import forms
 from django.forms import ModelForm
 from django.forms import Widget
 from django.forms.widgets import Input
@@ -23,6 +22,7 @@ from django.utils.safestring import mark_safe
 from gogogo.models.cache import getCachedObjectOr404
 from gogogo.models.utils import createEntity
 from gogogo.views.widgets import ReferenceLinkField
+from django import forms
 
 class ReportForm(ModelForm):
 	subject = forms.CharField(required=True)

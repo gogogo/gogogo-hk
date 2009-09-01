@@ -1,0 +1,9 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block extrahead %}{{ block.super }}
+<script src="http://www.google.com/jsapi?key={{GOOGLE_MAPS_KEY}}" type="text/javascript"></script>
+<script type="text/javascript">google.load("maps", "2.x");</script>
+<script type="text/javascript" src="{{ MEDIA_URL }}combined-{{ LANGUAGE_CODE }}.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}combined-{{ LANGUAGE_CODE }}-gogogo.js"></script>
+{% endblock %}

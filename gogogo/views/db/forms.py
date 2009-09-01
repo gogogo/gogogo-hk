@@ -14,7 +14,10 @@ from gogogo.models import TitledStringListField
 from gogogo.models.MLStringProperty import MLStringProperty , to_key_name
 from gogogo.models.utils import id_or_name
 from gogogo.views.widgets import LatLngInputWidget
+from gogogo.models.forms import StopForm
 import logging
+
+#TODO - move *From to gogogo.models.forms , and shave with gogogo.admin.py
 
 class AgencyForm(ModelForm):
 	class Meta:
@@ -42,16 +45,6 @@ class TripForm(ModelForm):
 		exclude = ["stop_list"]
 	
 	headsign = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())	
-	log_message = forms.CharField(widget = forms.Textarea)
-
-class StopForm(ModelForm):
-	class Meta:
-		model = Stop
-		
-		exclude = ["geohash"]
-		
-	name = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())		
-	latlng = forms.CharField(widget = LatLngInputWidget)
 	log_message = forms.CharField(widget = forms.Textarea)
 
 _supported_model = {
