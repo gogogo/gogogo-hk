@@ -6,7 +6,7 @@ from gogogo.models import TitledStringListField
 from gogogo.models.MLStringProperty import MLStringProperty , to_key_name
 from gogogo.views.widgets import LatLngInputWidget
 
-class StopForm(ModelForm):
+class StopBasicForm(ModelForm):
     class Meta:
         model = Stop
         
@@ -14,4 +14,7 @@ class StopForm(ModelForm):
         
     name = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())
     latlng = forms.CharField(widget = LatLngInputWidget)
+
+
+class StopForm(StopBasicForm):
     log_message = forms.CharField(widget = forms.Textarea)

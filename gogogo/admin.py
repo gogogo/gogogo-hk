@@ -3,8 +3,9 @@ from django import forms
 from ragendja.forms import *
 from gogogo.models import *
 from gogogo.models.utils import copyModel
-from gogogo.models.forms import StopForm
+from gogogo.models.forms import *
 from gogogo.views.db.forms import next_key_name
+from django.conf import settings
 
 class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -51,11 +52,13 @@ class StopAdmin(admin.ModelAdmin):
         #}),
     #)
     
-    form = StopForm
+    form = StopBasicForm
 
     search_fields = ('name',)
 
     list_display = ('Stop_ID','Stop_Name',)
+    
+    exclude = ('log_message',)
 
     change_form_template = "gogogo/admin/change_form.html"
 
@@ -64,6 +67,13 @@ class StopAdmin(admin.ModelAdmin):
 
     def Stop_Name(self,obj):
         return u' | '.join(obj.name)
+
+    def save_model(self,request,obj,form,change):
+        if change:
+            return admin.ModelAdmin.save_model(self,request,obj,form,change)
+        else:            
+            new_obj = copyModel(obj,key_name = next_key_name(Stop,Stop.gen_key_name(obj.name)) )
+            new_obj.save()
 
 admin.site.register(Stop, StopAdmin)
 
@@ -139,7 +149,6 @@ class FareStopAdmin(admin.ModelAdmin):
         else:            
             new_obj = copyModel(obj,key_name = next_key_name(FareStop,FareStop.gen_key_name(obj.agency,obj.name)) )
             new_obj.save()
-            #return admin.ModelAdmin.save_model(self,request,new_obj,form,change)
             
     
 admin.site.register(FareStop, FareStopAdmin)

@@ -7,6 +7,8 @@ from django.conf import settings
 from TitledStringListProperty import TitledStringListProperty
 from django.utils.translation import ugettext_lazy as _
 from ragendja.dbutils import get_object
+from django.conf import settings
+
 from gogogo.geo.geohash import Geohash
 
 from gogogo.models.NumberListProperty import NumberListProperty
@@ -87,68 +89,72 @@ class Agency(db.Model):
 
 		
 class Stop(db.Model):
-	"""
-		Stop/Station data model
-	"""
-	agency = db.ReferenceProperty(Agency,required=False)	
-	
-	# Optional field. A human readable ID for passengers
-	code = db.StringProperty()
-	
-	# name of the Stop (Multiple language)
-	name = MLStringProperty(required=True)
-	
-	desc = MLStringProperty()
-	
-	# The address of the stop
-	address = MLStringProperty()
+    """
+        Stop/Station data model
+    """
+    agency = db.ReferenceProperty(Agency,required=False)	
 
-	# Geo position of the stop. It is not indexed. Instead, it should use geohash
-	latlng = db.GeoPtProperty()
-	
-	geohash = db.StringProperty()
-	
-	# TRUE if the geo position data is accuracy enough 
-	inaccuracy = db.BooleanProperty(default=False)
-	
-	# URL for the STOP information
-	# Link must not be empty. Therefore , we use String Property
-	url = db.StringProperty()
-	
-	# 0  or blank - Stop. A location where passengers board or disembark from a transit vehicle. 
-	# 1 - Station. A physical structure or area that contains one or more stop. 
-	location_type = db.IntegerProperty(choices=set([0,1]))
-	
-	parent_station = db.SelfReferenceProperty()
-	
-	# Tag of the stop for advanced feature.
-	# e.g Stop with facility for disabled person
-	tags = db.StringProperty()
+    # Optional field. A human readable ID for passengers
+    code = db.StringProperty()
 
-	# nearby stop list
-	#near = KeyListProperty(Stop)
+    # name of the Stop (Multiple language)
+    name = MLStringProperty(required=True)
 
-	def __init__(self,*args , **kwargs):
-		super(Stop,self).__init__(*args,**kwargs)
-		
-		if "lat" in kwargs and "lng" in kwargs:
-			self.latlng = db.GeoPt(kwargs['lat'],kwargs['lng'])
-			self.update_geohash()
-	
-	class Meta:
-		verbose_name = _('Stops')
-		verbose_name_plural = _('Stops')
+    desc = MLStringProperty()
 
-	def __unicode__(self):
-		return u' | '.join(self.name)
+    # The address of the stop
+    address = MLStringProperty()
 
-	def update_geohash(self):
-		self.geohash = str(Geohash( (self.latlng.lon , self.latlng.lat) ))
+    # Geo position of the stop. It is not indexed. Instead, it should use geohash
+    latlng = db.GeoPtProperty()
 
-	@permalink
-	def get_absolute_url(self):
-		return ('gogogo.views.transit.stop',[self.key().id_or_name()]) 
+    geohash = db.StringProperty()
 
+    # TRUE if the geo position data is accuracy enough 
+    inaccuracy = db.BooleanProperty(default=False)
+
+    # URL for the STOP information
+    # Link must not be empty. Therefore , we use String Property
+    url = db.StringProperty()
+
+    # 0  or blank - Stop. A location where passengers board or disembark from a transit vehicle. 
+    # 1 - Station. A physical structure or area that contains one or more stop. 
+    location_type = db.IntegerProperty(choices=set([0,1]))
+
+    parent_station = db.SelfReferenceProperty()
+
+    # Tag of the stop for advanced feature.
+    # e.g Stop with facility for disabled person
+    tags = db.StringProperty()
+
+    # nearby stop list
+    #near = KeyListProperty(Stop)
+
+    def __init__(self,*args , **kwargs):
+        super(Stop,self).__init__(*args,**kwargs)
+        
+        if "lat" in kwargs and "lng" in kwargs:
+            self.latlng = db.GeoPt(kwargs['lat'],kwargs['lng'])
+            self.update_geohash()
+
+    class Meta:
+        verbose_name = _('Stops')
+        verbose_name_plural = _('Stops')
+
+    def __unicode__(self):
+        return u' | '.join(self.name)
+
+    def update_geohash(self):
+        self.geohash = str(Geohash( (self.latlng.lon , self.latlng.lat) ))
+
+    @permalink
+    def get_absolute_url(self):
+        return ('gogogo.views.transit.stop',[self.key().id_or_name()]) 
+        
+    def gen_key_name(name):
+        return MLStringProperty.to_key_name(name)
+        
+    gen_key_name = staticmethod(gen_key_name)
 
 class Route(db.Model):	
 	class Meta:

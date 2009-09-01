@@ -7,6 +7,7 @@ from django.utils.safestring import mark_safe
 from django.forms.util import flatatt
 from django.utils.encoding import StrAndUnicode, force_unicode
 from django.template import Context, loader , RequestContext
+from django.conf import settings
 
 from gogogo.models.cache import getCachedObjectOr404
 
@@ -73,7 +74,7 @@ class LatLngInputWidget(forms.Widget):
         super(LatLngInputWidget, self).__init__(attrs)
 
     def render(self, name, value, attrs=None):
-        if value is None: value = ''
+        if value is None: value = "%s,%s" % (settings.GOGOGO_DEFAULT_LOCATION[0],settings.GOGOGO_DEFAULT_LOCATION[1])
         
         final_attrs = self.build_attrs(attrs, name=name)
         if value != '':
