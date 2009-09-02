@@ -81,7 +81,7 @@ def _createModel(kind,parent = None,form = None):
         return Route(key_name = key_name , agency = agency)
     elif kind == "agency":
         if form:
-            key_name = next_key_name(Agency,Agency.gen_key_name(form.cleaned_data["name"]))
+            key_name = next_key_name(Agency,Agency.gen_key_name(name = form.cleaned_data["name"]))
             
         return Agency(key_name = key_name)
     elif kind == "trip":

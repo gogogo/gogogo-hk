@@ -19,7 +19,9 @@ from utils import createEntity , trEntity
 from MLStringProperty import MLStringProperty , to_key_name
 # Utilities
 from TitledStringListProperty import TitledStringListField
-		
+
+import logging
+        
 def create_entity(model,request = None):
 	""" Create entity (a dict object) from model with: MLString translated. (based on Models._to_entity(self, entity) )
 
@@ -87,7 +89,9 @@ class Agency(db.Model):
     def get_absolute_url(self):
         return ('gogogo.views.transit.agency',[self.key().id_or_name()]) 
         
-    def gen_key_name(name):
+    def gen_key_name(obj = None,name = None):
+        if obj:
+            name = obj.name
         return MLStringProperty.to_key_name(name)
         
     gen_key_name = staticmethod(gen_key_name)
@@ -155,7 +159,9 @@ class Stop(db.Model):
     def get_absolute_url(self):
         return ('gogogo.views.transit.stop',[self.key().id_or_name()]) 
         
-    def gen_key_name(name):
+    def gen_key_name(obj = None , name = None):
+        if obj:
+            name = obj.name
         return MLStringProperty.to_key_name(name)
         
     gen_key_name = staticmethod(gen_key_name)
@@ -460,11 +466,18 @@ class FareStop(db.Model):
     # TRUE if it is the default fare type used in shortest path calculation
     default = db.BooleanProperty(default = False)
     
-    def gen_key_name(agency,name):
+    def gen_key_name(object , agency = None , name = None):
         """
        Generate a key name
+       
+       @tyep agency db.Key
         """
-        prefix = str(agency.key().id_or_name())
+        if object:
+            property = getattr(FareStop, "agency")
+            agency = property.get_value_for_datastore(object)            
+            name = object.name          
+            
+        prefix = str(agency.id_or_name())
         
         return prefix + "-" + MLStringProperty.to_key_name(name)
         
@@ -486,10 +499,21 @@ class FarePair(db.Model):
     
     fare = db.FloatProperty(default = 0.0)
 
-    def gen_key_name(owner,from_stop,to_stop):
+    def gen_key_name(obj= None , owner = None,from_stop = None,to_stop = None):
         """
        Generate a key name
         """
+        
+        if obj:
+            property = getattr(FarePair, "owner")
+            owner = property.get_value_for_datastore(obj)
+
+            property = getattr(FarePair, "from_stop")
+            from_stop = property.get_value_for_datastore(obj)
+
+            property = getattr(FarePair, "to_stop")
+            to_stop = property.get_value_for_datastore(obj)
+        
         if isinstance(owner,db.Key):
             prefix = str(owner.id_or_name())
         else:

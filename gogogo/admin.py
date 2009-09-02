@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from ragendja.forms import *
 from gogogo.models import *
-from gogogo.models.utils import copyModel
+from gogogo.models.utils import copyModel,createEntity
 from gogogo.models.forms import *
 from gogogo.views.db.forms import next_key_name
 from django.conf import settings
@@ -37,7 +37,7 @@ class AgencyAdmin(admin.ModelAdmin):
         if change:
             return admin.ModelAdmin.save_model(self,request,obj,form,change)
         else:            
-            new_obj = copyModel(obj,key_name = next_key_name(Agency,Agency.gen_key_name(obj.name)) )
+            new_obj = copyModel(obj,key_name = next_key_name(Agency,Agency.gen_key_name(obj)) )
             new_obj.save()
 
 admin.site.register(Agency, AgencyAdmin)
@@ -81,7 +81,7 @@ class StopAdmin(admin.ModelAdmin):
         if change:
             return admin.ModelAdmin.save_model(self,request,obj,form,change)
         else:            
-            new_obj = copyModel(obj,key_name = next_key_name(Stop,Stop.gen_key_name(obj.name)) )
+            new_obj = copyModel(obj,key_name = next_key_name(Stop,Stop.gen_key_name(obj)) )
             new_obj.save()
 
 admin.site.register(Stop, StopAdmin)
@@ -156,7 +156,7 @@ class FareStopAdmin(admin.ModelAdmin):
         if change:
             return admin.ModelAdmin.save_model(self,request,obj,form,change)
         else:            
-            new_obj = copyModel(obj,key_name = next_key_name(FareStop,FareStop.gen_key_name(obj.agency,obj.name)) )
+            new_obj = copyModel(obj,key_name = next_key_name(FareStop,FareStop.gen_key_name(obj)) )
             new_obj.save()
             
     

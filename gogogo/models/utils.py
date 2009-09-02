@@ -51,7 +51,8 @@ def createEntity(object):
 	
 	# The client side do not know the different between id and key_name, they just 
 	# "id" as the unique identifier of an entry
-	entity['id'] = object.key().id_or_name()
+	if object.is_saved():
+		entity['id'] = object.key().id_or_name()
 	entity['instance'] = object
 	return entity
 
