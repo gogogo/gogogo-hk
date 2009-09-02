@@ -48,45 +48,49 @@ def create_entity(model,request = None):
 # Database Model
 	
 class Agency(db.Model):
-	"""
-		Public transportation agency data model
-	"""
-	
-	name = MLStringProperty(required=True)
-	
-	url = db.StringProperty(default="")
-	
-	timezone = db.StringProperty()
-	
-	# Don't use PhoneNumberProperty as we allow empty string in upload
-	phone = db.StringProperty()
-	
-	#desc = MLStringProperty() - Later will implement a text input for multiple language handling
+    """
+        Public transportation agency data model
+    """
 
-	icon = db.StringProperty()
-	
-	# An agency with "no_service" means that the agency do not provide
-	# any transportation service. It is just used to manage facilities
-	# (stop) on map.
-	no_service = db.BooleanProperty(default=False)
-    
+    name = MLStringProperty(required=True)
+
+    url = db.StringProperty(default="")
+
+    timezone = db.StringProperty()
+
+    # Don't use PhoneNumberProperty as we allow empty string in upload
+    phone = db.StringProperty()
+
+    #desc = MLStringProperty() - Later will implement a text input for multiple language handling
+
+    icon = db.StringProperty()
+
+    # An agency with "no_service" means that the agency do not provide
+    # any transportation service. It is just used to manage facilities
+    # (stop) on map.
+    no_service = db.BooleanProperty(default=False)
+
     # A "free_transfer" agency means that passengers are free to transfer
     # from a trip to another trip within the stop. It also imply that
     # the fare is depended on station pairs, how passenger get there doesn't
     # matter
-	free_transfer = db.BooleanProperty(default=False)
+    free_transfer = db.BooleanProperty(default=False)
 
-	class Meta:
-		verbose_name = _('Transport Agency')
-		verbose_name_plural = _('Transport Agency')
-	
-	def __unicode__(self):
-		return u' | '.join(self.name)
-		
-	@permalink
-	def get_absolute_url(self):
-		return ('gogogo.views.transit.agency',[self.key().id_or_name()]) 
+    class Meta:
+        verbose_name = _('Transport Agency')
+        verbose_name_plural = _('Transport Agency')
 
+    def __unicode__(self):
+        return u' | '.join(self.name)
+        
+    @permalink
+    def get_absolute_url(self):
+        return ('gogogo.views.transit.agency',[self.key().id_or_name()]) 
+        
+    def gen_key_name(name):
+        return MLStringProperty.to_key_name(name)
+        
+    gen_key_name = staticmethod(gen_key_name)
 		
 class Stop(db.Model):
     """

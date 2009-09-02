@@ -10,7 +10,7 @@ from django.conf import settings
 class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('name', 'url', 'timezone', 
+            'fields': ('name', 'url',
             'phone',
             'icon',
             'no_service',
@@ -20,16 +20,25 @@ class AgencyAdmin(admin.ModelAdmin):
 
     )
     
+    form = AgencyBasicForm
+
     list_display = ('Agency_ID','Agency_Name','url')	
-    
+
     search_fields = ('name',)
-    
+
     def Agency_Name(self,obj):
-    	return u' | '.join(obj.name)
-    	
+        return u' | '.join(obj.name)
+        
     def Agency_ID(self,obj):
-    	#return obj.aid
-    	return obj.key().id_or_name()
+        #return obj.aid
+        return obj.key().id_or_name()
+        
+    def save_model(self,request,obj,form,change):
+        if change:
+            return admin.ModelAdmin.save_model(self,request,obj,form,change)
+        else:            
+            new_obj = copyModel(obj,key_name = next_key_name(Agency,Agency.gen_key_name(obj.name)) )
+            new_obj.save()
 
 admin.site.register(Agency, AgencyAdmin)
 

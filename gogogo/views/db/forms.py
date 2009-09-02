@@ -14,19 +14,10 @@ from gogogo.models import TitledStringListField
 from gogogo.models.MLStringProperty import MLStringProperty , to_key_name
 from gogogo.models.utils import id_or_name
 from gogogo.views.widgets import LatLngInputWidget
-from gogogo.models.forms import StopForm
+from gogogo.models.forms import AgencyForm , StopForm
 import logging
 
 #TODO - move *From to gogogo.models.forms , and shave with gogogo.admin.py
-
-class AgencyForm(ModelForm):
-	class Meta:
-		model = Agency
-		fields = ['name','phone','url','icon']
-		
-	name = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())
-		
-	log_message = forms.CharField(widget = forms.Textarea)
 
 class RouteForm(ModelForm):
     class Meta:
@@ -90,7 +81,7 @@ def _createModel(kind,parent = None,form = None):
         return Route(key_name = key_name , agency = agency)
     elif kind == "agency":
         if form:
-            key_name = next_key_name(Agency,MLStringProperty.to_key_name(form.cleaned_data["name"]))
+            key_name = next_key_name(Agency,Agency.gen_key_name(form.cleaned_data["name"]))
             
         return Agency(key_name = key_name)
     elif kind == "trip":

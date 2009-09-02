@@ -6,6 +6,20 @@ from gogogo.models import TitledStringListField
 from gogogo.models.MLStringProperty import MLStringProperty , to_key_name
 from gogogo.views.widgets import LatLngInputWidget
 
+class AgencyBasicForm(ModelForm):
+    class Meta:
+        model = Agency
+        fields = ["name"]
+        
+    url = forms.CharField(required=False)
+    phone = forms.CharField(required=False)
+    icon = forms.CharField(required=False)
+    no_service = forms.BooleanField(required=False)
+    free_transfer = forms.BooleanField(required=False)
+    
+class AgencyForm(AgencyBasicForm):
+    log_message = forms.CharField(widget = forms.Textarea)
+
 class StopBasicForm(ModelForm):
     class Meta:
         model = Stop
