@@ -92,3 +92,35 @@ class LatLngInputWidget(forms.Widget):
         })
             
         return mark_safe(	t.render(c) )
+
+class StopListEditor(forms.Widget):
+    """
+    Stop list editor
+    """
+
+    def render(self, name, value, attrs=None):
+        if value is None: value = "%s,%s" % (settings.GOGOGO_DEFAULT_LOCATION[0],settings.GOGOGO_DEFAULT_LOCATION[1])
+        
+        final_attrs = self.build_attrs(attrs, name=name)
+        if value != '':
+            final_attrs['value'] = force_unicode(self._gen_value(value))
+        
+        t = loader.get_template('gogogo/widgets/stoplisteditor.html')	
+        c = Context({
+            'final_attrs': mark_safe(flatatt(final_attrs)),
+            'value' : value,
+            'id' : final_attrs['id'],
+            'map_id' : "map_%s" % final_attrs['id'],
+            'sortable_id' : "sortable_%s" % final_attrs['id'],
+            'model_manager' : "model_manager_%s" % final_attrs['id'],
+            'cluster_manager' : "cluster_manager_%s" % final_attrs['id'],
+            'marker_id' : "marker_%s" % final_attrs['id']
+        })
+            
+        return mark_safe(	t.render(c) )
+    
+    def _gen_value(self,value):
+        
+        return ",".join([str(v.id_or_name()) for v in value])
+        
+        

@@ -101,6 +101,8 @@ class TripAdmin(admin.ModelAdmin):
     list_display = ('Trip_ID',)	
     
     form = TripBasicForm
+    
+    change_form_template = "gogogo/admin/change_form.html"    
 
     def Trip_ID(self,obj):
         return obj.key().name()
