@@ -154,3 +154,37 @@ class RouteLoader(Loader):
 
 	def get_trip_list(self):
 		return self.trip_list
+
+class RouteListLoader:
+    """
+    Load all route into memory from BigTable or memcache
+    """
+    
+    cache_key = "gogogo_route_list"
+    
+    def __init__(self):
+        self.list = None
+        
+    def load(self):
+        if self.list != None: 
+            #already loaded
+            return
+        
+        cache = memcache.get(RouteListLoader.cache_key)
+		
+        if cache == None:
+            cache = []
+            
+            query = Route.all()
+            for route in query:
+                cache.append(route)
+                
+            memcache.add(RouteListLoader.cache_key, cache, _default_cache_time)
+        
+        self.list = cache
+        
+	def remove_cache(self):
+		memcache.delete(RouteListLoader.cache_key)
+        
+    def get_list(self):
+        return self.list

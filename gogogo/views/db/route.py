@@ -12,83 +12,66 @@ from gogogo.models import *
 from ragendja.dbutils import get_object_or_404
 #from gogogo.views.db import reverse as db_reverse
 from django.core.urlresolvers import reverse
+from gogogo.models.loaders import RouteListLoader
 
 import cgi
+import logging
 
 def search(request):
-	"""
-	Route searching
-	"""	
-	
-	agency = None
-	try:
-		agency_id = request.GET['agency']
-		key = db.Key.from_path(Agency.kind(),agency_id)
-		agency = db.get(key)
-	except:
-		pass
-	
-	route_search = None
-	try:
-		route_search = request.GET['route']
-	except:
-		pass
+    """
+    Route searching
+    """	
+    error = None
+    agency = None
+    if "agency" in request.GET:
+        agency_id = request.GET['agency']
+        agency = db.Key.from_path(Agency.kind(),agency_id)
 
-	if agency:
-		gql = db.GqlQuery("SELECT * FROM gogogo_route where short_name = :1 and agency=:2",route_search,agency)
-	else:
-		gql = db.GqlQuery("SELECT * FROM gogogo_route where short_name = :1",route_search)
+    if "keyword" not in request.GET:
+        return render_to_response( 
+            request,
+            'gogogo/route/search.html'
+            ,{ 
+                'page_title': _("Route searching"),
+                'result' : [],
+                'error' : _("Error! No keyword provided!")
+               })
+        
+    keyword = request.GET['keyword']
+    keyword = keyword.lower()
 
-	result = []
-	
-	for row in gql:
-		entity = create_entity(row,request)
-		entity['id'] = row.key().id_or_name()
-		entity['agency'] = row.agency.key().name()
-		result.append(entity)
+    route_list_loader = RouteListLoader()
+    route_list_loader.load()
+    
+    route_list = route_list_loader.get_list()
+    
+    result = []
+    
+    agency_property = getattr(Route,"agency")
 
-	return render_to_response( 
-		request,
-		'gogogo/route/search.html'
-		,{ 
-			'page_title': _("Route searching"),
-			'result' : result
-		   })		
-	
-class Form(ModelForm):
-	class Meta:
-		model = Route
-		fields = ['short_name','long_name','desc']
-		
-@staff_only
-def edit(request,id):
-	"""
-	Edit route information (staff only)
-	"""
-	
-	record = get_object_or_404(Route,key_name=id)	
+    for route in route_list:
+        if agency:
+            key = agency_property.get_value_for_datastore(route)
+            if agency != key:
+                continue
 
-	message=""
-
-	if request.method == 'POST':
-		form = Form(request.POST,instance=record)
-		if form.is_valid():
-			form.save()
-			message = "The form is successfully saved. <a href='%s'>View.</a> " % record.get_absolute_url()
-
-	else:
-		form = Form(instance=record)
-
-	agency = create_entity(record,request)
-	agency['id'] = record.key().id_or_name()
-	
-	return render_to_response( 
-		request,
-		'gogogo/db/edit.html'
-		,{ "form" : form , 
-		   "agency" : agency,
-		   "message" : message,
-		   "action" : reverse('gogogo.views.db.route.edit',args=[id,]) ,
-		   })		
-
+        if route.short_name.find(keyword) != -1:
+            result.append(route)
+            continue
+            
+        for name in route.long_name:
+            if name.lower().find(keyword)!= -1:
+                result.append(route)
+                continue
+            
+    result = [createEntity(route) for route in result  ]
+        
+    return render_to_response( 
+        request,
+        'gogogo/route/search.html'
+        ,{ 
+            'page_title': _("Route searching"),
+            'result' : result,
+            'error' : error
+           })		
 	
