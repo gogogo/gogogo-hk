@@ -32,3 +32,16 @@ class StopBasicForm(ModelForm):
 
 class StopForm(StopBasicForm):
     log_message = forms.CharField(widget = forms.Textarea)
+
+class TripBasicForm(ModelForm):
+    class Meta:
+        model = Trip
+        
+        #TODO - Reenable stop_list
+        fields = ["headsign"]
+        exclude = ["stop_list"]
+
+    headsign = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())	
+
+class TripForm(TripBasicForm):
+    log_message = forms.CharField(widget = forms.Textarea)

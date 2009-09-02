@@ -98,10 +98,12 @@ class RouteAdmin(admin.ModelAdmin):
 admin.site.register(Route, RouteAdmin)
 
 class TripAdmin(admin.ModelAdmin):
-	list_display = ('Trip_ID',)	
-	
-	def Trip_ID(self,obj):
-		return obj.key().name()
+    list_display = ('Trip_ID',)	
+    
+    form = TripBasicForm
+
+    def Trip_ID(self,obj):
+        return obj.key().name()
 	
 admin.site.register(Trip, TripAdmin)	
 

@@ -14,7 +14,7 @@ from gogogo.models import TitledStringListField
 from gogogo.models.MLStringProperty import MLStringProperty , to_key_name
 from gogogo.models.utils import id_or_name
 from gogogo.views.widgets import LatLngInputWidget
-from gogogo.models.forms import AgencyForm , StopForm
+from gogogo.models.forms import AgencyForm , StopForm , TripForm
 import logging
 
 #TODO - move *From to gogogo.models.forms , and shave with gogogo.admin.py
@@ -27,16 +27,6 @@ class RouteForm(ModelForm):
     short_name = forms.CharField(required = True)
     type = forms.ChoiceField(Route.get_choices())	
     log_message = forms.CharField(widget = forms.Textarea)
-
-class TripForm(ModelForm):
-	class Meta:
-		model = Trip
-		
-		#TODO - Reenable stop_list
-		exclude = ["stop_list"]
-	
-	headsign = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())	
-	log_message = forms.CharField(widget = forms.Textarea)
 
 _supported_model = {
 	'route' : (Route,RouteForm),
