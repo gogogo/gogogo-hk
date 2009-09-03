@@ -113,12 +113,8 @@ class StopListEditor(forms.Widget):
             'value' : value,
             'id' : final_attrs['id'],
             'map_id' : "map_%s" % final_attrs['id'],
+            'editor' : "editor_%s" % final_attrs['id'],
             'sortable_id' : "sortable_%s" % final_attrs['id'],
-            'trip' : "trip_%s" % final_attrs['id'],
-            'model_manager' : "model_manager_%s" % final_attrs['id'],
-            'cluster_manager' : "cluster_manager_%s" % final_attrs['id'],
-            'stop_manager' : "stop_manager_%s" % final_attrs['id'],
-            'marker_id' : "marker_%s" % final_attrs['id']
         })
             
         return mark_safe(	t.render(c) )

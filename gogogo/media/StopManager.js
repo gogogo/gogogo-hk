@@ -95,10 +95,12 @@ gogogo.StopManager.prototype._search = function(prefix,callback) {
  */
 gogogo.StopManager.prototype.getStop = function(id) {
 	stop = this.stops[id];
+
 	if (stop != undefined) {
 		if (stop.complete == false)
 			stop = undefined;
 	}
+
 	return stop;
 }
 

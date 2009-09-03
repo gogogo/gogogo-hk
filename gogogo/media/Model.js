@@ -72,7 +72,7 @@ gogogo.Model.prototype.query = function(callback) {
 			model.complete = true;
 		} else {
             model.error = true;
-            model.complete = false;
+            model.complete = true;
         }
         
         $(model).trigger("query-finished",response);        
