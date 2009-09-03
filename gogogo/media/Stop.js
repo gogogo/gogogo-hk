@@ -72,3 +72,10 @@ gogogo.Stop.prototype.createMarker = function(){
     return this.marker;
 }
 
+/** Return a GLatLng instance of the location of the stop
+ * 
+ */
+
+gogogo.Stop.prototype.getLatLng  = function(){
+    return this.latlng;
+}

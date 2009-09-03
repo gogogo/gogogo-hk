@@ -9,7 +9,11 @@
 gogogo.Trip = function(id){
 	gogogo.Model.call(this,id);
 	this.polyline = undefined;
+    
+    // Stop Object storage
 	this.stopObjectList = [];
+    
+    // No. of stop objects stored
 	this.stopObjectListCount = 0;
 }
 
@@ -36,7 +40,7 @@ gogogo.Trip.prototype._queryStop = function(manager,index,callback){
 		});	
 };
 
-/** Query associative stop objects from StopManager
+/** Query associated stop objects from StopManager
  * 
  */
 
@@ -68,6 +72,35 @@ gogogo.Trip.prototype.isStopObjectListComplete = function () {
 	return ret;
 }
 
+/** Clear all the stop stored
+ * 
+ */
+
+gogogo.Trip.prototype.clearStops = function(){
+    this.info.stop_list = [];
+    
+	this.stopObjectList = [];
+   
+	this.stopObjectListCount = 0;    
+}
+
+/** Set the stop ID list
+ * 
+ */
+
+gogogo.Trip.prototype.setStopIDList = function(id_list) {
+    this.clearStops();
+    this.info.stop_list = id_list;
+}
+
+/**
+ * Get polyline
+ */
+
+gogogo.Trip.prototype.getPolyline = function(options) {
+	return this.polyline;
+}
+
 gogogo.Trip.prototype.createPolyline = function(options) {
 	if (this.polyline != undefined)
 		return this.polyline;
@@ -79,7 +112,7 @@ gogogo.Trip.prototype.createPolyline = function(options) {
 	for (var i = 0 ; i < this.stopObjectList.length ;i++) {		
 	//for (i in this.stopObjectList) {
 		if (this.stopObjectList[i] == 'undefined') {
-			console.error("Unknown stop - " , this.info.stop_list[i]);
+			//console.error("Unknown stop - " , this.info.stop_list[i]);
 			continue;
 		}
 		pts[i] = this.stopObjectList[i].latlng;
@@ -90,4 +123,29 @@ gogogo.Trip.prototype.createPolyline = function(options) {
 	return this.polyline;
 }
 
+/** Remove the polyline (p.s it is not removed from map)
+ */
+gogogo.Trip.prototype.removePolyline = function() {
+    this.polyline = undefined;
+}
 
+/** Zoom and pan to the trip
+ *
+ */
+
+gogogo.Trip.prototype.zoomAndPan = function(map){
+    if (this.stopObjectListCount > 0){
+        var bounds = new GLatLngBounds();
+        
+        for (var i =0 ; i < this.stopObjectList.length; i++){
+            var stop = this.stopObjectList[i];
+            bounds.extend(stop.getLatLng());
+        }
+    
+        if (!bounds.isEmpty()){
+            var center = bounds.getCenter();
+            var zoom = map.getBoundsZoomLevel(bounds);
+            map.setCenter(center,zoom);
+		}
+    }
+}

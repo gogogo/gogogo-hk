@@ -47,18 +47,43 @@
 
 <script type="text/javascript">
 	var {{map_id}};
-	var {{cluster_manager}};
-	var {{model_manager}}
+	var {{model_manager}};
+    var {{stop_manager}};
+    var {{trip}};
 
     function updateSortable(input,sortable) {
         var value = $(input).val();
         var keys = value.split(",");
         $(sortable).empty();
         for (var i = 0 ; i < keys.length;i++){
+            console.log(keys[i]);
             var li = $("<li id='" + keys[i] + "' > " + keys[i]+  " </li>")
             $(sortable).append(li);
         }
         $(sortable).sortable("refresh");
+        
+    }
+    
+    function updateOverlay(input,trip){
+        var polyline = trip.getPolyline();
+        if (polyline) {
+            console.log("removeOverlay");
+            {{map_id}}.removeOverlay(polyline);
+        }
+        trip.removePolyline();
+
+        var value = $(input).val();
+        var keys = value.split(",");       
+
+        trip.setStopIDList(keys);
+        
+        $(trip).one("stopObjectListComplete",function (e){
+            var line = e.target.createPolyline();
+            {{map_id}}.addOverlay(line);
+            trip.zoomAndPan({{map_id}});
+		});
+				
+        trip.queryStops({{stop_manager}});
     }
 		
 	$(document).ready(function(){
@@ -66,16 +91,22 @@
 			{{map_id}} = new GMap2(document.getElementById("{{map_id}}"));
 			gogogo.mapSetup({{map_id}});
 			{{model_manager}} = new gogogo.ModelManager();
-			{{cluster_manager}} = new gogogo.ClusterManager({{map_id}},{{model_manager}});
+            {{stop_manager}} = new gogogo.StopManager({{map_id}});
+            {{trip}} = new gogogo.Trip();
+            
             $("#{{sortable_id}}").sortable();
             
             $("#{{sortable_id}}").bind("sortstop",function (e,ui){
                 $("#{{id}}").val($("#{{sortable_id}}").sortable('toArray'));                
+                updateOverlay("#{{id}}",{{trip}});
             });
             
-            updateSortable("#{{id}}","#{{sortable_id}}" );
+            updateSortable("#{{id}}","#{{sortable_id}}");
+            updateOverlay("#{{id}}",{{trip}});
+            
             $("#{{id}}").change(function(){
                 updateSortable("#{{id}}","#{{sortable_id}}" );
+                updateOverlay("#{{id}}",{{trip}});
             });
 			
 	});

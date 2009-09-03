@@ -13,6 +13,7 @@ from gogogo.models.cache import getCachedObjectOr404
 from gogogo.models.utils import id_or_name
 from gogogo.models import Stop
 import cgi
+import logging
 
 class Pathbar:
 	"""
@@ -113,16 +114,23 @@ class StopListEditor(forms.Widget):
             'id' : final_attrs['id'],
             'map_id' : "map_%s" % final_attrs['id'],
             'sortable_id' : "sortable_%s" % final_attrs['id'],
+            'trip' : "trip_%s" % final_attrs['id'],
             'model_manager' : "model_manager_%s" % final_attrs['id'],
             'cluster_manager' : "cluster_manager_%s" % final_attrs['id'],
+            'stop_manager' : "stop_manager_%s" % final_attrs['id'],
             'marker_id' : "marker_%s" % final_attrs['id']
         })
             
         return mark_safe(	t.render(c) )
     
     def _gen_value(self,value):
-        
-        return ",".join([str(v.id_or_name()) for v in value])
+        ret = []
+        for v in value:
+            if isinstance(v,basestring):                
+                ret.append(v)
+            else:
+                ret.append(str(v.id_or_name()))
+        return ",".join(ret)
         
 class StopListField(forms.Field):
 
