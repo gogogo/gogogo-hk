@@ -79,3 +79,11 @@ gogogo.Stop.prototype.createMarker = function(){
 gogogo.Stop.prototype.getLatLng  = function(){
     return this.latlng;
 }
+
+/** Get the name of the stop
+ * 
+ */
+
+gogogo.Stop.prototype.getName = function(){
+    return this.info.name;
+}

@@ -34,13 +34,15 @@ gogogo.Trip.prototype._queryStop = function(manager,index,callback){
 			if (trip.isStopObjectListComplete()) {
 				$(trip).trigger("stopObjectListComplete");
 				if (callback !=undefined){
-					callback(trip);
+					callback(trip,trip.stopObjectList);
 				}
 			}
 		});	
 };
 
 /** Query associated stop objects from StopManager
+ * 
+ * @param callback To be involved when all the objects are fetched from server. ( callback(trip,stop_list) )
  * 
  */
 
@@ -93,6 +95,24 @@ gogogo.Trip.prototype.setStopIDList = function(id_list) {
     this.info.stop_list = id_list;
 }
 
+
+/** Get the stop ID list
+ * 
+ */
+
+gogogo.Trip.prototype.getStopIDList = function(id_list) {
+    return this.info.stop_list;
+}
+
+
+/** Get the list of gogogo.Stop object
+ * 
+ */
+
+gogogo.Trip.prototype.getStopList = function(){
+    return this.stopObjectList;
+}
+
 /**
  * Get polyline
  */
@@ -111,7 +131,7 @@ gogogo.Trip.prototype.createPolyline = function(options) {
 	var pts = [];
 	for (var i = 0 ; i < this.stopObjectList.length ;i++) {		
 	//for (i in this.stopObjectList) {
-		if (this.stopObjectList[i] == 'undefined') {
+		if (this.stopObjectList[i] == 'undefined' || this.stopObjectList[i].error) {
 			//console.error("Unknown stop - " , this.info.stop_list[i]);
 			continue;
 		}
@@ -139,7 +159,8 @@ gogogo.Trip.prototype.zoomAndPan = function(map){
         
         for (var i =0 ; i < this.stopObjectList.length; i++){
             var stop = this.stopObjectList[i];
-            bounds.extend(stop.getLatLng());
+            if (!stop.error)
+                bounds.extend(stop.getLatLng());
         }
     
         if (!bounds.isEmpty()){

@@ -43,7 +43,7 @@ class AgencyLoader(bulkloader.Loader):
                                 ('url', str),
         						('timezone',str),                                
         						('lang',str),
-                                ('phone', str),
+                                ('phone', lambda x: unicode(x,'utf-8')),
                                 ('icon',str)
                                ])
 

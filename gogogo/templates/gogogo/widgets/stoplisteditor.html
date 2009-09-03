@@ -11,11 +11,19 @@
     margin-top : 5px;
 }
 
+.stoplisteditor .header {
+    margin-left: 40px;
+}
+
 .stoplisteditor .left_area {
     width:600px;
     height: 500px;
     margin-top: 1em;
     float:left
+}
+
+.stoplisteditor .error {
+    color : red;
 }
 
 .stoplisteditor ul {
@@ -30,12 +38,16 @@
     width : 650px;
 }
 
+.stoplisteditor a {
+    margin-right : 5px;
+}
+
 </style>
 <div  class="stoplisteditor">
 <input {{final_attrs}} >
 
 <div class="right_area"> 
-    <div>Stop list</div>
+    <div class="header">Stop list</div>
 
     <ul id="{{sortable_id}}" >
     </ul>
@@ -50,40 +62,87 @@
 	var {{model_manager}};
     var {{stop_manager}};
     var {{trip}};
+    
+    /// TODO: Create a StopListEditor javascript to replace the following functions
+    
+    function _createDeleteLink(parent) {
+        var a = $("<a>[X]</a> ");
+        a.click(function (){
+           $(parent).remove();
+           _stoplisteditorSortableChanged();
+        });
+        return a;
+    }
+    
+    /// Called when the sortable object is changed
+    function _stoplisteditorSortableChanged() {
+        $("#{{id}}").val($("#{{sortable_id}}").sortable('toArray'));
+        
+        _stoplisteditorUpdateOverlay("#{{id}}","#{{sortable_id}}",{{trip}});        
+    }
 
-    function updateSortable(input,sortable) {
+    /// update Sortable list of stop
+    function _stoplisteditorUpdateSortable(input,sortable,trip) {
         var value = $(input).val();
         var keys = value.split(",");
         $(sortable).empty();
         for (var i = 0 ; i < keys.length;i++){
-            console.log(keys[i]);
-            var li = $("<li id='" + keys[i] + "' > " + keys[i]+  " </li>")
+            //console.log(keys[i]);    
+            
+            var li = $("<li></li>");
+            var a = _createDeleteLink($(li),input,sortable,trip);
+            
+            $(li).attr("id",keys[i]);
+            $(li).append(a);
+            $(li).append(keys[i]);
+            
             $(sortable).append(li);
         }
         $(sortable).sortable("refresh");
-        
     }
-    
-    function updateOverlay(input,trip){
+
+    /// update the map's overlay
+    function _stoplisteditorUpdateOverlay(input,sortable,trip) {
+        var value = $(input).val();
+        var keys = value.split(",");
+        
         var polyline = trip.getPolyline();
         if (polyline) {
-            console.log("removeOverlay");
+            //console.log("removeOverlay");
             {{map_id}}.removeOverlay(polyline);
         }
         trip.removePolyline();
 
-        var value = $(input).val();
-        var keys = value.split(",");       
-
         trip.setStopIDList(keys);
-        
-        $(trip).one("stopObjectListComplete",function (e){
-            var line = e.target.createPolyline();
+        				
+        trip.queryStops({{stop_manager}} , function(trip){
+            var line = trip.createPolyline();
             {{map_id}}.addOverlay(line);
             trip.zoomAndPan({{map_id}});
-		});
-				
-        trip.queryStops({{stop_manager}});
+            var kids = $(sortable).children();
+            
+            $.each(kids,function(i,child){
+                var stop_list = trip.getStopList();
+                var id = $(child).attr("id");
+                
+                for (var i = 0 ; i< stop_list.length;i++) {
+                    var stop  = stop_list[i];
+                    if (stop.getID() == id) {
+                        if (!stop.error) {
+                            var a = _createDeleteLink(child);
+                            
+                            $(child).empty();
+                            $(child).append(a);
+                            $(child).append(stop.getName());
+                        } else {
+                            $(child).addClass("error");
+                        }
+                        break;
+                    }
+                }
+                
+            });
+        });
     }
 		
 	$(document).ready(function(){
@@ -97,16 +156,15 @@
             $("#{{sortable_id}}").sortable();
             
             $("#{{sortable_id}}").bind("sortstop",function (e,ui){
-                $("#{{id}}").val($("#{{sortable_id}}").sortable('toArray'));                
-                updateOverlay("#{{id}}",{{trip}});
-            });
+                _stoplisteditorSortableChanged();
+            });            
             
-            updateSortable("#{{id}}","#{{sortable_id}}");
-            updateOverlay("#{{id}}",{{trip}});
+            _stoplisteditorUpdateSortable("#{{id}}","#{{sortable_id}}",{{trip}});
+            _stoplisteditorUpdateOverlay("#{{id}}","#{{sortable_id}}",{{trip}});
             
             $("#{{id}}").change(function(){
-                updateSortable("#{{id}}","#{{sortable_id}}" );
-                updateOverlay("#{{id}}",{{trip}});
+                _stoplisteditorUpdateSortable("#{{id}}","#{{sortable_id}}",{{trip}});
+                _stoplisteditorUpdateOverlay("#{{id}}","#{{sortable_id}}",{{trip}});
             });
 			
 	});

@@ -85,3 +85,10 @@ gogogo.Model.prototype.query = function(callback) {
 	jQuery.ajaxSettings.cache = cache;	
 }
 
+/** Get the ID of the model pbject
+ * 
+ */
+
+gogogo.Model.prototype.getID = function(){
+    return this.id;
+}
