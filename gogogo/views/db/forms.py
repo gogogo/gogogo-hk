@@ -15,6 +15,7 @@ from gogogo.models.MLStringProperty import MLStringProperty , to_key_name
 from gogogo.models.utils import id_or_name
 from gogogo.views.widgets import LatLngInputWidget
 from gogogo.models.forms import AgencyForm , StopForm , TripForm
+from gogogo.models.changelog import createChangelog
 import logging
 
 #TODO - move *From to gogogo.models.forms , and shave with gogogo.admin.py
@@ -101,124 +102,114 @@ def updateModel(kind,model):
 		model.update_geohash()
 
 def add(request,kind):
-	"""
-	Add new entry to database
-	"""
-	
-	(model,model_form) = _getModelInfo(kind)
-	
-	if request.method == 'POST':
-		form = model_form(request.POST)
+    """
+    Add new entry to database
+    """
+
+    (model,model_form) = _getModelInfo(kind)
+
+    if request.method == 'POST':
+        form = model_form(request.POST)
         
-		if form.is_valid():
-			instance = _createModel(kind,form = form)
-			form = model_form(request.POST,instance = instance)
+        if form.is_valid():
+            instance = _createModel(kind,form = form)
+            form = model_form(request.POST,instance = instance)
 
-			instance = form.save(commit=False)		
-			
-			updateModel(kind,instance)
-			instance.save()
+            instance = form.save(commit=False)		
+            
+            updateModel(kind,instance)
+            instance.save()
 
-			old_rev = None
-			new_rev = entityToText(createEntity(instance))
-			
-			changelog = Changelog(
-				reference = instance,
-				commit_date = datetime.utcnow(),
-#				committer=request.user,
-				comment=form.cleaned_data['log_message'],
-				old_rev = old_rev,
-				new_rev = new_rev,
-				model_kind=kind,
-				type=1
-				)
+            #old_rev = None
+            #new_rev = entityToText(createEntity(instance))
+            changelog = createChangelog(None,instance,form.cleaned_data['log_message'])
+            #changelog = Changelog(
+                #reference = instance,
+                #commit_date = datetime.utcnow(),
+    ##				committer=request.user,
+                #comment=form.cleaned_data['log_message'],
+                #old_rev = old_rev,
+                #new_rev = new_rev,
+                #model_kind=kind,
+                #type=1
+                #)
 
-			changelog.save()
-			
-			return HttpResponseRedirect(instance.get_absolute_url())
-	elif request.method == 'GET':
-		parent = None
-		if "parent" in request.GET:
-			parent = request.GET['parent']
-		instance = _createModel(kind,parent)
-		form = model_form(instance=instance)
-		
-	else:
-		form = model_form()
-		
-	message = ""
+            changelog.save()
+            
+            return HttpResponseRedirect(instance.get_absolute_url())
+    elif request.method == 'GET':
+        parent = None
+        if "parent" in request.GET:
+            parent = request.GET['parent']
+        instance = _createModel(kind,parent)
+        form = model_form(instance=instance)
+        
+    else:
+        form = model_form()
+        
+    message = ""
 
-	return render_to_response( 
-		request,
-		'gogogo/db/edit.html'
-		,{ "form" : form , 
-		   "kind" : kind,
-		   "message" : message,
-		   "history_link" : _reverse('gogogo.views.db.changelog.list') + "?kind=%s" % kind,
-		   "action" : _reverse('gogogo.views.db.add',args=[kind]) ,
-		   })		
+    return render_to_response( 
+        request,
+        'gogogo/db/edit.html'
+        ,{ "form" : form , 
+           "kind" : kind,
+           "message" : message,
+           "history_link" : _reverse('gogogo.views.db.changelog.list') + "?kind=%s" % kind,
+           "action" : _reverse('gogogo.views.db.add',args=[kind]) ,
+           })		
 
 
 @staff_only
 def edit(request,kind,object_id):
-	"""
-	Edit model
-	"""
-	
-	(model,model_form) = _getModelInfo(kind)
-	
-	message = ""
+    """
+    Edit model
+    """
 
-	id = None
-	key_name = None
-	try:
-		id = int(object_id)
-	except ValueError:
-		key_name = object_id
-	
-	object = get_object_or_404(model,key_name = key_name , id=id)
-		
-	
-	if request.method == 'POST':
-		form = model_form(request.POST,instance=object)
-		if form.is_valid():
-			old_rev = entityToText(createEntity(object))
-			new_object = form.save(commit = False)
-			updateModel(kind,new_object)
-			new_rev = entityToText(createEntity(new_object))
-			
-			changelog = Changelog(
-				reference = object,
-				commit_date = datetime.utcnow(),
-#				committer=request.user,
-				comment=form.cleaned_data['log_message'],
-				old_rev = old_rev,
-				new_rev = new_rev,
-				model_kind=kind,
-				)
-			
-			
-			db.put([new_object,changelog])
-			updateCachedObject(new_object)
-			#TODO - Update loader cache
-			
-			message = "The form is successfully saved. <a href='%s'>View.</a> " % object.get_absolute_url()
+    (model,model_form) = _getModelInfo(kind)
 
-	else:
-		form = model_form(instance=object)
+    message = ""
 
-	view_object_link = None
-	if object : 
-		view_object_link = object.get_absolute_url()
-		
-	return render_to_response( 
-		request,
-		'gogogo/db/edit.html'
-		,{ "form" : form , 
-		   "object" : object,
-		   "kind" : kind,
-		   "message" : message,
-		   "history_link" : _reverse('gogogo.views.db.changelog.list') + "?kind=%s" % kind,
-		   "view_object_link" : view_object_link,
-		   "action" : _reverse('gogogo.views.db.edit',args=[kind,object_id]) ,
-		   })		
+    id = None
+    key_name = None
+    try:
+        id = int(object_id)
+    except ValueError:
+        key_name = object_id
+
+    object = get_object_or_404(model,key_name = key_name , id=id)
+        
+
+    if request.method == 'POST':
+        form = model_form(request.POST,instance=object)
+        if form.is_valid():
+            new_object = form.save(commit = False)
+            updateModel(kind,new_object)
+            
+            changelog = createChangelog(object,new_object,form.cleaned_data['log_message'])
+            
+            
+            db.put([new_object,changelog])
+            updateCachedObject(new_object)
+            #TODO - Update loader cache
+            
+            message = "The form is successfully saved. <a href='%s'>View.</a> " % object.get_absolute_url()
+
+    else:
+        form = model_form(instance=object)
+
+    view_object_link = None
+    if object : 
+        view_object_link = object.get_absolute_url()
+        
+    return render_to_response( 
+        request,
+        'gogogo/db/edit.html'
+        ,{ "form" : form , 
+           "object" : object,
+           "kind" : kind,
+           "message" : message,
+           "history_link" : _reverse('gogogo.views.db.changelog.list') + "?kind=%s" % kind,
+           "view_object_link" : view_object_link,
+           "action" : _reverse('gogogo.views.db.edit',args=[kind,object_id]) ,
+           })		
