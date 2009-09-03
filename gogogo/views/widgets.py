@@ -10,7 +10,8 @@ from django.template import Context, loader , RequestContext
 from django.conf import settings
 
 from gogogo.models.cache import getCachedObjectOr404
-
+from gogogo.models.utils import id_or_name
+from gogogo.models import Stop
 import cgi
 
 class Pathbar:
@@ -123,4 +124,28 @@ class StopListEditor(forms.Widget):
         
         return ",".join([str(v.id_or_name()) for v in value])
         
+class StopListField(forms.Field):
+
+    def __init__(self,  *args, **kwargs):
         
+        if 'widget' not in kwargs:
+            kwargs.update( { 'widget' : StopListEditor() })
+                
+        super(StopListField, self).__init__(*args, **kwargs)
+
+    def clean(self, value):
+        if self.required and not value:
+            raise ValidationError(gettext(u'This field is required.'))
+        elif not self.required and not value:
+            return []
+        if isinstance(value,basestring):
+            value = value.split(",")
+            
+        if not isinstance(value, (list, tuple)):
+            raise ValidationError(gettext(u'Enter a list of values.'))
+        
+        final_values = []
+        for val in value:
+            key = db.Key.from_path(Stop.kind(),id_or_name(val))
+            final_values.append(key)
+        return final_values
