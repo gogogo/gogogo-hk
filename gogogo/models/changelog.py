@@ -35,6 +35,10 @@ def createChangelog(old_object , new_object,comment):
         
         old_entity = serialize(old_object)
         new_entity = serialize(new_object)
+        
+        diffResult = diff(old_entity,new_entity)
+        if diffResult == None:
+            return None
     
         content = StringIO()
         
@@ -59,6 +63,32 @@ def createChangelog(old_object , new_object,comment):
 
     return changelog    
     
+def diff(a,b):
+    """
+    Compare two dict objects , and return the different
+    
+    @return None if no different was found
+    """
+    
+    retA = {}
+    retB = {}
+    
+    for key in a:
+        if key not in b:
+            retA[key] = a[key]
+        else:
+            if a[key] != b[key]:
+                retA[key] = a[key]
+                retB[key] = b[key]
+    
+    for key in b:
+        if key not in a:
+            retB[key] = b[key]
+            
+    if len(retA) >0 or len(retB) > 0:
+        return (retA,retB)
+    else:
+        return None 
     
 
 #######################################################################

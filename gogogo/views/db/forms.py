@@ -5,6 +5,7 @@ from django import forms
 from django.forms import ModelForm
 from ragendja.template import render_to_response
 from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.utils.translation import ugettext_lazy as _
 
 from django.core.urlresolvers import reverse as _reverse
 from gogogo.models.utils import createEntity , entityToText
@@ -16,6 +17,7 @@ from gogogo.models.utils import id_or_name
 from gogogo.views.widgets import LatLngInputWidget
 from gogogo.models.forms import AgencyForm , StopForm , TripForm
 from gogogo.models.changelog import createChangelog
+
 import logging
 
 #TODO - move *From to gogogo.models.forms , and shave with gogogo.admin.py
@@ -187,13 +189,15 @@ def edit(request,kind,object_id):
             updateModel(kind,new_object)
             
             changelog = createChangelog(object,new_object,form.cleaned_data['log_message'])
+            if changelog:                
             
-            
-            db.put([new_object,changelog])
-            updateCachedObject(new_object)
-            #TODO - Update loader cache
-            
-            message = "The form is successfully saved. <a href='%s'>View.</a> " % object.get_absolute_url()
+                db.put([new_object,changelog])
+                updateCachedObject(new_object)
+                #TODO - Update loader cache
+                
+                message = _("The form is successfully saved. <a href='%s'>View.</a> ") % object.get_absolute_url()
+            else:
+                message = _("Nothing changed. The form will not be saved")
 
     else:
         form = model_form(instance=object)
