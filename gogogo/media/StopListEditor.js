@@ -18,6 +18,15 @@ gogogo.StopListEditor = function (map,input,sortable){
     this.stopManager = new gogogo.StopManager(map);
     
     this.trip = new gogogo.Trip();    
+    
+    var editor = this;
+    
+    $(this.stopManager).bind("markerAdded",function (e,marker,stop) {
+        GEvent.addListener(marker, "mousedown", function(){
+            editor.addStopID(stop.getID());
+        });
+    });
+    
 };
 
 /** Initialize the editor
@@ -34,13 +43,26 @@ gogogo.StopListEditor.prototype.init = function(){
     
 
     this._updateSortable();
-    this._updateOverlay();
+    this._updateOverlay(false);
     
     this.input.change(function(){
         editor._updateSortable();
-        editor._updateOverlay();        
+        editor._updateOverlay(false);        
     });
     
+}
+
+/** Add Stop ID
+ */
+
+gogogo.StopListEditor.prototype.addStopID = function(id){
+    var value = this.input.val();
+    var items = value.split(",")
+    items.push(id);
+    this.input.val(items.join(","));
+
+    this._updateSortable();
+    this._updateOverlay(true);
 }
 
 gogogo.StopListEditor.prototype._createDeleteLink = function(parent) {
@@ -59,7 +81,7 @@ gogogo.StopListEditor.prototype._createDeleteLink = function(parent) {
 gogogo.StopListEditor.prototype._onSortableChanged = function() {
    this.input.val(this.sortable.sortable('toArray'));
    
-   this._updateOverlay();     
+   this._updateOverlay(false);     
 }
 
 gogogo.StopListEditor.prototype._updateSortable = function(){
@@ -80,7 +102,7 @@ gogogo.StopListEditor.prototype._updateSortable = function(){
     this.sortable.sortable("refresh");
 }
 
-gogogo.StopListEditor.prototype._updateOverlay = function(){
+gogogo.StopListEditor.prototype._updateOverlay = function(nozoom){
     var value = this.input.val();
     var keys = value.split(",");
     
@@ -97,7 +119,9 @@ gogogo.StopListEditor.prototype._updateOverlay = function(){
     this.trip.queryStops(this.stopManager , function(trip){
         var line = editor.trip.createPolyline();
         editor.map.addOverlay(line);
-        trip.zoomAndPan(editor.map);
+        
+        if (!nozoom)
+            trip.zoomAndPan(editor.map);
         var kids = editor.sortable.children();
         
         $.each(kids,function(i,child){

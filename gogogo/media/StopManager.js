@@ -6,6 +6,10 @@
 
 /** Stop Manager
  * 
+ * Signals:
+ * 
+ * markerAdded - Called when a marker is added.
+ * 
  * @constructor 
  */
 
@@ -31,6 +35,10 @@ gogogo.StopManager.prototype._createOverlays = function(items) {
         var marker = stop.createMarker();
      
         manager.markermanager.addMarker(marker,manager.minZoom);
+        
+        $(manager).trigger("markerAdded",[marker,stop]);
+        
+        ret.push(marker);
 	});
     
     return ret;

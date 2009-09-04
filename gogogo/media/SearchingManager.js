@@ -1,8 +1,12 @@
 /** Map Items Searching Manager
  * 
- * @constructor 
  * 
- * All the subclass should implement the following function
+ * Signals:
+ *  
+ *  overlayAdded - Triggered when a list of overlays are added to map
+ * 
+ * 
+ * All the subclass should implement the following functions:
  * 
  * _search(prefix,callback) - Search items in specific region. 
  * The result should be passed to callback, then SearchingManager
@@ -14,6 +18,8 @@
  * items - A list of storage instance (Returned by _search() )
  * 
  * Return : A list of overlay objects
+ * 
+ * @constructor 
  */
 
 gogogo.SearchingManager = function (map){
@@ -49,6 +55,10 @@ gogogo.SearchingManager = function (map){
                         && manager._createOverlays != undefined
                         ) {
                           manager.overlays[prefix] = manager._createOverlays(result);
+                          if (manager.overlays[prefix].length > 0){
+                              $(manager).trigger("overlayAdded",manager.overlays[prefix]);
+                          }
+                          
                         }
                 });		
     	    });
