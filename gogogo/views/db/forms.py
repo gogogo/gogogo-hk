@@ -180,10 +180,9 @@ def edit(request,kind,object_id):
         key_name = object_id
 
     object = get_object_or_404(model,key_name = key_name , id=id)
-        
 
     if request.method == 'POST':
-        form = model_form(request.POST,instance=object)
+        form = model_form(request.POST)
         if form.is_valid():
             new_object = form.save(commit = False)
             updateModel(kind,new_object)

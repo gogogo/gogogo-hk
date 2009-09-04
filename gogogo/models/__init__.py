@@ -376,11 +376,8 @@ class Changelog(db.Model):
 	# The model kind
 	model_kind = db.StringProperty()
 	
-	# Entity of original data
-	old_rev = db.TextProperty()
-
-	# Entity of new data
-	new_rev = db.TextProperty()
+	# The changes in JSON format produced by diffModel()
+	changes = db.TextProperty()
 	
 	# A masked changelog will not be shown to public. It is probably a spam or invalid commit
 	masked = db.BooleanProperty()

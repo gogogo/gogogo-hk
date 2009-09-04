@@ -131,7 +131,9 @@ class ChangelogAdmin(admin.ModelAdmin):
 	fieldsets = (
         (None, {
             'fields': (
-     				'committer','commit_date','model_kind','old_rev','new_rev','comment','tag','masked'
+     				'committer','commit_date','model_kind',
+                    'changes',
+                    'comment','tag','masked'
             	)
         }),
     )	

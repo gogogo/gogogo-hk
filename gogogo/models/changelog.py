@@ -14,49 +14,41 @@ def createChangelog(old_object , new_object,comment):
     """
     Create a Changelog instance
     """
-    old_rev = None
-    new_rev = None
+    changes = None
     
     if old_object == None: # Add a new record
         type = 1
         kind = new_object.kind()
         instance = new_object
         
-        entity = serialize(new_object)
-        
+        d = diffModel(None,new_object)
+
         content = StringIO()
-        simplejson.dump(entity,content,ensure_ascii=False,indent =1)
+        simplejson.dump([d],content,ensure_ascii=False,indent =1)
+        changes = content.getvalue()
         
-        new_rev = content.getvalue()
     elif old_object != None and new_object != None:
         type = 0
-        kind = new_object.kind()
-        instance = new_object
+        kind = old_object.kind()
+        instance = old_object
         
-        old_entity = serialize(old_object)
-        new_entity = serialize(new_object)
+        #old_entity = serialize(old_object)
+        #new_entity = serialize(new_object)
         
-        diffResult = diff(old_entity,new_entity)
-        if diffResult == None:
+        d = diffModel(old_object,new_object)
+        if d["old"] == None: #Nothing changed.
             return None
-    
+
         content = StringIO()
+        simplejson.dump([d],content,ensure_ascii=False,indent =1)
+        changes = content.getvalue()
         
-        simplejson.dump(old_entity,content,ensure_ascii=False,indent =1)
-        old_rev = content.getvalue()
-        
-        content = StringIO()
-        
-        simplejson.dump(new_entity,content,ensure_ascii=False,indent =1)
-        new_rev = content.getvalue()
-    
     changelog = Changelog(
         reference = instance,
         commit_date = datetime.utcnow(),
 #				committer=request.user,
         comment=comment,
-        old_rev = old_rev,
-        new_rev = new_rev,
+        changes = changes,
         model_kind=kind,
         type=type
         )
@@ -89,7 +81,44 @@ def diff(a,b):
         return (retA,retB)
     else:
         return None 
+
+def diffModel(a,b):
+    """
+    Compare two model objects , and return the different
+    """
+    instance = None
+    if a != None and a.is_saved():
+        instance = a
+    elif b != None and b.is_saved():
+        instance = b
     
+    if instance:
+        kind = instance.kind()
+        key = instance.key().id_or_name()
+    
+    ret = {
+        "kind" : kind,
+        "key" : key,
+        "old" : None,
+        "new" : None
+    }
+    entity_a = {}
+    entity_b = {}
+        
+    if a:
+        entity_a = serialize(a)
+    if b:
+        entity_b = serialize(b)
+    
+    d = diff(entity_a,entity_b)
+    
+    if d:
+        ret["old"] = d[0]
+        ret["new"] = d[1]
+    
+    logging.debug(ret)
+    
+    return ret
 
 #######################################################################
 #

@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.forms import ModelForm
 
+from django.utils import simplejson
 from ragendja.auth.decorators import staff_only
 from ragendja.template import render_to_response
 from django.core.urlresolvers import reverse
@@ -69,16 +70,21 @@ def list(request):
 	
 
 def browse(request,id):
-	"""
-	Browse a changelog
-	"""	
-	
-	entity = getCachedEntityOr404(Changelog,id_or_name = id)
-	#entity['id'] = int(id)
+    """
+    Browse a changelog
+    """	
 
-	return render_to_response( 
-		request,
-		'gogogo/db/changelog/browse.html',
-			{ "changelog" : entity,
+    entity = getCachedEntityOr404(Changelog,id_or_name = id)
+    #entity['id'] = int(id)
+    
+    d = simplejson.loads(entity["changes"])
+    
+    entity["old_rev"] = d[0]["old"]
+    entity["new_rev"] = d[0]["new"]
+
+    return render_to_response( 
+        request,
+        'gogogo/db/changelog/browse.html',
+            { "changelog" : entity,
             "reference_link" : entity['instance'].reference.get_absolute_url()
-		   })		
+           })		
