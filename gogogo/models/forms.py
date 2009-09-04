@@ -9,7 +9,7 @@ from gogogo.views.widgets import LatLngInputWidget , StopListEditor , StopListFi
 class AgencyBasicForm(ModelForm):
     class Meta:
         model = Agency
-        fields = ["name","url","phone","icon","no_service","free_transfer"]
+        fields = ["name","type","url","phone","icon","no_service","free_transfer"]
 
     name = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())
     url = forms.CharField(required=False)
@@ -41,7 +41,6 @@ class RouteBasicForm(ModelForm):
 
     short_name = forms.CharField(required = True)
     long_name = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())
-    type = forms.ChoiceField(Route.get_choices())	
 
 class RouteForm(RouteBasicForm):
     log_message = forms.CharField(widget = forms.Textarea)

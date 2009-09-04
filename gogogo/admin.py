@@ -11,6 +11,7 @@ class AgencyAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': ('name', 'url',
+            'type',
             'phone',
             'icon',
             'no_service',

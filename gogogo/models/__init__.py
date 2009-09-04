@@ -19,6 +19,7 @@ from utils import createEntity , trEntity
 from MLStringProperty import MLStringProperty , to_key_name
 # Utilities
 from TitledStringListProperty import TitledStringListField
+from property import TransitTypeProperty
 
 import logging
         
@@ -77,6 +78,8 @@ class Agency(db.Model):
     # the fare is depended on station pairs, how passenger get there doesn't
     # matter
     free_transfer = db.BooleanProperty(default=False)
+    
+    type = TransitTypeProperty()
 
     class Meta:
         verbose_name = _('Transport Agency')
@@ -181,7 +184,7 @@ class Route(db.Model):
 
     # Reference : 
     # http://code.google.com/intl/zh-TW/transit/spec/transit_feed_specification.html#routes_txt___Field_Definitions
-    type = db.IntegerProperty(choices=range(0,8))
+    type = TransitTypeProperty()
 
     #As Link must not be empty, it is replaced by String Property
     url = db.StringProperty()
@@ -197,33 +200,6 @@ class Route(db.Model):
     def get_absolute_url(self):
         return ('gogogo.views.transit.route',[self.agency.key().id_or_name(),self.key().id_or_name()]) 
         
-    def get_type_name(type):
-        if type == 0:
-            return "Tram, Streetcar, Light rail"
-        elif type == 1:
-            return "Subway, Metro" #Any underground rail system within a metropolitan area
-        elif type == 2:
-            return "Rail" #Used for intercity or long-distance travel. 
-        elif type == 3:
-            return "Bus"
-        elif type == 4:
-            return "Ferry"
-        elif type == 5:
-            return "Cable car"
-        elif type == 6:
-            return "Gondola, Suspended cable car"
-        elif type == 7:
-            return "Funicular"
-            
-    get_type_name = staticmethod(get_type_name)
-
-    def get_choices(cls):
-        ret = []
-        for i in range(0,8):
-            ret.append( (i,cls.get_type_name(i)) )
-        return ret
-    get_choices = classmethod(get_choices)
-
     def gen_key_name(obj = None , agency = None , short_name = None , long_name = None):
         if obj:
             property = getattr(obj,"agency")
