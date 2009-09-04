@@ -7,7 +7,17 @@
 {% block js %}
 	<script src="http://www.google.com/jsapi?key={{GOOGLE_MAPS_KEY}}" type="text/javascript"></script>
 	<script type="text/javascript">google.load("maps", "2.x");</script>
+    <!-- Local Search API //-->
+    <script src="http://www.google.com/uds/api?file=uds.js&v=1.0&key={{GOOGLE_MAPS_KEY}}"
+          type="text/javascript"></script>
+    <script src="http://www.google.com/uds/solutions/localsearch/gmlocalsearch.js"
+          type="text/javascript"></script>
 
+    <style type="text/css">
+      @import url("http://www.google.com/uds/css/gsearch.css");
+      @import url("http://www.google.com/uds/solutions/localsearch/gmlocalsearch.css");
+    </style>
+    <!-- End of Local Search API //-->
 	{{block.super}}
 	<script type="text/javascript" src="{{ MEDIA_URL }}combined-{{ LANGUAGE_CODE }}-gogogo.js"></script>
 {% endblock %}

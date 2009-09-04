@@ -34,7 +34,7 @@
     list-style-type:None;
 }
 
-.stoplisteditor input {
+.stoplisteditor .stop_list_input {
     width : 650px;
 }
 
@@ -44,7 +44,7 @@
 
 </style>
 <div  class="stoplisteditor">
-<input {{final_attrs}} >
+<input {{final_attrs}} class="stop_list_input" >
 
 <div class="right_area"> 
     <div class="header">Stop list</div>
@@ -65,7 +65,8 @@
         
 			{{map_id}} = new GMap2(document.getElementById("{{map_id}}"));
 			gogogo.mapSetup({{map_id}});
-            
+            {{map_id}}.addControl(new google.maps.LocalSearch(), new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(10,20)));        
+                        
             {{editor}} = new gogogo.StopListEditor({{map_id}},$("#{{id}}"),$("#{{sortable_id}}"));
             
             {{editor}}.init();
