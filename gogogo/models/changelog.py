@@ -149,7 +149,7 @@ def encode_key(key,reference_class,field):
     Encode a key for JSON output
     """
     if reference_class != db.Model:
-        return key_name
+        return str(key)
     else:
         if key.id() == None:
             return str(key)

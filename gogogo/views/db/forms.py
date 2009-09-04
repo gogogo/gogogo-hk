@@ -15,21 +15,10 @@ from gogogo.models import TitledStringListField
 from gogogo.models.MLStringProperty import MLStringProperty , to_key_name
 from gogogo.models.utils import id_or_name
 from gogogo.views.widgets import LatLngInputWidget
-from gogogo.models.forms import AgencyForm , StopForm , TripForm
+from gogogo.models.forms import AgencyForm , StopForm , TripForm , RouteForm
 from gogogo.models.changelog import createChangelog
 
 import logging
-
-#TODO - move *From to gogogo.models.forms , and shave with gogogo.admin.py
-
-class RouteForm(ModelForm):
-    class Meta:
-        model = Route
-        fields = ['agency','short_name','long_name','desc','type','url','color','text_color']
-
-    short_name = forms.CharField(required = True)
-    type = forms.ChoiceField(Route.get_choices())	
-    log_message = forms.CharField(widget = forms.Textarea)
 
 _supported_model = {
 	'route' : (Route,RouteForm),
@@ -68,10 +57,16 @@ def _createModel(kind,parent = None,form = None):
         agency = None
         if form:
             agency = form.cleaned_data["agency"]
-            key_name = next_key_name(Route,to_key_name(str(agency.key().id_or_name()) + "-" + form.cleaned_data["short_name"]))
+            key_name = next_key_name(Route,Route.gen_key_name(
+                agency = agency,
+                short_name = form.cleaned_data["short_name"],
+                long_name = form.cleaned_data["long_name"],
+                ))
+                
         if parent:
             agency = db.Key.from_path(Agency.kind() , value)
-        return Route(key_name = key_name , agency = agency)
+            
+        return Route(key_name = key_name,agency = agency)
     elif kind == "agency":
         if form:
             key_name = next_key_name(Agency,Agency.gen_key_name(name = form.cleaned_data["name"]))

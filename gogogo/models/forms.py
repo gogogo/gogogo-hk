@@ -34,6 +34,18 @@ class StopBasicForm(ModelForm):
 class StopForm(StopBasicForm):
     log_message = forms.CharField(widget = forms.Textarea)
 
+class RouteBasicForm(ModelForm):
+    class Meta:
+        model = Route
+        fields = ['agency','short_name','long_name','desc','type','url','color','text_color']
+
+    short_name = forms.CharField(required = True)
+    long_name = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())
+    type = forms.ChoiceField(Route.get_choices())	
+
+class RouteForm(RouteBasicForm):
+    log_message = forms.CharField(widget = forms.Textarea)
+
 class TripBasicForm(ModelForm):
     class Meta:
         model = Trip

@@ -167,62 +167,78 @@ class Stop(db.Model):
     gen_key_name = staticmethod(gen_key_name)
 
 class Route(db.Model):	
-	class Meta:
-		verbose_name = _('Routes')
-		verbose_name_plural = _('Routes')
-	
-	agency = db.ReferenceProperty(Agency,required=True)
-	
-	short_name = db.StringProperty()
-	
-	long_name = MLStringProperty()
-	
-	desc = db.TextProperty()
-	
-	# Reference : 
-	# http://code.google.com/intl/zh-TW/transit/spec/transit_feed_specification.html#routes_txt___Field_Definitions
-	type = db.IntegerProperty(choices=range(0,8))
-	
-	#As Link must not be empty, it is replaced by String Property
-	url = db.StringProperty()
-	
-	color = db.StringProperty()
-	
-	text_color = db.StringProperty()
+    class Meta:
+        verbose_name = _('Routes')
+        verbose_name_plural = _('Routes')
 
-	def __unicode__(self):
-		return unicode(self.short_name)
+    agency = db.ReferenceProperty(Agency,required=True)
 
-	@permalink
-	def get_absolute_url(self):
-		return ('gogogo.views.transit.route',[self.agency.key().id_or_name(),self.key().id_or_name()]) 
-		
-	def get_type_name(type):
-		if type == 0:
-			return "Tram, Streetcar, Light rail"
-		elif type == 1:
-			return "Subway, Metro" #Any underground rail system within a metropolitan area
-		elif type == 2:
-			return "Rail" #Used for intercity or long-distance travel. 
-		elif type == 3:
-			return "Bus"
-		elif type == 4:
-			return "Ferry"
-		elif type == 5:
-			return "Cable car"
-		elif type == 6:
-			return "Gondola, Suspended cable car"
-		elif type == 7:
-			return "Funicular"
-			
-	get_type_name = staticmethod(get_type_name)
-	
-	def get_choices(cls):
-		ret = []
-		for i in range(0,8):
-			ret.append( (i,cls.get_type_name(i)) )
-		return ret
-	get_choices = classmethod(get_choices)
+    short_name = db.StringProperty()
+
+    long_name = MLStringProperty()
+
+    desc = db.TextProperty()
+
+    # Reference : 
+    # http://code.google.com/intl/zh-TW/transit/spec/transit_feed_specification.html#routes_txt___Field_Definitions
+    type = db.IntegerProperty(choices=range(0,8))
+
+    #As Link must not be empty, it is replaced by String Property
+    url = db.StringProperty()
+
+    color = db.StringProperty()
+
+    text_color = db.StringProperty()
+
+    def __unicode__(self):
+        return unicode(self.short_name)
+
+    @permalink
+    def get_absolute_url(self):
+        return ('gogogo.views.transit.route',[self.agency.key().id_or_name(),self.key().id_or_name()]) 
+        
+    def get_type_name(type):
+        if type == 0:
+            return "Tram, Streetcar, Light rail"
+        elif type == 1:
+            return "Subway, Metro" #Any underground rail system within a metropolitan area
+        elif type == 2:
+            return "Rail" #Used for intercity or long-distance travel. 
+        elif type == 3:
+            return "Bus"
+        elif type == 4:
+            return "Ferry"
+        elif type == 5:
+            return "Cable car"
+        elif type == 6:
+            return "Gondola, Suspended cable car"
+        elif type == 7:
+            return "Funicular"
+            
+    get_type_name = staticmethod(get_type_name)
+
+    def get_choices(cls):
+        ret = []
+        for i in range(0,8):
+            ret.append( (i,cls.get_type_name(i)) )
+        return ret
+    get_choices = classmethod(get_choices)
+
+    def gen_key_name(obj = None , agency = None , short_name = None , long_name = None):
+        if obj:
+            property = getattr(obj,"agency")
+            agency = property.get_value_for_datastore(object)
+            short_name = obj.short_name
+            long_name = obj.long_name
+            
+        if isinstance(agency,db.Key):
+            agency_id = agency.id_or_name()
+        else:
+            agency_id = agency.key().id_or_name()
+            
+        return to_key_name(agency_id + "-" + short_name + "-" +  MLStringProperty.to_key_name(long_name) )
+        
+    gen_key_name = staticmethod(gen_key_name)
 
 class Shape(db.Model):
 	"""

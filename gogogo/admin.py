@@ -87,13 +87,22 @@ class StopAdmin(admin.ModelAdmin):
 admin.site.register(Stop, StopAdmin)
 
 class RouteAdmin(admin.ModelAdmin):
-	fieldsets = (
+    fieldsets = (
         (None, {
             'fields': (
-     				'agency','short_name','long_name','desc','type','url','color','text_color'
-            	)
+                    'agency','short_name','long_name','desc','type','url','color','text_color'
+                )
         }),
     )	
+
+    form = RouteBasicForm
+
+    def save_model(self,request,obj,form,change):
+        if change:
+            return admin.ModelAdmin.save_model(self,request,obj,form,change)
+        else:            
+            new_obj = copyModel(obj,key_name = next_key_name(Route,Route.gen_key_name(obj)) )
+            new_obj.save()
 	
 admin.site.register(Route, RouteAdmin)
 
