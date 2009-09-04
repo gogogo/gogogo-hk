@@ -41,32 +41,6 @@ gogogo.Stop.prototype.createMarker = function(){
             "title": this.name
         };
         this.marker = new GMarker(this.latlng,option);
-
-        var marker = this.marker;
-        var stop = this;
-
-        GEvent.addListener(marker,'infowindowopen',function(){
-			var cache = jQuery.ajaxSettings.cache;
-			jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter			
-            $('#markerwin').load(
-                '/api/stop/markerwin/' + stop.id, null,
-                function(){
-                    var win = map.getInfoWindow();
-                    var content = $('#markerwin');
-                    win.reset(
-                        win.getPoint(), win.getTabs(),
-                        new GSize(content.width(), content.height()),
-                        null, null
-                    );
-                }
-            );
-            jQuery.ajaxSettings.cache = cache;	
-            
-        });
-
-        GEvent.addListener(marker,"click",function(){
-            marker.openInfoWindowHtml('<div id="markerwin">Loading...</div>');
-        });
     }
 
     return this.marker;
