@@ -79,6 +79,7 @@ class StopAdmin(admin.ModelAdmin):
         return u' | '.join(obj.name)
 
     def save_model(self,request,obj,form,change):
+        obj.update_geohash()
         if change:
             return admin.ModelAdmin.save_model(self,request,obj,form,change)
         else:            
