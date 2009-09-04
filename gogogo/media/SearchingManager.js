@@ -3,7 +3,7 @@
  * 
  * Signals:
  *  
- *  overlayAdded - Triggered when a list of overlays are added to map
+ *  overlaysAdded - Triggered when a list of overlays are added to map
  * 
  * 
  * All the subclass should implement the following functions:
@@ -56,7 +56,7 @@ gogogo.SearchingManager = function (map){
                         ) {
                           manager.overlays[prefix] = manager._createOverlays(result);
                           if (manager.overlays[prefix].length > 0){
-                              $(manager).trigger("overlayAdded",manager.overlays[prefix]);
+                              $(manager).trigger("overlaysAdded",manager.overlays[prefix]);
                           }
                           
                         }
@@ -102,11 +102,10 @@ gogogo.SearchingManager.prototype.getBounds = function() {
 gogogo.SearchingManager.prototype.search = function(prefix,callback) {
         
     if (this.geohash_prefix_list[prefix] == undefined){
-	    this.geohash_prefix_list[prefix] = [];
-	    var geohash_prefix_list = this.geohash_prefix_list[prefix];
+        var manager = this;
 	    
 		this._search(prefix,function(list) {
-		   geohash_prefix_list = list;
+		   manager.geohash_prefix_list[prefix] = list;
 		   if (callback)
                 callback(list);
         });
