@@ -7,6 +7,13 @@
  * _search(prefix,callback) - Search items in specific region. 
  * The result should be passed to callback, then SearchingManager
  * will store the result. And allow user to query by search()
+ * 
+ * _createOverlays(items) - Create overlay items and add to the map.
+ * 
+ * Argumemts:
+ * items - A list of storage instance (Returned by _search() )
+ * 
+ * Return : A list of overlay objects
  */
 
 gogogo.SearchingManager = function (map){

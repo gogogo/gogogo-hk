@@ -23,38 +23,17 @@ gogogo.StopManager = function (map){
 
 extend(gogogo.StopManager,gogogo.SearchingManager);
 
-/** Refresh the stop list from gogogo server.
- * 
- * Deprecated 
- */
-
-gogogo.StopManager.prototype.refresh = function(bounds) {	
-
-	var api = "/api/stop/search/" + 
-		bounds.getSouthWest().lat() + "," + bounds.getSouthWest().lng() + "," +
-		bounds.getNorthEast().lat() + "," + bounds.getNorthEast().lng();
-	
-	manager = this;
-	
-	var cache = jQuery.ajaxSettings.cache;
-	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
-	$.getJSON(api, null , function(data) {
-		if (data.stat == "ok") {
-			$.each(data.data, function(i, item){
-				if (manager.stops[item.id] == undefined ) {
-					var stop = new gogogo.Stop(item.id);
-					stop.updateFromJson(item);
-					var marker = stop.createMarker();
-                 
-                	manager.markermanager.addMarker(marker,manager.minZoom);
-                	manager.stops[item.id] = stop;
-				}
-			});
-			manager.markermanager.refresh();
-		}
+gogogo.StopManager.prototype._createOverlays = function(items) {	
+	var ret = []
+	var manager = this;	
+    
+	$(items).each(function(i,stop){
+        var marker = stop.createMarker();
+     
+        manager.markermanager.addMarker(marker,manager.minZoom);
 	});
-	jQuery.ajaxSettings.cache = cache;	
-		
+    
+    return ret;
 }
 
 gogogo.StopManager.prototype._search = function(prefix,callback) {	
@@ -72,10 +51,8 @@ gogogo.StopManager.prototype._search = function(prefix,callback) {
 				if (manager.stops[item.id] == undefined ) {
 					var stop = new gogogo.Stop(item.id);
 					stop.updateFromJson(item);
-					var marker = stop.createMarker();
-                 
-                	manager.markermanager.addMarker(marker,manager.minZoom);
-                	manager.stops[item.id] = stop;
+                    
+                    manager.stops[item.id] = stop;                    
 				}
 				list.push(manager.stops[item.id]);
 			});
