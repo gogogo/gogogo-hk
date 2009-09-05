@@ -55,18 +55,40 @@
 </div>
 
 <div id="{{map_id}}" class="left_area"></div>
-
 </div>
 
 <script type="text/javascript">
 	var {{map_id}};
     var {{editor}};            
 		
+    function extendMarker(marker,html,result){
+        GEvent.addListener(marker,"infowindowopen",function(){
+            //{{map_id}}.setZoom(17);
+        });
+
+        GEvent.addListener(marker,"click",function(){
+            {{map_id}}.setZoom(17);
+           
+        });
+
+        
+        $(html).empty();
+        return html
+    }
+            
 	$(document).ready(function(){
         
 			{{map_id}} = new GMap2(document.getElementById("{{map_id}}"));
 			gogogo.mapSetup({{map_id}});
-            {{map_id}}.addControl(new google.maps.LocalSearch(), new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(10,20)));        
+            var options = {
+                resultList : google.maps.LocalSearch.RESULT_LIST_INLINE,
+                searchFormHint : "Example Searches: Mong Kok",
+                suppressZoomToBounds : true,
+                onGenerateMarkerHtmlCallback : extendMarker,
+            };
+            
+            {{map_id}}.addControl(new google.maps.LocalSearch(options),
+            new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(10,20)));
                         
             {{editor}} = new gogogo.StopListEditor({{map_id}},$("#{{id}}"),$("#{{sortable_id}}"));
             
