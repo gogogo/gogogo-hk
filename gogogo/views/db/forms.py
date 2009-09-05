@@ -98,6 +98,7 @@ def updateModel(kind,model):
 	if kind == "stop":
 		model.update_geohash()
 
+@staff_only
 def add(request,kind):
     """
     Add new entry to database
