@@ -18,7 +18,7 @@ from gogogo.geo.LatLng import LatLng
 from widgets import Pathbar as _Pathbar
 from gogogo.models.StopList import StopList
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
-from gogogo.models.loaders import RouteLoader,TripLoader
+from gogogo.models.loaders import AgencyLoader,RouteLoader,TripLoader
 from gogogo.models.property import TransitTypeProperty
 from google.appengine.api import memcache
 
@@ -79,54 +79,31 @@ def index(request):
 		   })		
 
 def agency(request,agency_id):
-	"""
-	Browse the information of a transport agency
-	"""
+    """
+    Browse the information of a transport agency
+    """
+    
+    agency_loader = AgencyLoader(request,agency_id)
+    agency_loader.load(request)
 
-	cache_key = "gogogo__transit_agency_%s" % agency_id #Prefix of memecache key
+    agency = agency_loader.get_agency_entity()
+    
+    pathbar = Pathbar(agency=(agency,))
+   
+    route_list = agency_loader.get_route_list()
+    
+    railway_list = route_list
+    trip_id_list = agency_loader.get_trip_id_list()
+    
+    if len(route_list) > 0 :
+        showMap = True
+    else:
+        showMap = False    
 
-	cache = memcache.get(cache_key)
-	
-	if cache == None:
-		entity = getCachedEntityOr404(Agency,id_or_name = agency_id)
-
-		cache = {}
-		cache['agency'] = entity
-		
-		railway_list = []
-		trip_id_list = []
-		
-		# Query for railway information
-		gql = db.GqlQuery("SELECT * FROM gogogo_route where type = :1 and agency=:2",2,entity['instance'])
-		
-		for row in gql:		
-			e = createEntity(row)
-			railway_list.append(e)
-			
-			queryTrip = db.GqlQuery("SELECT * from gogogo_trip where route = :1",row)
-			for trip in queryTrip:
-				trip_id_list.append(trip.key().id_or_name())
-			
-		if len(railway_list) > 0:
-			cache['showMap'] = True
-		else:
-			cache['showMap'] = False
-			
-		cache['railway_list'] = railway_list
-		cache['trip_id_list'] = trip_id_list
-		memcache.add(cache_key, cache, _default_cache_time)
-
-	agency = trEntity(cache['agency'],request)
-	pathbar = Pathbar(agency=(agency,))
-	
-	showMap = cache['showMap']
-	railway_list = [ trEntity(e,request) for e in cache['railway_list'] ]
-	trip_id_list = cache['trip_id_list']
-	
-	t = loader.get_template('gogogo/transit/agency.html')
-	c = RequestContext(
-		request,
-	{
+    t = loader.get_template('gogogo/transit/agency.html')
+    c = RequestContext(
+        request,
+    {
         'page_title': agency['name'] ,
         'pathbar' : pathbar,
         'agency_kind' : 'agency',
@@ -136,8 +113,8 @@ def agency(request,agency_id):
         'trip_id_list' : trip_id_list,
         'railway_list' : railway_list
     })
-    		
-	return HttpResponse(t.render(c))
+            
+    return HttpResponse(t.render(c))
 
 def route(request,agency_id,route_id):
 	"""
