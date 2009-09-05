@@ -102,3 +102,12 @@ class MLStringProperty(TitledStringListProperty):
         return fields
 
     get_lang_list = staticmethod(get_lang_list)
+    
+    def get_lang_count():
+        """
+       Get the no. of supported language by the site
+        """
+        return len(settings.LANGUAGES)
+
+    get_lang_count = staticmethod(get_lang_count)
+        

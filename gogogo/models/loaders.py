@@ -33,9 +33,11 @@ class Loader:
     def get_entity(self):
         return self.entity
 
-    def get_cache_key(self):
-        if hasattr(self,"lang"):
-            return "%s_%s_%d" % (self.cache_key_prefix , str(self.id) , self.lang)
+    def get_cache_key(self,lang=None):
+        if lang == None and hasattr(self,"lang"):
+            lang = self.lang
+        if lang != None:
+            return "%s_%s_%d" % (self.cache_key_prefix , str(self.id) , lang)
         return self.cache_key_prefix + "_" + str(self.id)
         
     def remove_cache(self):
@@ -47,8 +49,9 @@ class AgencyLoader(Loader):
     Agency data loading and cache management
     """
     
-    def __init__(self,request,id):
-        self.lang = MLStringProperty.get_current_lang(request)
+    def __init__(self,id,request=None):
+        if request:
+            self.lang = MLStringProperty.get_current_lang(request)
         self.id = id_or_name(id)
         self.cache_key_prefix = "gogogo_agency_loader_"
         
@@ -64,7 +67,7 @@ class AgencyLoader(Loader):
         getCachedEntityOr404 instead.
         """
         cache_key = self.get_cache_key()
-
+        
         cache = memcache.get(cache_key)
 
         if cache == None:
@@ -118,8 +121,11 @@ class AgencyLoader(Loader):
                 ret.append(trip.id_or_name())
         
         return ret
-        
-    
+
+    def remove_cache(self):
+        for i in range(0,MLStringProperty.get_lang_count()):
+            cache_key = self.get_cache_key(i)
+            ret = memcache.delete(cache_key)
 
 class TripLoader(Loader):
 	"""

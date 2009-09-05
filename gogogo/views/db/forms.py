@@ -168,8 +168,11 @@ def edit(request,kind,object_id):
     object = get_object_or_404(model,key_name = key_name , id=id)
 
     if request.method == 'POST':
-        form = model_form(request.POST)
+        form = model_form(request.POST,instance=object)
         if form.is_valid():
+            
+            #Old object was changed by the from, so it need to get a new copy
+            object = get_object_or_404(model,key_name = key_name , id=id)
             new_object = form.save(commit = False)
             
             changelog = createChangelog(object,new_object,form.cleaned_data['log_message'])

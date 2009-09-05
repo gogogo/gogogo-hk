@@ -95,3 +95,16 @@ def updateCachedObject(object):
 	
 	memcache.delete(cache_key)
 	
+def removeCache(object):
+    """
+    Remove the cache of the object
+    """
+
+    cache_key = getCacheObjectKey(key = object.key() )
+
+    memcache.delete(cache_key)
+
+    cache_key = getCacheEntityKey(key = object.key())
+
+    memcache.delete(cache_key)    
+    

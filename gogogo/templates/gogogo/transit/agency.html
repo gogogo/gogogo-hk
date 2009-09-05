@@ -34,21 +34,19 @@
 </div>
 
 <p></p>
-{% if railway_list|length %}
 
-<h4>Railway</h4>
+{% if showMap %}
+<h4>{% trans "Routes" %}</h4>
 
-{% for railway in railway_list %}
+{% for route in route_list %}
     <div style="margin-bottom: 5px">
-    	<div style="float: left; width:5em; margin-right:1em;background-color: {{railway.color}}">&nbsp;</div>
-        <a href="{%url gogogo.views.transit.route agency.id railway.id %}">{{railway.long_name}}</a>
+    	<div style="float: left; width:5em; margin-right:1em;background-color: {{route.color}}">&nbsp;</div>
+        <a href="{%url gogogo.views.transit.route agency.id route.id %}">{{route.long_name}}</a>
 	</div>
     
 {% endfor %}
+{% endif %}
 
-
-
-{%endif%}
 </div><!-- End of agency_info -->
 
 {% if showMap %}

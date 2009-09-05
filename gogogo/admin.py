@@ -15,7 +15,8 @@ class AgencyAdmin(admin.ModelAdmin):
             'phone',
             'icon',
             'no_service',
-            'free_transfer'
+            'free_transfer',
+            'show_map_in_transit_page'
             )
         }),
 

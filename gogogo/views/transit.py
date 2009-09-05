@@ -83,7 +83,7 @@ def agency(request,agency_id):
     Browse the information of a transport agency
     """
     
-    agency_loader = AgencyLoader(request,agency_id)
+    agency_loader = AgencyLoader(agency_id,request)
     agency_loader.load(request)
 
     agency = agency_loader.get_agency_entity()
@@ -92,13 +92,9 @@ def agency(request,agency_id):
    
     route_list = agency_loader.get_route_list()
     
-    railway_list = route_list
     trip_id_list = agency_loader.get_trip_id_list()
     
-    if len(route_list) > 0 :
-        showMap = True
-    else:
-        showMap = False    
+    showMap = agency["show_map_in_transit_page"]
 
     t = loader.get_template('gogogo/transit/agency.html')
     c = RequestContext(
@@ -111,7 +107,7 @@ def agency(request,agency_id):
         'agency' : agency,
         'showMap' : showMap,
         'trip_id_list' : trip_id_list,
-        'railway_list' : railway_list
+        'route_list' : route_list
     })
             
     return HttpResponse(t.render(c))
