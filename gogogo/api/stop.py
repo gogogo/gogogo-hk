@@ -82,7 +82,7 @@ def block(request):
     cache = memcache.get(cache_key)
 
     if cache == None:           
-        query = Stop.all(keys_only=True).filter("geohash >=" , prefix ).filter("geohash <=" , prefix + 'z')
+        query = Stop.all(keys_only=True).filter("geohash >=" , prefix ).filter("geohash <=" , prefix + 'zzzzzz')
         
         result = []
         for key in query:
