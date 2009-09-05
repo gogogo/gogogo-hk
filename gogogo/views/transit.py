@@ -19,6 +19,7 @@ from widgets import Pathbar as _Pathbar
 from gogogo.models.StopList import StopList
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
 from gogogo.models.loaders import RouteLoader,TripLoader
+from gogogo.models.property import TransitTypeProperty
 from google.appengine.api import memcache
 
 
@@ -188,7 +189,7 @@ def route(request,agency_id,route_id):
 	
 	agency_entity = trEntity(route_loader.get_agency(),request)
 	route_entity = trEntity(route_loader.get_entity(),request)
-	route_entity['type'] = Route.get_type_name(route_entity['type'])
+	route_entity['type'] = TransitTypeProperty.get_type_name(route_entity['type'])
 	
 	trip_list = []
 	

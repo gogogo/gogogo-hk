@@ -8,6 +8,7 @@ from django.forms.util import flatatt
 from django.utils.encoding import StrAndUnicode, force_unicode
 from django.template import Context, loader , RequestContext
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from gogogo.models.cache import getCachedObjectOr404
 from gogogo.models.utils import id_or_name
@@ -139,7 +140,7 @@ class StopListField(forms.Field):
 
     def clean(self, value):
         if self.required and not value:
-            raise ValidationError(gettext(u'This field is required.'))
+            raise forms.ValidationError(_(u'This field is required.'))
         elif not self.required and not value:
             return []
         if isinstance(value,basestring):

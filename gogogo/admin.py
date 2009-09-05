@@ -98,6 +98,7 @@ class RouteAdmin(admin.ModelAdmin):
     )	
 
     form = RouteBasicForm
+    list_filter = ('agency',)
 
     def save_model(self,request,obj,form,change):
         if change:

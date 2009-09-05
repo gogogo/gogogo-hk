@@ -37,7 +37,7 @@ fieldset.form  {
 }
 
 .fieldWrapper input {
-	width:20em;
+#	width:20em;
 	border:1px solid #CCCCCC;
 }
 
