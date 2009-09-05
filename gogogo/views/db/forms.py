@@ -90,6 +90,7 @@ def _createModel(kind,parent = None,form = None):
         
     raise ValueError
 
+@staff_only
 def add(request,kind):
     """
     Add new entry to database
