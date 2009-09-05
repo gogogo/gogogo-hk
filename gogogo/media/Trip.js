@@ -149,6 +149,25 @@ gogogo.Trip.prototype.removePolyline = function() {
     this.polyline = undefined;
 }
 
+/** Get the bounding region
+ * 
+ */
+
+gogogo.Trip.prototype.getBounds = function(){
+    var bounds = new GLatLngBounds();    
+    if (this.stopObjectListCount > 0){
+        
+        
+        for (var i =0 ; i < this.stopObjectList.length; i++){
+            var stop = this.stopObjectList[i];
+            if (!stop.error)
+                bounds.extend(stop.getLatLng());
+        }
+    }
+    
+    return bounds;
+}
+
 /** Zoom and pan to the trip
  *
  */
