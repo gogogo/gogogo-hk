@@ -4,17 +4,18 @@ from ragendja.dbutils import KeyListProperty
 from django import forms
 from django.utils.safestring import mark_safe
 from django.conf import settings
-from TitledStringListProperty import TitledStringListProperty
 from django.utils.translation import ugettext_lazy as _
-from ragendja.dbutils import get_object
 from django.conf import settings
+from django.db.models import permalink # For permalink
+from django.db.models.signals import pre_save
+
+
+from ragendja.dbutils import get_object
 
 from gogogo.geo.geohash import Geohash
-
 from gogogo.models.NumberListProperty import NumberListProperty
 
-from django.db.models import permalink # For permalink
-
+from TitledStringListProperty import TitledStringListProperty
 from utils import createEntity , trEntity
 from MLStringProperty import MLStringProperty , to_key_name
 # Utilities
@@ -168,6 +169,12 @@ class Stop(db.Model):
         return MLStringProperty.to_key_name(name)
         
     gen_key_name = staticmethod(gen_key_name)
+
+def stop_pre_save(sender, **kwargs):
+    instance = kwargs['instance']
+    instance.update_geohash()
+
+pre_save.connect(stop_pre_save, sender=Stop)
 
 class Route(db.Model):	
     class Meta:

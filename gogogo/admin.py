@@ -79,12 +79,12 @@ class StopAdmin(admin.ModelAdmin):
         return u' | '.join(obj.name)
 
     def save_model(self,request,obj,form,change):
-        obj.update_geohash()
         if change:
             return admin.ModelAdmin.save_model(self,request,obj,form,change)
         else:            
             new_obj = copyModel(obj,key_name = next_key_name(Stop,Stop.gen_key_name(obj)) )
-            new_obj.save()
+            #new_obj.save()
+            return admin.ModelAdmin.save_model(self,request,new_obj,form,change)
 
 admin.site.register(Stop, StopAdmin)
 

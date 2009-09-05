@@ -90,14 +90,6 @@ def _createModel(kind,parent = None,form = None):
         
     raise ValueError
 
-def updateModel(kind,model):
-	"""
-	Update model
-	"""
-	
-	if kind == "stop":
-		model.update_geohash()
-
 def add(request,kind):
     """
     Add new entry to database
@@ -114,7 +106,6 @@ def add(request,kind):
 
             instance = form.save(commit=False)		
             
-            updateModel(kind,instance)
             instance.save()
 
             #old_rev = None
@@ -180,7 +171,6 @@ def edit(request,kind,object_id):
         form = model_form(request.POST)
         if form.is_valid():
             new_object = form.save(commit = False)
-            updateModel(kind,new_object)
             
             changelog = createChangelog(object,new_object,form.cleaned_data['log_message'])
             if changelog:                

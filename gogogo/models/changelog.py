@@ -24,7 +24,7 @@ def createChangelog(old_object , new_object,comment):
         d = diffModel(None,new_object)
 
         content = StringIO()
-        simplejson.dump([d],content,ensure_ascii=False,indent =1)
+        simplejson.dump([d],content,default=default,ensure_ascii=False,indent =1)
         changes = content.getvalue()
         
     elif old_object != None and new_object != None:
@@ -54,6 +54,17 @@ def createChangelog(old_object , new_object,comment):
         )
 
     return changelog    
+
+def default(o):
+    """
+    ``default(obj)`` is a function that should return a serializable version
+    of obj or raise TypeError for JSON generation
+    """
+
+    if isinstance(o,db.Key): # For KeyListProperty
+        return o.id_or_name()
+    else:
+        raise TypeError("%r is not JSON serializable" % (o,))   
     
 def diff(a,b):
     """
