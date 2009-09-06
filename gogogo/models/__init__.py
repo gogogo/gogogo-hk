@@ -97,14 +97,7 @@ class Agency(db.Model):
     @permalink
     def get_absolute_url(self):
         return ('gogogo.views.transit.agency',[self.key().id_or_name()]) 
-        
-    def gen_key_name(obj = None,name = None):
-        if obj:
-            name = obj.name
-        return MLStringProperty.to_key_name(name)
-        
-    gen_key_name = staticmethod(gen_key_name)
-
+       
 def agency_pre_save(sender, **kwargs):
     from gogogo.models.loaders import AgencyLoader
     from gogogo.models.cache import removeCache
@@ -182,13 +175,7 @@ class Stop(db.Model):
     @permalink
     def get_absolute_url(self):
         return ('gogogo.views.transit.stop',[self.key().id_or_name()]) 
-        
-    def gen_key_name(obj = None , name = None):
-        if obj:
-            name = obj.name
-        return MLStringProperty.to_key_name(name)
-        
-    gen_key_name = staticmethod(gen_key_name)
+       
 
 def stop_pre_save(sender, **kwargs):
     instance = kwargs['instance']
@@ -227,22 +214,6 @@ class Route(db.Model):
     def get_absolute_url(self):
         return ('gogogo.views.transit.route',[self.agency.key().id_or_name(),self.key().id_or_name()]) 
         
-    def gen_key_name(obj = None , agency = None , short_name = None , long_name = None):
-        if obj:
-            property = getattr(obj,"agency")
-            agency = property.get_value_for_datastore(object)
-            short_name = obj.short_name
-            long_name = obj.long_name
-            
-        if isinstance(agency,db.Key):
-            agency_id = agency.id_or_name()
-        else:
-            agency_id = agency.key().id_or_name()
-            
-        return to_key_name(agency_id + "-" + short_name + "-" +  MLStringProperty.to_key_name(long_name) )
-        
-    gen_key_name = staticmethod(gen_key_name)
-
 class Shape(db.Model):
 	"""
 		Shape data model. The stored data can be a polyline or polygon
@@ -482,17 +453,6 @@ class FareTrip(db.Model):
     def get_absolute_url(self):
         return ('gogogo.views.transit.index',)
 
-    def gen_key_name(obj = None ,trip = None, name = None):
-        if obj:
-            property = getattr(obj,"trip")
-            trip = property.get_value_for_datastore(object)
-            name = obj.name
-            
-        return to_key_name(trip.id_or_name() + "-" + MLStringProperty.to_key_name(name) )
-        
-    gen_key_name = staticmethod(gen_key_name)
-
-
 class FareStop(db.Model):
     """
     For fare depends on station pairs, how passengers get there doesn't matter.    
@@ -505,24 +465,7 @@ class FareStop(db.Model):
     
     # TRUE if it is the default fare type used in shortest path calculation
     default = db.BooleanProperty(default = False)
-    
-    def gen_key_name(object , agency = None , name = None):
-        """
-       Generate a key name
-       
-       @tyep agency db.Key
-        """
-        if object:
-            property = getattr(FareStop, "agency")
-            agency = property.get_value_for_datastore(object)            
-            name = object.name          
-            
-        prefix = str(agency.id_or_name())
-        
-        return prefix + "-" + MLStringProperty.to_key_name(name)
-        
-    gen_key_name = staticmethod(gen_key_name)
-        
+           
     def __unicode__(self):
         if not self.is_saved():
             return u"|".join(self.name)
@@ -538,41 +481,7 @@ class FarePair(db.Model):
     to_stop = db.ReferenceProperty(Stop,collection_name="fair_pair_to")
     
     fare = db.FloatProperty(default = 0.0)
-
-    def gen_key_name(obj= None , owner = None,from_stop = None,to_stop = None):
-        """
-       Generate a key name
-        """
-        
-        if obj:
-            property = getattr(FarePair, "owner")
-            owner = property.get_value_for_datastore(obj)
-
-            property = getattr(FarePair, "from_stop")
-            from_stop = property.get_value_for_datastore(obj)
-
-            property = getattr(FarePair, "to_stop")
-            to_stop = property.get_value_for_datastore(obj)
-        
-        if isinstance(owner,db.Key):
-            prefix = str(owner.id_or_name())
-        else:
-            prefix = str(agency.key().id_or_name())
-            
-        if isinstance(from_stop,db.Key):
-            from_stop_str = str(from_stop.id_or_name())
-        else:
-            from_stop_str = str(from_stop.key().id_or_name())
-            
-        if isinstance(to_stop,db.Key):
-            to_stop_str = str(to_stop.id_or_name())
-        else:
-            to_stop_str = str(to_stop.key().id_or_name())
-        
-        return to_key_name(prefix + "-" + from_stop_str + "-to-" + to_stop_str)
-        
-    gen_key_name = staticmethod(gen_key_name)
-    
+   
     def __unicode__(self):
 		return unicode(self.key().id_or_name())
 

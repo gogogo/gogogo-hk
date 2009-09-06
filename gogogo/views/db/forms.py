@@ -51,38 +51,21 @@ def next_key_name(model_class,key_name):
 def _getModelInfo(kind):
     return _supported_model[kind]
 
-def _createModel(kind,parent = None,form = None):
+def _createModel(kind,parent = None):
     value = id_or_name(parent)
     key_name = None
     if kind == "route":
         agency = None
-        if form:
-            agency = form.cleaned_data["agency"]
-            key_name = next_key_name(Route,Route.gen_key_name(
-                agency = agency,
-                short_name = form.cleaned_data["short_name"],
-                long_name = form.cleaned_data["long_name"],
-                ))
                 
         if parent:
             agency = db.Key.from_path(Agency.kind() , value)
             
         return Route(key_name = key_name,agency = agency)
     elif kind == "agency":
-        if form:
-            key_name = next_key_name(Agency,Agency.gen_key_name(name = form.cleaned_data["name"]))
             
         return Agency(key_name = key_name)
     elif kind == "trip":
         route = None
-        if form:
-            route = form.cleaned_data["route"]
-            
-            #TODO - Replace by trip.gen_key_name()
-            key_name = next_key_name(Trip, 
-                route.key().name() + 
-                "_to_" + 
-                MLStringProperty.to_key_name(form.cleaned_data["headsign"]) )
         
         if parent:
             route = db.Key.from_path(Route.kind() , value)
@@ -92,12 +75,6 @@ def _createModel(kind,parent = None,form = None):
         return Stop()
     elif kind =="faretrip":
         trip = None
-        if form:
-            trip = form.cleaned_data["trip"].key()
-            key_name = next_key_name(FareTrip,FareTrip.gen_key_name(
-                trip = trip,
-                name = form.cleaned_data["name"]
-                ))
             
         if parent:
             trip = db.Key.from_path(Trip.kind(),value)
@@ -105,6 +82,14 @@ def _createModel(kind,parent = None,form = None):
         return FareTrip(trip = trip , key_name = key_name)
         
     raise ValueError
+
+def _createModelByForm(model,form):
+    args = {"auto_set_key_name" : True}
+    for prop in model.properties().values():
+        if prop.name in form.cleaned_data:
+            args[prop.name] = form.cleaned_data[prop.name]
+    
+    return model(**args)
 
 @staff_only
 def add(request,kind):
@@ -118,7 +103,7 @@ def add(request,kind):
         form = model_form(request.POST)
         
         if form.is_valid():
-            instance = _createModel(kind,form = form)
+            instance = _createModelByForm(model,form)
             form = model_form(request.POST,instance = instance)
 
             instance = form.save(commit=False)		

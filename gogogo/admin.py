@@ -211,7 +211,7 @@ class FareStopAdmin(admin.ModelAdmin):
         if change:
             return admin.ModelAdmin.save_model(self,request,obj,form,change)
         else:            
-            new_obj = copyModel(obj,key_name = next_key_name(FareStop,FareStop.gen_key_name(obj)) )
+            new_obj = copyModel(obj,auto_set_key_name = True)
             new_obj.save()
             
     

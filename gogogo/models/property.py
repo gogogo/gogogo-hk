@@ -9,6 +9,12 @@ class TransitTypeProperty(db.IntegerProperty):
     def __init__ (self,*args,**kwargs):    
         kwargs["choices"] = range(0,8)       
         db.IntegerProperty.__init__(self,*args,**kwargs)
+
+    def validate(self, value):
+        if isinstance(value,basestring):
+            value = int(value)
+        
+        return super(TransitTypeProperty, self).validate(value)
         
     def get_form_field(self, **kwargs):
         attrs = {
