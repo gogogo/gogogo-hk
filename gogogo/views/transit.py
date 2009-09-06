@@ -83,14 +83,15 @@ def agency(request,agency_id):
     Browse the information of a transport agency
     """
     
-    agency_loader = AgencyLoader(agency_id,request)
+    agency_loader = AgencyLoader(agency_id)
     agency_loader.load(request)
 
-    agency = agency_loader.get_agency_entity()
+    agency = trEntity(agency_loader.get_agency_entity(),request)
     
     pathbar = Pathbar(agency=(agency,))
    
     route_list = agency_loader.get_route_list()
+    route_list = [trEntity(route,request) for route in route_list]
     
     trip_id_list = agency_loader.get_trip_id_list()
     

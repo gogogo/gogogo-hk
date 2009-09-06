@@ -10,7 +10,7 @@ from ragendja.dbutils import get_object
 from gogogo.geo.geohash import Geohash
 from django.http import Http404
 
-from utils import createEntity , entityToText , id_or_name , trEntity
+from utils import createEntity , entityToText , id_or_name
 from cache import getCachedEntityOr404 , getCachedObjectOr404
 from MLStringProperty import MLStringProperty
 
@@ -49,9 +49,7 @@ class AgencyLoader(Loader):
     Agency data loading and cache management
     """
     
-    def __init__(self,id,request=None):
-        if request:
-            self.lang = MLStringProperty.get_current_lang(request)
+    def __init__(self,id):
         self.id = id_or_name(id)
         self.cache_key_prefix = "gogogo_agency_loader_"
         
@@ -75,7 +73,7 @@ class AgencyLoader(Loader):
             entity = getCachedEntityOr404(Agency,id_or_name = self.id)
             agency = entity["instance"]
             
-            cache["agency"] = trEntity(entity,request)
+            cache["agency"] = entity
             
             property = getattr(Trip,"route")
             route_entity_list = []
@@ -85,7 +83,7 @@ class AgencyLoader(Loader):
             
             for row in gql:		
                 e = createEntity(row)
-                route_entity_list.append(trEntity(e,request) )
+                route_entity_list.append(e)
                 gql2 = db.GqlQuery("SELECT __key__ FROM gogogo_trip where route = :1",row)
                 
                 route_key = row.key().id_or_name()
@@ -121,11 +119,6 @@ class AgencyLoader(Loader):
                 ret.append(trip.id_or_name())
         
         return ret
-
-    def remove_cache(self):
-        for i in range(0,MLStringProperty.get_lang_count()):
-            cache_key = self.get_cache_key(i)
-            ret = memcache.delete(cache_key)
 
 class TripLoader(Loader):
     """
