@@ -199,7 +199,8 @@ def trip(request,agency_id,route_id,trip_id):
             "agency" : agency_entity,
             "route" : route_entity,
            "trip" : trip_entity,
-           "stop_list" : stop_list
+           "stop_list" : stop_list,
+           "faretrip_kind" : "faretrip"
            })		
 	
 

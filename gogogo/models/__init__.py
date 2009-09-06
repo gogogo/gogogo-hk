@@ -20,7 +20,7 @@ from utils import createEntity , trEntity
 from MLStringProperty import MLStringProperty , to_key_name
 # Utilities
 from TitledStringListProperty import TitledStringListField
-from property import TransitTypeProperty
+from property import TransitTypeProperty , PaymentMethodProperty
 
 import logging
         
@@ -463,7 +463,7 @@ class FareTrip(db.Model):
     trip = db.ReferenceProperty(Trip)
     
     # The name of the fare type
-    name = MLStringProperty()
+    name = MLStringProperty(required = True)
     
     # TRUE if it is the default fare type used in shortest path calculation
     default = db.BooleanProperty(default = False)
@@ -473,9 +473,24 @@ class FareTrip(db.Model):
     # Valid values for this field are:
     # 0 - Fare is paid on board.
     # 1 - Fare must be paid before boarding.
-    payment_method = db.IntegerProperty(default = 0 ,choices=set([0,1]))
+    payment_method = PaymentMethodProperty()
     
     fares = NumberListProperty(float)
+
+    @permalink
+    def get_absolute_url(self):
+        return ('gogogo.views.transit.index',)
+
+    def gen_key_name(obj = None ,trip = None, name = None):
+        if obj:
+            property = getattr(obj,"trip")
+            trip = property.get_value_for_datastore(object)
+            name = obj.name
+            
+        return to_key_name(trip.id_or_name() + "-" + MLStringProperty.to_key_name(name) )
+        
+    gen_key_name = staticmethod(gen_key_name)
+
 
 class FareStop(db.Model):
     """

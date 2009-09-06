@@ -55,3 +55,11 @@ class TripBasicForm(ModelForm):
 
 class TripForm(TripBasicForm):
     log_message = forms.CharField(widget = forms.Textarea)
+
+class FareTripBasicForm(ModelForm):
+    class Meta:
+        model = FareTrip
+       
+        
+class FareTripForm(FareTripBasicForm):
+    log_message = forms.CharField(widget = forms.Textarea)

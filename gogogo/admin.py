@@ -160,7 +160,7 @@ class ReportAdmin(admin.ModelAdmin):
 admin.site.register(Report, ReportAdmin)		
 
 class FareTripAdmin(admin.ModelAdmin):
-    pass
+    form = FareTripBasicForm
     
 admin.site.register(FareTrip, FareTripAdmin)
 

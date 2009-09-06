@@ -15,7 +15,7 @@ from gogogo.models import TitledStringListField
 from gogogo.models.MLStringProperty import MLStringProperty , to_key_name
 from gogogo.models.utils import id_or_name
 from gogogo.views.widgets import LatLngInputWidget
-from gogogo.models.forms import AgencyForm , StopForm , TripForm , RouteForm
+from gogogo.models.forms import AgencyForm , StopForm , TripForm , RouteForm , FareTripForm
 from gogogo.models.changelog import createChangelog
 
 import logging
@@ -25,6 +25,7 @@ _supported_model = {
 	'agency' : (Agency,AgencyForm),
 	'trip' : (Trip,TripForm),
 	'stop': (Stop,StopForm),
+    'faretrip' : (FareTrip,FareTripForm),
 }
 
 def next_key_name(model_class,key_name):
@@ -76,6 +77,8 @@ def _createModel(kind,parent = None,form = None):
         route = None
         if form:
             route = form.cleaned_data["route"]
+            
+            #TODO - Replace by trip.gen_key_name()
             key_name = next_key_name(Trip, 
                 route.key().name() + 
                 "_to_" + 
@@ -87,6 +90,19 @@ def _createModel(kind,parent = None,form = None):
         return Trip(route = route , key_name = key_name)
     elif kind == "stop":
         return Stop()
+    elif kind =="faretrip":
+        trip = None
+        if form:
+            trip = form.cleaned_data["trip"].key()
+            key_name = next_key_name(FareTrip,FareTrip.gen_key_name(
+                trip = trip,
+                name = form.cleaned_data["name"]
+                ))
+            
+        if parent:
+            trip = db.Key.from_path(Trip.kind(),value)
+            
+        return FareTrip(trip = trip , key_name = key_name)
         
     raise ValueError
 
@@ -109,19 +125,7 @@ def add(request,kind):
             
             instance.save()
 
-            #old_rev = None
-            #new_rev = entityToText(createEntity(instance))
             changelog = createChangelog(None,instance,form.cleaned_data['log_message'])
-            #changelog = Changelog(
-                #reference = instance,
-                #commit_date = datetime.utcnow(),
-    ##				committer=request.user,
-                #comment=form.cleaned_data['log_message'],
-                #old_rev = old_rev,
-                #new_rev = new_rev,
-                #model_kind=kind,
-                #type=1
-                #)
 
             changelog.save()
             

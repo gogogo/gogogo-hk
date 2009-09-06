@@ -35,7 +35,11 @@
 <div class="span-6 colborder">
 {%if user.is_staff %}
 		<ul class="object-tools">
-    	<li><a href="{%url gogogo.views.db.edit object_type,trip.id %}" >Edit</a></li>
+        {% if user.is_authenticated %}
+    	<li><a href="{%url gogogo.views.db.add faretrip_kind%}?parent={{trip.id}}">{% trans "Add Fare Type" %}</a></li>
+        <li><a href="{%url gogogo.views.db.edit object_type,trip.id %}" >Edit</a></li>        
+    	{%endif%}        
+    	
     	</ul>
     	<p>
 {%endif%}
