@@ -7,7 +7,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db.models import permalink # For permalink
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save , pre_init
 
 
 from ragendja.dbutils import get_object
@@ -155,12 +155,13 @@ class Stop(db.Model):
 
     # Tag of the stop for advanced feature.
     # e.g Stop with facility for disabled person
-    tags = db.StringProperty()
-
-    # nearby stop list
-    #near = KeyListProperty(Stop)
-
+    tags = db.StringListProperty(default = [])
+    
     def __init__(self,*args , **kwargs):
+        # Dirty fix. Prevent the GAE complains "Property tags is required"
+        if kwargs["tags"] == None:
+            kwargs["tags"] = []
+        
         super(Stop,self).__init__(*args,**kwargs)
         
         if "lat" in kwargs and "lng" in kwargs:
@@ -366,6 +367,13 @@ class Cluster(db.Model):
 		if station != None:
 			self.center = db.GeoPt(station.latlng.lat,station.latlng.lon)
 			self.name = u'|'.join(station.name)
+
+def cluster_pre_save(sender, **kwargs):
+    instance = kwargs['instance']
+    instance.update_geohash()
+
+pre_save.connect(cluster_pre_save, sender=Cluster)
+
 		
 class Changelog(db.Model):
 	"""
