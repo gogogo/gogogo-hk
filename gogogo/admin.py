@@ -83,7 +83,7 @@ class StopAdmin(admin.ModelAdmin):
         if change:
             return admin.ModelAdmin.save_model(self,request,obj,form,change)
         else:            
-            new_obj = copyModel(obj,key_name = next_key_name(Stop,Stop.gen_key_name(obj)) )
+            new_obj = copyModel(obj,auto_set_key_name = True)
             #new_obj.save()
             return admin.ModelAdmin.save_model(self,request,new_obj,form,change)
 
@@ -161,6 +161,16 @@ admin.site.register(Report, ReportAdmin)
 
 class FareTripAdmin(admin.ModelAdmin):
     form = FareTripBasicForm
+    
+    list_display = ("Trip_ID","FareTrip_ID",)
+    
+    def Trip_ID(self,obj):
+        property = getattr(FareTrip,"trip")
+        trip = property.get_value_for_datastore(obj)
+        return trip.id_or_name()
+    
+    def FareTrip_ID(self,obj):
+        return obj.key().id_or_name()
     
 admin.site.register(FareTrip, FareTripAdmin)
 

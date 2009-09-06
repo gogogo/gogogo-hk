@@ -592,3 +592,34 @@ class Transfer(db.Model):
     
     max_transfer_time = db.IntegerProperty(default=-1)
     
+
+auto_set_key_name_table = {
+    Stop.kind() : ("name",),
+}
+
+def auto_set_key_name(sender, **kwargs):
+    
+    kwargs = kwargs["kwargs"]
+    
+    if "auto_set_key_name" in kwargs:
+        if sender.kind() in auto_set_key_name_table and "key_name" not in kwargs:
+            fields = auto_set_key_name_table[sender.kind()]
+            items = []
+            
+            for f in fields:
+                prop = getattr(sender,f)
+                value = kwargs[f]
+                if isinstance(prop,db.ReferenceProperty):
+                    if isinstance(value,db.Key):
+				        items.append(value.id_or_name())
+                    else:
+                        items.append(value.key().id_or_name())
+                        
+                elif isinstance(prop,MLStringProperty):
+                    items.append(MLStringProperty.to_key_name(value))
+                    
+            kwargs["key_name"] = "-".join(items)
+        
+        del kwargs["auto_set_key_name"]
+
+pre_init.connect(auto_set_key_name)
