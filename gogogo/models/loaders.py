@@ -128,69 +128,95 @@ class AgencyLoader(Loader):
             ret = memcache.delete(cache_key)
 
 class TripLoader(Loader):
-	"""
-	Trip and related object loader and cache management
-	
-	"""
-	def __init__(self,id):
-		self.id = id_or_name(id)
-		self.cache_key_prefix = "gogogo_trip_loader_"
+    """
+    Trip and related object loader and cache management
 
-	def load(self):
-		"""
-		Load trip and all related objects from memecache or bigtable.
-		
-		If you only want to load a single entry of Trip , please use
-		getCachedEntityOr404 instead.
-		"""
-		
-		cache_key = self.get_cache_key()
-		
-		cache = memcache.get(cache_key)
-		
-		if cache == None:
-			trip_entity = getCachedEntityOr404(Trip,id_or_name = self.id)
-			trip = trip_entity['instance']
-			
-			first = None
-			last = None
-			try:
-				first = db.get(trip.stop_list[0])
-				last = db.get(trip.stop_list[len(trip.stop_list)-1])
-			except IndexError:
-				last = first
-			
-			stop_entity_list = []
-			for key in trip.stop_list:
-				stop_id = key.id_or_name()
-				try:
-					stop = getCachedEntityOr404(Stop,id_or_name= stop_id)
-					stop_entity_list.append(stop)
-				except Http404:
-					logging.error("Stop %s not found" % str(stop_id))
-		
-			cache = {}	
-			
-			if first != None:
-				cache['first'] = createEntity(first)
-			else:
-				cache['first'] = None
-			if last != None:	
-				cache['last'] = createEntity(last)
-			else:
-				cache['last'] = None
-			cache['trip'] = trip_entity
-			cache['stop_entity_list'] = stop_entity_list
-			
-			memcache.add(cache_key, cache, _default_cache_time)
-			
-		# First station/stop	
-		self.first = cache['first']
-		
-		# Last station/stop
-		self.last = cache['last']
-		self.entity = cache['trip']
-		self.stop_entity_list = cache['stop_entity_list']
+    """
+    def __init__(self,id):
+        self.id = id_or_name(id)
+        self.cache_key_prefix = "gogogo_trip_loader_"
+
+    def load(self):
+        """
+        Load trip and all related objects from memecache or bigtable.
+        
+        If you only want to load a single entry of Trip , please use
+        getCachedEntityOr404 instead.
+        """
+        
+        cache_key = self.get_cache_key()
+        
+        cache = memcache.get(cache_key)
+        
+        if cache == None:
+            cache = {}
+            
+            trip_entity = getCachedEntityOr404(Trip,id_or_name = self.id)
+            trip = trip_entity['instance']
+            cache['trip'] = trip_entity
+                        
+            cache['route'] = getCachedEntityOr404(Route,id_or_name = trip_entity['route'] )
+            cache['agency'] = getCachedEntityOr404(Agency,id_or_name = cache['route']['agency'] )
+            
+            first = None
+            last = None
+            try:
+                first = db.get(trip.stop_list[0])
+                last = db.get(trip.stop_list[len(trip.stop_list)-1])
+            except IndexError:
+                last = first
+            
+            stop_entity_list = []
+            for key in trip.stop_list:
+                stop_id = key.id_or_name()
+                try:
+                    stop = getCachedEntityOr404(Stop,id_or_name= stop_id)
+                    stop_entity_list.append(stop)
+                except Http404:
+                    logging.error("Stop %s not found" % str(stop_id))
+            
+            if first != None:
+                cache['first'] = createEntity(first)
+            else:
+                cache['first'] = None
+            if last != None:	
+                cache['last'] = createEntity(last)
+            else:
+                cache['last'] = None
+            cache['trip'] = trip_entity
+            cache['stop_entity_list'] = stop_entity_list
+            
+            memcache.add(cache_key, cache, _default_cache_time)
+
+        self.agency = cache['agency']
+        self.route = cache['route']
+        self.trip  = cache['trip']
+            
+        # First station/stop	
+        self.first = cache['first']
+        
+        # Last station/stop
+        self.last = cache['last']
+        self.entity = cache['trip']
+        self.stop_entity_list = cache['stop_entity_list']
+
+    def get_agency(self):
+        return self.agency
+        
+    def get_route(self):
+        return self.route
+        
+    def get_trip(self):
+        return self.trip
+        
+    def get_start_end_pair(self):
+        """
+        Get the start and last station
+        """
+        return (self.first , self.last)
+        
+    def get_stop_list(self):
+        return self.stop_entity_list
 		
 class RouteLoader(Loader):
 	"""

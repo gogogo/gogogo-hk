@@ -1,4 +1,6 @@
 {% extends 'gogogo/transit/base.html' %}
+{% load i18n %}
+
 {% block js %}
 	{{block.super}}
 	<script type="text/javascript">
@@ -7,17 +9,19 @@
 		
 		$(document).ready(function(){
 			map = new GMap2(document.getElementById("map"));
-			map.setCenter(new GLatLng({{GOGOGO_DEFAULT_LOCATION}}), {{GOGOGO_DEFAULT_ZOOM}});
-			map.setUIToDefault();
-		{%if shape %}
-			var points = {{shape.points}};
-			var latlng = [];
-			for (var i = 0 ; i < points.length ;i+=2) {
-				latlng.push(new GLatLng(points[i],points[i+1] ));
-			}
-			map.addOverlay(new GPolyline(latlng));
-		{%endif %}
-							
+			gogogo.mapSetup(map);
+            
+            var stopManager = new gogogo.StopManager(map);							
+            var trip = new gogogo.Trip("{{trip.id}}");
+            
+            trip.query(function(trip){
+				trip.queryStops(stopManager,function(trip){
+                    var line = trip.createPolyline();
+					map.addOverlay(line);
+                    trip.zoomAndPan(map);
+                });
+            });
+            
 		});
 	</script>
 {% endblock %}
@@ -57,6 +61,11 @@
         <td>{{trip.headsign}}</td>
     </tr>
 
+    <tr>
+        <td>Fare : </td>
+        <td></td>
+    </tr>
+
 </table>
 </div>
 
@@ -74,9 +83,14 @@
 </table>
 </div>
 
-	<div class="span-12">
-		{%if not shape %}<div class="alt">No shape available. <a>Contribute.</a></div>	{%endif%}
-	</div>
+<div class="span-6 colborder">
+<b>{%trans "Stations" %}:</b>
+<ul>
+{% for stop in stop_list %}
+    <li><a href="{%url gogogo.views.transit.stop stop.id %}">{{stop.name}}</a></li>
+{% endfor %}
+</ul>
+</div> <!-- Stations //-->
 
 </div>
 {# Right Column #}
@@ -84,5 +98,6 @@
 	
 	<div id="map" style="width:100%;height:400px"/>	
 </div>
+
 
 {% endblock %}

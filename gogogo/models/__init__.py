@@ -159,6 +159,8 @@ class Stop(db.Model):
     
     def __init__(self,*args , **kwargs):
         # Dirty fix. Prevent the GAE complains "Property tags is required"
+        if "tags" not in kwargs:
+            kwargs["tags"] = []
         if kwargs["tags"] == None:
             kwargs["tags"] = []
         
