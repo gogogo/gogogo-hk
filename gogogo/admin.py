@@ -39,7 +39,7 @@ class AgencyAdmin(admin.ModelAdmin):
         if change:
             return admin.ModelAdmin.save_model(self,request,obj,form,change)
         else:            
-            new_obj = copyModel(obj,key_name = next_key_name(Agency,Agency.gen_key_name(obj)) )
+            new_obj = copyModel(obj,auto_set_key_name = True )
             new_obj.save()
 
 admin.site.register(Agency, AgencyAdmin)
@@ -100,12 +100,16 @@ class RouteAdmin(admin.ModelAdmin):
 
     form = RouteBasicForm
     list_filter = ('agency',)
+    list_display = ('Route_ID',)
+    
+    def Route_ID(self,obj):
+        return obj.key().id_or_name()
 
     def save_model(self,request,obj,form,change):
         if change:
             return admin.ModelAdmin.save_model(self,request,obj,form,change)
         else:            
-            new_obj = copyModel(obj,key_name = next_key_name(Route,Route.gen_key_name(obj)) )
+            new_obj = copyModel(obj,auto_set_key_name = True)
             new_obj.save()
 	
 admin.site.register(Route, RouteAdmin)
@@ -118,7 +122,14 @@ class TripAdmin(admin.ModelAdmin):
     change_form_template = "gogogo/admin/change_form.html"    
 
     def Trip_ID(self,obj):
-        return obj.key().name()
+        return obj.key().id_or_name()
+
+    def save_model(self,request,obj,form,change):
+        if change:
+            return admin.ModelAdmin.save_model(self,request,obj,form,change)
+        else:            
+            new_obj = copyModel(obj,auto_set_key_name = True)
+            return admin.ModelAdmin.save_model(self,request,new_obj,form,change)
 	
 admin.site.register(Trip, TripAdmin)	
 

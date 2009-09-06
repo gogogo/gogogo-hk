@@ -48,6 +48,7 @@ class RouteForm(RouteBasicForm):
 class TripBasicForm(ModelForm):
     class Meta:
         model = Trip
+        exclude = ["arrival_time_list"]
         
     headsign = TitledStringListField(required = True , fixed_fields = MLStringProperty.get_lang_list())	
     

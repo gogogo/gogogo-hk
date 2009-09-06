@@ -21,7 +21,6 @@ from MLStringProperty import MLStringProperty , to_key_name
 # Utilities
 from TitledStringListProperty import TitledStringListField
 from property import TransitTypeProperty , PaymentMethodProperty
-
 import logging
         
 def create_entity(model,request = None):
@@ -307,6 +306,8 @@ class Trip(db.Model):
 		verbose_name_plural = _('Trips')
 
 	def __unicode__(self):
+		if not self.is_saved():
+			return unicode("")
 		return unicode(self.key().id_or_name())
 
 	route = db.ReferenceProperty(Route)
@@ -594,11 +595,15 @@ class Transfer(db.Model):
     
 
 auto_set_key_name_table = {
+    Agency.kind() : ("name",),
     Stop.kind() : ("name",),
+    Route.kind() : ("agency","short_name","long_name",),
+    Trip.kind() : ("route","to","headsign"),
+    FareTrip.kind() : ("trip","name"),
 }
 
 def auto_set_key_name(sender, **kwargs):
-    
+    from gogogo.views.db.forms import next_key_name    
     kwargs = kwargs["kwargs"]
     
     if "auto_set_key_name" in kwargs:
@@ -607,6 +612,11 @@ def auto_set_key_name(sender, **kwargs):
             items = []
             
             for f in fields:
+                
+                if not hasattr(sender,f): # It is not a property. It is a keyword
+                    items.append(f)
+                    continue
+                    
                 prop = getattr(sender,f)
                 value = kwargs[f]
                 if isinstance(prop,db.ReferenceProperty):
@@ -617,8 +627,11 @@ def auto_set_key_name(sender, **kwargs):
                         
                 elif isinstance(prop,MLStringProperty):
                     items.append(MLStringProperty.to_key_name(value))
+                else:
+                    items.append(value)
                     
-            kwargs["key_name"] = "-".join(items)
+            key_name = "-".join(items)
+            kwargs["key_name"] = next_key_name(sender,key_name)
         
         del kwargs["auto_set_key_name"]
 

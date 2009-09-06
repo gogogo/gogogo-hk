@@ -21,6 +21,13 @@ class NumberListProperty(db.ListProperty):
         if not value:
             return []
         if isinstance(value, basestring):
-            value = [ self.item_type(v) for v in value.split(',')]
+            new_value = []
+            for v in value.split(','):
+                try:
+                    new_value.append(self.item_type(v))
+                except ValueError:
+                    pass
+                
+            value = new_value
             
         return value
