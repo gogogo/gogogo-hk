@@ -18,6 +18,7 @@ from google.appengine.api import memcache
 from . import Route , Trip , Stop , Agency
 from StopList import StopList
 import logging
+import sys
 
 _default_cache_time = 3600
 
@@ -179,6 +180,29 @@ class TripLoader(Loader):
             cache['trip'] = trip_entity
             cache['stop_entity_list'] = stop_entity_list
             
+            #Fare Trip
+            faretrip_entity_list = []
+            for faretrip in trip.faretrip_set:
+                entity = createEntity(faretrip)
+                min = sys.maxint
+                max = 0
+                for fare in faretrip.fares:
+                    if fare < min:
+                        min = fare
+                    if fare > max:
+                        max = fare
+                        
+                if max > 0 :
+                    entity["min_fare"] = min
+                    entity["max_fare"] = max
+                else:
+                    entity["min_fare"] = -1
+                    entity["max_fare"] = -1
+                    
+                faretrip_entity_list.append(entity)
+            
+            cache['faretrip_entity_list'] = faretrip_entity_list
+            
             memcache.add(cache_key, cache, _default_cache_time)
 
         self.agency = cache['agency']
@@ -192,6 +216,7 @@ class TripLoader(Loader):
         self.last = cache['last']
         self.entity = cache['trip']
         self.stop_entity_list = cache['stop_entity_list']
+        self.faretrip_entity_list = cache['faretrip_entity_list']
 
     def get_agency(self):
         return self.agency
@@ -210,6 +235,9 @@ class TripLoader(Loader):
         
     def get_stop_list(self):
         return self.stop_entity_list
+        
+    def get_faretrip_list(self):
+        return self.faretrip_entity_list
 		
 class RouteLoader(Loader):
 	"""

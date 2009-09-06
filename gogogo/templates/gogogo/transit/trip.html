@@ -67,7 +67,10 @@
 
     <tr>
         <td>Fare : </td>
-        <td></td>
+        <td>{% for faretrip in faretrip_list %}
+        {{faretrip.name}} {{faretrip.fare_range}}
+        {%endfor%}
+        </td>
     </tr>
 
 </table>

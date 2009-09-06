@@ -187,7 +187,19 @@ def trip(request,agency_id,route_id,trip_id):
     agency_entity = trEntity(agency_entity,request)
     route_entity = trEntity(route_entity,request)
     stop_list = [trEntity(stop,request) for stop in trip_loader.get_stop_list() ]
-
+    
+    faretrip_list = []
+    for faretrip in trip_loader.get_faretrip_list():
+        entity = trEntity(faretrip,request)
+        entity["fare_range"] = None
+        if entity["max_fare"] > 0 :
+            if entity["max_fare"] != entity["min_fare"]:
+                entity["fare_range"] = "$%0.1f - $%0.1f" % (entity["min_fare"],entity["max_fare"])
+            else:
+                entity["fare_range"] = "$%0.1f" % (entity["min_fare"])
+        
+        faretrip_list.append(entity)
+        
     pathbar = Pathbar(agency=(agency_entity,route_entity,trip_entity))
 
     return render_to_response( 
@@ -201,6 +213,7 @@ def trip(request,agency_id,route_id,trip_id):
             "route" : route_entity,
            "trip" : trip_entity,
            "stop_list" : stop_list,
+           "faretrip_list" : faretrip_list,
            "faretrip_kind" : "faretrip"
            })		
 	

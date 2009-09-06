@@ -61,6 +61,12 @@ class PaymentMethodProperty(db.IntegerProperty):
         if "default" not in kwargs:
             kwargs["default"] = 0
         db.IntegerProperty.__init__(self,*args,**kwargs)
+
+    def validate(self, value):
+        if isinstance(value,basestring):
+            value = int(value)
+        
+        return super(PaymentMethodProperty, self).validate(value)
         
     def get_form_field(self, **kwargs):
         attrs = {

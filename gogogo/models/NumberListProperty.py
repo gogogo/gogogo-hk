@@ -2,6 +2,16 @@ from google.appengine.ext import db
 from django import forms
 
 class NumberListProperty(db.ListProperty):
+
+    def validate(self, value):
+        if isinstance(value,basestring):
+            try:
+                value = [self.item_type(v) for v in value.split(",")]
+            except ValueError:
+                raise forms.ValidationError("Contains non-numeric value")
+                    
+        return super(NumberListProperty, self).validate(value)
+
     def get_value_for_form(self, instance):
         """Extract the property value from the instance for use in a form.
         """

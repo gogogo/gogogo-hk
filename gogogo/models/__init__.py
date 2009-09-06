@@ -451,7 +451,20 @@ class FareTrip(db.Model):
 
     @permalink
     def get_absolute_url(self):
+        # Implement the link to the faretrip
         return ('gogogo.views.transit.index',)
+
+def faretrip_pre_save(sender, **kwargs):
+    from gogogo.models.loaders import TripLoader
+    instance = kwargs['instance']
+    property = getattr(sender,"trip")
+    trip = property.get_value_for_datastore(instance)
+    
+    trip_loader = TripLoader(trip.id_or_name())
+    trip_loader.remove_cache() # Clear the parent trip cache
+
+pre_save.connect(faretrip_pre_save, sender=FareTrip)
+
 
 class FareStop(db.Model):
     """
