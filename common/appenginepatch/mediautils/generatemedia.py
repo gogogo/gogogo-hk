@@ -2,7 +2,9 @@
 from django.conf import settings
 from django.utils.simplejson import dumps
 from os.path import getmtime
-import os, codecs, shutil, logging
+import os, codecs, shutil, logging, re
+
+path_re = re.compile(r'/[^/]+/\.\./')
 
 MEDIA_VERSION = unicode(settings.MEDIA_VERSION)
 COMPRESSOR = os.path.join(os.path.dirname(__file__), '.yuicompressor.jar')
@@ -98,9 +100,35 @@ def get_file_path(handler, target, media_dirs, **kwargs):
         if handler.__module__.startswith(app + '.') and len(app) > len(owner):
             owner = app
     owner = owner or handler.__module__
-    name = getattr(handler, 'name', handler.__name__ + ext) % kwargs
+    name = getattr(handler, 'name', handler.__name__ + ext) % dict(kwargs,
+                                                                target=target)
     assert '/' not in name
     return os.path.join(DYNAMIC_MEDIA, '%s-%s' % (owner, name))
+
+def get_css_content(handler, content, **kwargs):
+    # Add $MEDIA_URL variable to CSS files
+    content = content.replace('$MEDIA_URL/', settings.MEDIA_URL)
+
+    # Remove @charset rules
+    content = re.sub(r'@charset(.*?);', '', content)
+
+    if not isinstance(handler, basestring):
+        return content
+
+    def fixurls(path):
+        # Resolve ../ paths
+        path = '%s%s/%s' % (settings.MEDIA_URL,
+                            os.path.dirname(handler % dict(kwargs)),
+                            path.group(1))
+        while path_re.search(path):
+            path = path_re.sub('/', path, 1)
+        return 'url("%s")' % path
+
+    # Make relative paths work with MEDIA_URL
+    content = re.sub(r'url\s*\(["\']?([\w\.][^:]*?)["\']?\)',
+                     fixurls, content)
+
+    return content
 
 def get_file_content(handler, cache, **kwargs):
     path = get_file_path(handler, **kwargs)
@@ -118,10 +146,10 @@ def get_file_content(handler, cache, **kwargs):
             cache[path] = handler(**kwargs)
         else:
             raise ValueError('Media generator source "%r" not valid!' % handler)
-    # Add $MEDIA_URL variable to CSS files
+    # Rewrite url() paths in CSS files
     ext = os.path.splitext(path)[1]
     if ext == '.css':
-        cache[path] = cache[path].replace('$MEDIA_URL/', settings.MEDIA_URL)
+        cache[path] = get_css_content(handler, cache[path], **kwargs)
     return cache[path]
 
 def update_dynamic_file(handler, cache, **kwargs):
@@ -189,7 +217,7 @@ def get_copy_targets(media_dirs, **kwargs):
     targets = {}
     for app, media_dir in media_dirs.items():
         for root, dirs, files in os.walk(media_dir):
-            for name in dirs:
+            for name in dirs[:]:
                 if name.startswith('.'):
                     dirs.remove(name)
             for file in files:
@@ -212,7 +240,7 @@ def cleanup_dir(dir, paths):
             keep.append(path)
             path = os.path.dirname(path)
     for root, dirs, files in os.walk(dir):
-        for name in dirs:
+        for name in dirs[:]:
             path = os.path.abspath(os.path.join(root, name))
             if path not in keep:
                 shutil.rmtree(path)

@@ -8,7 +8,6 @@ from django.utils.encoding import StrAndUnicode, smart_unicode, force_unicode
 from django.utils.safestring import mark_safe
 from django.forms.widgets import flatatt
 from google.appengine.ext import db
-from ragendja.dbutils import transaction
 
 class FakeModelIterator(object):
     def __init__(self, fake_model):
@@ -95,6 +94,7 @@ ul_row_re = re.compile(r'(<li>(<label.*?</label>)(.*?)</li>)', re.DOTALL)
 p_sections_re = re.compile(r'^(.*?)(<p>.*</p>)(.*?)$', re.DOTALL)
 p_row_re = re.compile(r'(<p>(<label.*?</label>)(.*?)</p>)', re.DOTALL)
 label_re = re.compile(r'^(.*)<label for="id_(.*?)">(.*)</label>(.*)$')
+hidden_re = re.compile(r'(<input type="hidden".* />)', re.DOTALL)
 
 class BoundFormSet(StrAndUnicode):
     def __init__(self, field, formset, name, args):
@@ -201,7 +201,7 @@ class FormWithSetsInstance(object):
             return obj
 
         instance = self.form.instance
-        grouped = [self.form]
+        grouped = []
         ungrouped = []
         # cache the result of get_queryset so that it doesn't run inside the transaction
         for bf in self.formsets:
@@ -211,8 +211,14 @@ class FormWithSetsInstance(object):
                 ungrouped.append(bf.formset)
             bf.formset_get_queryset = bf.formset.get_queryset
             bf.formset.get_queryset = CachedQuerySet(bf.formset_get_queryset)
-        obj = db.run_in_transaction(save_forms, grouped)
-        save_forms(ungrouped, obj)
+        if grouped:
+            grouped.insert(0, self.form)
+        else:
+            ungrouped.insert(0, self.form)
+        obj = None
+        if grouped:
+            obj = db.run_in_transaction(save_forms, grouped)
+        obj = save_forms(ungrouped, obj)
         for bf in self.formsets:
             bf.formset.get_queryset = bf.formset_get_queryset
             del bf.formset_get_queryset
@@ -235,12 +241,20 @@ class FormWithSetsInstance(object):
                 help_text = help_text_html % force_unicode(bf.field.help_text)
             else:
                 help_text = u''
-            formsets[bf.name] = normal_row % {'label': force_unicode(label), 'field': unicode(bf), 'help_text': help_text}
+            formsets[bf.name] = {'label': force_unicode(label), 'field': unicode(bf), 'help_text': help_text}
 
         try:
             output = []
             data = form_as()
             section_search = sections_re.search(data)
+            if formsets:
+                hidden = u''.join(hidden_re.findall(data))
+                last_formset_name, last_formset = formsets.items()[-1]
+                last_formset['field'] = last_formset['field'] + hidden
+                formsets[last_formset_name] = normal_row % last_formset
+                for name, formset in formsets.items()[:-1]:
+                    formsets[name] = normal_row % formset
+
             if not section_search:
                 output.append(data)
             else:
@@ -291,6 +305,10 @@ class FormWithSetsInstance(object):
         for bf in self.formsets:
             result = bf.formset.is_multipart() or result
         return result
+
+    @property
+    def media(self):
+        return mark_safe(unicode(self.form.media) + u'\n'.join([unicode(f.formset.media) for f in self.formsets]))
 
 from django.forms.fields import Field
 from django.forms.widgets import Widget

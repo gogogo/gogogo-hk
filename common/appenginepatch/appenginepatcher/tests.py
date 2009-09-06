@@ -49,16 +49,42 @@ class ModelMetaTest(TestCase):
 
 class SignalTest(TestCase):
     def test_signals(self):
-        global received
-        received = False
+        global received_pre_delete
+        global received_post_save
+        received_pre_delete = False
+        received_post_save = False
         def handle_pre_delete(**kwargs):
-            global received
-            received = True
+            global received_pre_delete
+            received_pre_delete = True
         signals.pre_delete.connect(handle_pre_delete, sender=TestC)
+        def handle_post_save(**kwargs):
+            global received_post_save
+            received_post_save = True
+        signals.post_save.connect(handle_post_save, sender=TestC)
         a = TestC()
         a.put()
         a.delete()
-        self.assertTrue(received)
+        self.assertTrue(received_pre_delete)
+        self.assertTrue(received_post_save)
+
+    def test_batch_signals(self):
+        global received_pre_delete
+        global received_post_save
+        received_pre_delete = False
+        received_post_save = False
+        def handle_pre_delete(**kwargs):
+            global received_pre_delete
+            received_pre_delete = True
+        signals.pre_delete.connect(handle_pre_delete, sender=TestC)
+        def handle_post_save(**kwargs):
+            global received_post_save
+            received_post_save = True
+        signals.post_save.connect(handle_post_save, sender=TestC)
+        a = TestC()
+        db.put([a])
+        db.delete([a])
+        self.assertTrue(received_pre_delete)
+        self.assertTrue(received_post_save)
 
 # Test serialization
 

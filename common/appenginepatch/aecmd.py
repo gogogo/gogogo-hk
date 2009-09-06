@@ -14,6 +14,9 @@ def setup_env(manage_py_env=False):
     try:
         from google.appengine.api import apiproxy_stub_map
     except ImportError, e:
+        for k in [k for k in sys.modules if k.startswith('google')]:
+            del sys.modules[k]
+
         # Not on the system path. Build a list of alternative paths where it
         # may be. First look within the project for a local copy, then look for
         # where the Mac OS SDK installs it.
@@ -66,7 +69,7 @@ def setup_env(manage_py_env=False):
     if not manage_py_env:
         return
 
-    print >> sys.stderr, 'Running on app-engine-patch 1.0.2.1'
+    print >> sys.stderr, 'Running on app-engine-patch 1.0.2.2'
 
 def setup_project():
     from appenginepatcher import on_production_server

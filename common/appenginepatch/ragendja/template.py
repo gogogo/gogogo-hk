@@ -59,17 +59,22 @@ def render_to_string(request, template_name, data=None):
 def render_to_response(request, template_name, data=None, mimetype=None):
     if mimetype is None:
         mimetype = settings.DEFAULT_CONTENT_TYPE
+    original_mimetype = mimetype
     if mimetype == 'application/xhtml+xml':
         # Internet Explorer only understands XHTML if it's served as text/html
         if request.META.get('HTTP_ACCEPT').find(mimetype) == -1:
             mimetype = 'text/html'
+
+    response = HttpResponse(render_to_string(request, template_name, data),
+        content_type='%s; charset=%s' % (mimetype, settings.DEFAULT_CHARSET))
+    
+    if original_mimetype == 'application/xhtml+xml':
         # Since XHTML is served with two different MIME types, depending on the
         # browser, we need to tell proxies to serve different versions.
         from django.utils.cache import patch_vary_headers
         patch_vary_headers(response, ['User-Agent'])
 
-    return HttpResponse(render_to_string(request, template_name, data),
-        content_type='%s; charset=%s' % (mimetype, settings.DEFAULT_CHARSET))
+    return response
 
 def JSONResponse(pyobj):
     from ragendja.json import JSONResponse as real_class

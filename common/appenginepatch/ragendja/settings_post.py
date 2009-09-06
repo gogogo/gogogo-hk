@@ -82,6 +82,8 @@ class _Module(object):
         _globals[key] = value
     def __getattribute__(self, key):
         return _globals[key]
+    def __hasattr__(self, key):
+        return key in _globals
 settings = _Module()
 
 for app in INSTALLED_APPS:
