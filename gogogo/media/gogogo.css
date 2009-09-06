@@ -71,8 +71,8 @@ fieldset.form  {
 	padding-left:3.5em; 
 }
 
-.object-tools li { display:block; float:left; background:url(admin_media/img/admin/tool-left.gif) 0 0 no-repeat; padding:0 0 0 8px; margin-left:2px; height:16px; }
-.object-tools li:hover { background:url(admin_media/img/admin/tool-left_over.gif) 0 0 no-repeat; }
+.object-tools li { display:block; float:left; background:url(../admin_media/img/admin/tool-left.gif) 0 0 no-repeat; padding:0 0 0 8px; margin-left:2px; height:16px; }
+.object-tools li:hover { background:url(../admin_media/img/admin/tool-left_over.gif) 0 0 no-repeat; }
 
 .object-tools a:link, .object-tools a:visited {
 	 display:block; 
@@ -80,12 +80,12 @@ fieldset.form  {
 	 color:white; 
 	 padding:.1em 14px .1em 8px; 
 	 height:14px; 
-	 background:#999 url(admin_media/img/admin/tool-right.gif) 100% 0 no-repeat;  
+	 background:#999 url(../admin_media/img/admin/tool-right.gif) 100% 0 no-repeat;  
 	 text-decoration:none;
 }
 
 .object-tools a:hover, .object-tools li:hover a { 
-	background:#5b80b2 url(admin_media/img/admin/tool-right_over.gif) 100% 0 no-repeat; 
+	background:#5b80b2 url(../admin_media/img/admin/tool-right_over.gif) 100% 0 no-repeat; 
 }
 
 .object-tools a.viewsitelink, .object-tools a.golink {
