@@ -121,6 +121,21 @@ class TripAdmin(admin.ModelAdmin):
     
     change_form_template = "gogogo/admin/change_form.html"    
 
+    fieldsets = (
+        (None, {
+            'fields': (
+                    'route',
+                    'headsign',
+                    'short_name',
+                    'stop_list',
+                    'direction',
+                    'service',
+                    'block',
+                    'shape',
+                )
+        }),
+    )
+
     def Trip_ID(self,obj):
         return obj.key().id_or_name()
 

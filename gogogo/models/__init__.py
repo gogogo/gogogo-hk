@@ -307,7 +307,7 @@ class Trip(db.Model):
 
 	def __unicode__(self):
 		if not self.is_saved():
-			return unicode("")
+			return unicode("Non-saved trip")
 		return unicode(self.key().id_or_name())
 
 	route = db.ReferenceProperty(Route)
