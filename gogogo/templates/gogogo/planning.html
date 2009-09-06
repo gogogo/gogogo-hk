@@ -48,6 +48,7 @@
 		}
 	}
 	
+    /// Check is the address input field empty
 	function checkEmpty(index) {
 		input = addressList[index];
 		if ($(input).val() == ""
@@ -61,6 +62,36 @@
 		}
 		return false;
 	}
+    
+    function bindLocalSearchMarker(link,marker,index,result) {
+        $(link).click(function(){
+            var address = planner.getAddress(index);
+            _empty(addressList[index]);
+            
+            address.setAddress(result.addressLines.join(","));
+			address.setLocation(new GLatLng(result.lat,result.lng));
+            marker.closeInfoWindow();
+        });
+    }
+    
+    function extendLocalSearchMarker(marker,html,result){
+        GEvent.addListener(marker,"click",function(){
+            map.setZoom(17);           
+        });
+
+        $(html).empty();
+        var startLink = $("<a></a>");
+        $(startLink).append("{%trans 'Set as startpoint address' %}");
+        bindLocalSearchMarker(startLink,marker,0,result);
+        var endLink = $("<a></a>");
+        $(endLink).append("{%trans 'Set as endpoint address' %}");
+        bindLocalSearchMarker(endLink,marker,1,result);
+        
+        $(html).append(startLink);
+        $(html).append(" ");
+        $(html).append(endLink);
+        return html
+    }
 
 	$(document).ready(function() {
     	layout.sizePane("west",230);
@@ -70,6 +101,16 @@
 		modelManager = new gogogo.ModelManager();
 
 		clusterManager = new gogogo.ClusterManager(map,modelManager);
+
+        var options = {
+            resultList : google.maps.LocalSearch.RESULT_LIST_INLINE,
+            searchFormHint : "Example Searches: Mong Kok",
+            suppressZoomToBounds : true,
+            onGenerateMarkerHtmlCallback : extendLocalSearchMarker,
+        };
+        
+        map.addControl(new google.maps.LocalSearch(options),
+        new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(10,20)));
 
 
 		planningOutput = $("#planningOutput");
