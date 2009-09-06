@@ -301,6 +301,7 @@ class Trip(db.Model):
 	
 	@permalink
 	def get_absolute_url(self):
+        #TODO - Reduce the database access
 		return ('gogogo.views.transit.trip',[self.route.agency.key().id_or_name(),
 			self.route.key().id_or_name(),
 			self.key().id_or_name()]) 
@@ -451,8 +452,12 @@ class FareTrip(db.Model):
 
     @permalink
     def get_absolute_url(self):
-        # Implement the link to the faretrip
-        return ('gogogo.views.transit.index',)
+        # TODO: Implement the link to the faretrip        
+        return ('gogogo.views.transit.trip',
+            [self.trip.route.agency.key().id_or_name(),
+			self.trip.route.key().id_or_name(),
+			self.trip.key().id_or_name()]) 
+
 
 def faretrip_pre_save(sender, **kwargs):
     from gogogo.models.loaders import TripLoader
