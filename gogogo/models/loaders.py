@@ -290,9 +290,51 @@ class RouteLoader(Loader):
 	def get_trip_list(self):
 		return self.trip_list
 
+################################
+# List loader
+################################
+
+class ListLoader:
+    """
+    Load all entity of a model from memcache or bigtable
+    """
+    
+    cache_key_prefix = "gogogo_list_loader_"
+    
+    def __init__(self,model):
+        self.model = model
+        self.data = None
+        self.cache_key = ListLoader.cache_key_prefix + self.model.kind()
+        
+
+    def load(self):
+        if self.data != None: #already loaded
+            return
+            
+        cache = memcache.get(self.cache_key)
+        
+        if cache == None:
+            cache = []
+            
+            query = self.model.all()
+            for entry in query:
+                cache.append(entry)
+                
+            memcache.add(self.cache_key, cache, _default_cache_time)
+        
+        self.data = cache
+        
+	def remove_cache(self):
+		memcache.delete(self.cache_key)
+        
+    def get_data(self):
+        return self.data
+
 class RouteListLoader:
     """
     Load all route into memory from BigTable or memcache
+    
+    Deprecated
     """
     
     cache_key = "gogogo_route_list"

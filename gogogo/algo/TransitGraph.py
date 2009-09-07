@@ -30,6 +30,8 @@ class TransitGraph(Graph):
         self.cluster_table = {}
         self.route_table = {}
         self.trip_table = {}
+        
+        # Match a stop to cluster
         self.stop_to_cluster = {}
         self.cluster_id = {}
         
