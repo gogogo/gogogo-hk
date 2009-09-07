@@ -17,7 +17,9 @@ gogogo.DEFAULT_LOCATION = [%f,%f];
 settings.add_app_media('combined-%(LANGUAGE_CODE)s.js',
     setting_converter,
 )
-
+settings.add_app_media('combined-plugins.js',
+	'gogogo/jquery.treeview.min.js'
+)
 settings.add_app_media('combined-%(LANGUAGE_CODE)s-gogogo.js',
     
     'gogogo/jquery-ui-1.7.1.custom.min.js',
@@ -55,4 +57,7 @@ settings.add_app_media('combined-%(LANGUAGE_CODE)s-gogogo.js',
 settings.add_app_media('combined-%(LANGUAGE_DIR)s.css',
     'gogogo/gogogo.css',
     # ...
+)
+settings.add_app_media('combined-plugins.css',
+	'gogogo/jquery.treeview.css',
 )

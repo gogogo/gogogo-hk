@@ -1,5 +1,16 @@
 {% extends 'gogogo/transit/base.html' %}
 {%load i18n%}
+{% block css %}
+{{block.super}}
+<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}combined-plugins.css" />
+<style type="text/css">
+#tree li {background-repeat:no-repeat;}
+</style>
+{% endblock %}
+{% block js %}
+{{block.super}}
+<script type="text/javascript" src="{{ MEDIA_URL }}combined-plugins.js"></script>
+{% endblock %}
 {% block content %}
 
 
@@ -18,11 +29,30 @@
 {% endif %}
 
 </div>
+<div id="sidetreecontrol"><a href="?#">Collapse All</a> | <a href="?#">Expand All</a></div>
 
-<ul>
-	{% for agency in agency_list %}
-	<li><a href="{%url gogogo.views.transit.agency agency_id=agency.id%}">{{agency.name}}</a></li>
-   {% endfor %}	
+{# I am very sorry for the one-liner started with agency_list, but this is the only way to make the :empty selector work :( #}
+<ul id="tree" class="treeview-gray">
+	{% for agency_type_name in agency_type_list %}
+	<li>{{ agency_type_name }}
+		<ul>{% for agency in agency_list %}{% ifequal agency.type_name agency_type_name %}<li><a href="{%url gogogo.views.transit.agency agency_id=agency.id%}">{{agency.name}}</a></li>{% endifequal %}{% endfor %}</ul>
+	</li>
+	{% endfor %}
+	<li>{%trans "Others"%}
+	<ul>{% for agency in agency_list %}{% ifequal agency.type_name "" %}<li><a href="{%url gogogo.views.transit.agency agency_id=agency.id%}">{{agency.name}}</a></li>{% endifequal %}{% endfor %}</ul>
+	</li>
 </ul>
+<script type="text/javascript">
+$(function() {
+	$("#tree ul:empty").remove();
 
+	$("#tree").treeview({
+		collapsed: true,
+		animated: "medium",
+		control:"#sidetreecontrol",
+		persist: "location"
+	});
+})
+
+</script>
 {% endblock %}
