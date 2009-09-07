@@ -18,7 +18,7 @@ from gogogo.geo.LatLng import LatLng
 from widgets import Pathbar as _Pathbar
 from gogogo.models.StopList import StopList
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
-from gogogo.models.loaders import AgencyLoader,RouteLoader,TripLoader
+from gogogo.models.loaders import AgencyLoader,RouteLoader,TripLoader, ListLoader
 from gogogo.models.property import TransitTypeProperty
 from google.appengine.api import memcache
 
@@ -51,32 +51,34 @@ class Pathbar(_Pathbar):
 			self.append(stop['name'] , 'gogogo.views.transit.stop', [ stop['id']]  )		
 
 def index(request):
-	"""
-	Show transit information
-	
-	@TODO - Memcache
-	"""
+    """
+    Show transit information
+    """
 
-	pathbar = Pathbar()
-	#pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
+    pathbar = Pathbar()
+    #pathbar.append(_("Transit information") , 'gogogo.views.transit.index',None)
 
-	query = Agency.all()
-	
-	agency_list = []
-	for row in query:
-		entity = create_entity(row,request)
-		entity['id'] = row.key().id_or_name()
-		agency_list.append(entity)
+    loader = ListLoader(Agency)
+    loader.load()
 
-	return render_to_response( 
-		request,
-		'gogogo/transit/index.html'
-		,{ 
-			'page_title': _("Transit information"),
-			'pathbar' : pathbar,
-			'model_kind' : "agency",
-		   "agency_list" : agency_list,
-		   })		
+    data = loader.get_data()
+    agency_list = []
+    for agency in data:
+        entity = createEntity(agency)
+        entity = trEntity(entity,request)
+        entity["type"] = TransitTypeProperty.get_type_name(entity["type"])
+        
+        agency_list.append(entity)
+
+    return render_to_response( 
+        request,
+        'gogogo/transit/index.html'
+        ,{ 
+            'page_title': _("Transit information"),
+            'pathbar' : pathbar,
+            'model_kind' : "agency",
+           "agency_list" : agency_list,
+           })		
 
 def agency(request,agency_id):
     """
