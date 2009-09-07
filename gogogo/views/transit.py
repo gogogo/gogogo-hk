@@ -66,7 +66,7 @@ def index(request):
     for agency in data:
         entity = createEntity(agency)
         entity = trEntity(entity,request)
-        entity["type"] = TransitTypeProperty.get_type_name(entity["type"])
+        entity["type_name"] = TransitTypeProperty.get_type_name(entity["type"])
         
         agency_list.append(entity)
 
@@ -78,6 +78,7 @@ def index(request):
             'pathbar' : pathbar,
             'model_kind' : "agency",
            "agency_list" : agency_list,
+           "agency_type_list" : TransitTypeProperty.get_basic_type_name_list()
            })		
 
 def agency(request,agency_id):

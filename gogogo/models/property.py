@@ -28,8 +28,18 @@ class TransitTypeProperty(db.IntegerProperty):
         ret = [ (i,TransitTypeProperty.get_type_name(i)) for i in range(0,8)]
         
         return ret
-        
+    
     get_choices = staticmethod(get_choices)
+        
+    def get_basic_type_name_list():
+        """
+        Return a list of basic type name
+        """
+        ret = [TransitTypeProperty.get_type_name(i) for i in range(0,8)]
+        
+        return ret
+        
+    get_basic_type_name_list = staticmethod(get_basic_type_name_list)   
 
     def get_type_name(type):
         if type == 0:
