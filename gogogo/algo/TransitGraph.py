@@ -5,6 +5,7 @@ from graphs import Graph , Node , Arc
 from gogogo.models import *
 from ragendja.dbutils import prefetch_references
 import logging
+from gogogo.models.loaders import ListLoader , FareStopLoader
 
 class TransitGraph(Graph):
     """
@@ -31,9 +32,40 @@ class TransitGraph(Graph):
         self.route_table = {}
         self.trip_table = {}
         
-        # Match a stop to cluster
+        # stop to cluster matching
         self.stop_to_cluster = {}
+        
+        # cluster's name to node id matching
         self.cluster_id = {}
+        
+    def get_node(self,key):
+        """
+        Override parent's get_node function. (Supported to search by 
+        cluster name , key and instance)
+        
+        @param data The key
+        
+        @type data db.Key
+        @type data int
+        @type data basestring The key of cluster
+        """
+        if isinstance(key,int):
+            id = key
+        else:
+            if isinstance(key,basestring):
+                # The name of the cluster
+                if isinstance(key,unicode): 
+                    cluster = str(key)
+                else:
+                    cluster = key 
+            elif isinstance(key,db.Key):
+                cluster = key().id_or_name()
+            else:
+                cluster = key.key().id_or_name()
+                
+            id = self.cluster_id[cluster]
+            
+        return Graph.get_node(self,id)
         
     def load(self):
         """
@@ -45,6 +77,7 @@ class TransitGraph(Graph):
         cluster_list = []
         trip_list = []
         
+        # TODO : Replace by ListLoader
         # For testing
         query = Agency.all().filter("free_transfer = ", True).filter("no_service = " ,False)
         
@@ -75,12 +108,28 @@ class TransitGraph(Graph):
             self.cluster_table[cluster.key().id_or_name()] = cluster
             node = Node(name = cluster.key().id_or_name() , data = cluster)
             self.cluster_id [cluster.key().id_or_name()] = self.add_node(node)
+            logging.info(cluster.key().id_or_name())
             
             for key in cluster.members:
                 name = key.id_or_name()
                 if name in self.stop_table:
                     self.stop_to_cluster[name] = cluster
-            
+        
+        # Process agency with "free_transfer"
+        for agency in agency_list:
+            if agency.free_transfer:
+                query = db.GqlQuery("SELECT __key__ from gogogo_farestop WHERE owner = :1 and default = True limit 1",key)
+                key = query.get()
+                if key == None:
+                    continue
+                farestop_loader = FareStopLoader(key.id_or_name())
+                farestop_loader.load()
+                farestop = farestop_loader.get_farestop()
+                a = get_node(farestop["from_stop"])
+                b = get_node(farestop["to_stop"])
+                arc = Arc(data = (agency,farestop) ,weight =farestop["fare"] )
+                arc.link(a,b)
+                self.add_arc(arc)
         
         for trip in trip_list:
             from_stop = None
@@ -90,7 +139,7 @@ class TransitGraph(Graph):
                 try:
                     to_stop = self.stop_table[key.id_or_name()]
                 except KeyError:
-                    logging.error(key.id_or_name() , "not found!")
+                    logging.error(key.id_or_name() + "not found!")
                     continue
                 
                 cluster = self.stop_to_cluster[to_stop.key().id_or_name()]

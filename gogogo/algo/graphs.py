@@ -42,6 +42,13 @@ class Node:
         # The id is the index of node in the graph , which will be 
         # assigned by graph.
         self.id = None
+        
+    def __eq__(self,other):
+        import logging
+        logging.debug(str(self.id) + "__eq__" + str(other.id))
+        if self.id == other.id:
+            return True
+        return False
 
 class Graph:
     
@@ -65,6 +72,9 @@ class Graph:
         return ret
         
     def get_node_detail(self,id):
+        """
+        Return the 3-tuple internal data storage of a node with ID
+        """
         return self.nodes[id]
         
     def get_node_count(self):
@@ -77,6 +87,24 @@ class Graph:
         
         src_arcs.append(arc)
         dest_arcs.append(arc)
+        
+    def search_arcs(self,src,dest):
+        """
+        Search arcs by giving the ID/Node instance of source and dest node
+        
+        @type src int
+        @type src Node
+        """
+        ret = []
+        if isinstance(dest,int):
+            dest = self.get_node(int)
+        
+        arcs = self.get_arcs_from_src(src)
+        for arc in arcs:
+            if arc.dest == dest:
+                ret.append(arc)
+                
+        return ret
         
     def clear_arc(self):
         """

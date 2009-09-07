@@ -24,7 +24,19 @@ from google.appengine.api import memcache
 def plan(request):
     if "from" not in request.GET or "to" not in request.GET:
         return ApiResponse(error="Argument missing")
+
+    from_cluster = request.GET["from"]
+    to_cluster = request.GET["to"]
         
     graph = TransitGraph.create()
-    result = []
+    
+    a = graph.get_node(from_cluster)
+    b = graph.get_node(to_cluster)
+    arcs = graph.search_arcs(a,b)
+    
+    result = {
+        "from" : a.id,
+        "to" : b.id,
+        "count" : len(arcs)
+    }
     return ApiResponse(data=result)

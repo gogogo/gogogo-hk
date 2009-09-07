@@ -45,6 +45,69 @@ class Loader:
         cache_key = self.get_cache_key()
         memcache.delete(cache_key)
 
+class FareStopLoader(Loader):
+    """
+    FareStop loading and cache management
+    """
+    
+    def __init__(self,id):
+        self.id = id_or_name(id)
+        self.cache_key_prefix = "gogogo_farestop_loader_"
+        
+    def load(self):
+        """
+        Load from memcache or bigtable.
+        
+        Remark : If you only want to load a single entry of Agency , please use
+        getCachedEntityOr404 instead.
+        """
+        cache_key = self.get_cache_key()
+        
+        cache = memcache.get(cache_key)
+
+        if cache == None:
+            cache = {}
+            
+            entity = getCachedEntityOr404(Agency,id_or_name = self.id)
+            cache['farestop'] = entity
+            farestop = entity['instance']
+            
+            pair_list = []
+            for pair in farestop.pair_set:
+                pair_list.append(createEntity(pair))
+                
+            cache['pair_list'] = pair_list
+            
+            memcache.add(cache_key, cache, _default_cache_time)
+    
+        self.farestop = cache['farestop']
+        self.pair_list = cache['pair_list']
+        
+    def get_farestop():
+        return self.farestop
+        
+    def load_for_agency(agency):
+        """
+       Load a list of FareStopLoader for an agency
+        """
+        if isinstance(agency,db.Key):
+            key = agency
+        else:
+            key = agency.key()
+        
+        query = db.GqlQuery("SELECT __key__ from gogogo_farestop WHERE owner = :1",key)
+        
+        ret = []
+        for key in query:
+            loader = FareStopLoader(key.id_or_name())
+            loader.load()
+            ret.append(loader)
+            
+        return ret
+    
+    load_for_agency = staticmethod(load_for_agency)
+        
+
 class AgencyLoader(Loader):
     """
     Agency data loading and cache management
@@ -58,7 +121,7 @@ class AgencyLoader(Loader):
         self.routes = None # An array of route tr entity
         self.trips = None # A dict of trip key with using route as key
         
-    def load(self,request):
+    def load(self):
         """
         Load from memcache or bigtable.
         

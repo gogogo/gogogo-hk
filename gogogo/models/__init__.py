@@ -530,6 +530,8 @@ auto_set_key_name_table = {
     Route.kind() : ("agency","short_name","long_name",),
     Trip.kind() : ("route","to","headsign"),
     FareTrip.kind() : ("trip","name"),
+    FareStop.kind() : ("agency","name"),
+    FarePair.kind() : ("owner","from_stop","to_stop"),
 }
 
 def auto_set_key_name(sender, **kwargs):
