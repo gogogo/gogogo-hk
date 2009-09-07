@@ -44,8 +44,6 @@ class Node:
         self.id = None
         
     def __eq__(self,other):
-        import logging
-        logging.debug(str(self.id) + "__eq__" + str(other.id))
         if self.id == other.id:
             return True
         return False

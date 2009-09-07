@@ -89,23 +89,27 @@ class TransitGraph(Graph):
         
         # TODO : Replace by ListLoader
         # For testing
-        query = Agency.all().filter("free_transfer = ", True).filter("no_service = " ,False)
+        query = Agency.all().filter("no_service = " ,False)
         
         for agency in query:
             self.agency_table[agency.key().id_or_name()] = agency
             agency_list.append(agency)
         
         # TODO: Dump all route
-        query = Route.all().filter("agency in ",agency_list)
+        query = Route.all()
         for route in query:
             route_list.append(route)
             self.route_table[route.key().id_or_name() ] = route
+            
+        prefetch_references(route_list,"agency",agency_list)
 
         # TODO: Dump all trip
-        query = Trip.all().filter("route in ", route_list)
+        query = Trip.all()
         for trip in query:
             trip_list.append(trip)
             self.trip_table[trip.key().id_or_name()] = trip
+            
+        prefetch_references(trip_list,"route",route_list)
         
         # Fetch all the database record make fewer DB access call than filter("agency  in")
         query = Stop.all()
@@ -134,7 +138,6 @@ class TransitGraph(Graph):
                 key = query.get()
                 if key == None:
                     continue
-                logging.info(key.id_or_name())
                 farestop_loader = FareStopLoader(key.id_or_name())
                 farestop_loader.load()
                 farestop = farestop_loader.get_farestop()
@@ -150,15 +153,19 @@ class TransitGraph(Graph):
                     arc.link(a,b)
                     self.add_arc(arc)
         
-        for trip in trip_list:
-            from_stop = None
+        for trip in trip_list:           
+            if trip.route.agency.free_transfer == True: 
+                #Those trips are already processed in the previous block
+                continue
+                
+            logging.info(trip.key().id_or_name())                
             cluster_group = {}
             
             for key in trip.stop_list:
                 try:
                     to_stop = self.stop_table[key.id_or_name()]
                 except KeyError:
-                    logging.error(key.id_or_name() + "not found!")
+                    logging.error( "Stop(%s) not found" % key.id_or_name())
                     continue
                 
                 cluster = self.stop_to_cluster[to_stop.key().id_or_name()]
@@ -166,15 +173,12 @@ class TransitGraph(Graph):
                 if cluster_name not in cluster_group: # ignore self-looping
                     
                     for from_cluster_name in cluster_group:
-                        graph_id_a = self.cluster_id[from_cluster_name]
-                        graph_id_b = self.cluster_id[cluster_name]
-
-                        a = self.get_node(graph_id_a)
-                        b = self.get_node(graph_id_b)
+                        a  = self.get_node(from_cluster_name)
+                        b  = self.get_node(cluster_name)
                         
                         # Ignore weight in testing phase
                         #TODO , don't save entity in graph , reduce the memory usage
-                        arc = Arc(data= trip)             
+                        arc = Arc(data= trip)
                         arc.link(a,b)
                         self.add_arc(arc)       
                     

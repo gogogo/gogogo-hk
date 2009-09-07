@@ -262,6 +262,7 @@ class TripLoader(Loader):
             faretrip_entity_list = []
             for faretrip in trip.faretrip_set:
                 entity = createEntity(faretrip)
+                del entity['instance']
                 min = sys.maxint
                 max = 0
                 for fare in faretrip.fares:
