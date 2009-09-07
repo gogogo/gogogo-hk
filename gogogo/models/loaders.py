@@ -15,7 +15,7 @@ from cache import getCachedEntityOr404 , getCachedObjectOr404
 from MLStringProperty import MLStringProperty
 
 from google.appengine.api import memcache
-from . import Route , Trip , Stop , Agency
+from . import Route , Trip , Stop , Agency , FareStop , FarePair
 from StopList import StopList
 import logging
 import sys
@@ -68,23 +68,38 @@ class FareStopLoader(Loader):
         if cache == None:
             cache = {}
             
-            entity = getCachedEntityOr404(Agency,id_or_name = self.id)
+            entity = getCachedEntityOr404(FareStop,id_or_name = self.id)
             cache['farestop'] = entity
             farestop = entity['instance']
+            key = farestop.key()
             
+            limit = 1000
+            FarePair.all()
+            
+            entities = FarePair.all().filter("owner =",key).fetch(limit)
             pair_list = []
-            for pair in farestop.pair_set:
-                pair_list.append(createEntity(pair))
+            
+            while entities:
+                for pair in entities:
+                    entity = createEntity(pair)
+                    del entity['instance']
+                    pair_list.append(entity)
+            
+                entities = FarePair.all().filter('__key__ >', entities[-1].key()).filter("owner  =",key).fetch(limit)
                 
             cache['pair_list'] = pair_list
+            
             
             memcache.add(cache_key, cache, _default_cache_time)
     
         self.farestop = cache['farestop']
         self.pair_list = cache['pair_list']
         
-    def get_farestop():
+    def get_farestop(self):
         return self.farestop
+        
+    def get_pair_list(self):
+        return self.pair_list
         
     def load_for_agency(agency):
         """

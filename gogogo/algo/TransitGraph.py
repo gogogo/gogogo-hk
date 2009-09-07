@@ -67,6 +67,16 @@ class TransitGraph(Graph):
             
         return Graph.get_node(self,id)
         
+    def get_node_by_stop(self,stop):
+        if isinstance(stop,basestring):
+           key = stop 
+        elif isinstance(stop,db.Key()):
+            key = stop.id_or_name()
+        else:
+            key = stop.key().id_or_name()
+            
+        return self.get_node(self.stop_to_cluster[key])
+        
     def load(self):
         """
        Load graph from database
@@ -108,7 +118,7 @@ class TransitGraph(Graph):
             self.cluster_table[cluster.key().id_or_name()] = cluster
             node = Node(name = cluster.key().id_or_name() , data = cluster)
             self.cluster_id [cluster.key().id_or_name()] = self.add_node(node)
-            logging.info(cluster.key().id_or_name())
+            #logging.info(cluster.key().id_or_name())
             
             for key in cluster.members:
                 name = key.id_or_name()
@@ -118,18 +128,27 @@ class TransitGraph(Graph):
         # Process agency with "free_transfer"
         for agency in agency_list:
             if agency.free_transfer:
-                query = db.GqlQuery("SELECT __key__ from gogogo_farestop WHERE owner = :1 and default = True limit 1",key)
+                logging.info("Processing " +agency.key().id_or_name())
+                query = db.GqlQuery("SELECT __key__ from gogogo_farestop WHERE agency = :1 and default = True limit 1"
+                    ,agency)
                 key = query.get()
                 if key == None:
                     continue
+                logging.info(key.id_or_name())
                 farestop_loader = FareStopLoader(key.id_or_name())
                 farestop_loader.load()
                 farestop = farestop_loader.get_farestop()
-                a = get_node(farestop["from_stop"])
-                b = get_node(farestop["to_stop"])
-                arc = Arc(data = (agency,farestop) ,weight =farestop["fare"] )
-                arc.link(a,b)
-                self.add_arc(arc)
+                
+                pair_list = farestop_loader.get_pair_list()
+                
+                for pair in pair_list:        
+                    a = self.get_node_by_stop(pair["from_stop"])
+                    b = self.get_node_by_stop(pair["to_stop"])
+                    
+                    #TODO , don't save entity in graph , reduce the memory usage
+                    arc = Arc(data = (agency,farestop) ,weight = pair["fare"] )
+                    arc.link(a,b)
+                    self.add_arc(arc)
         
         for trip in trip_list:
             from_stop = None
@@ -154,6 +173,7 @@ class TransitGraph(Graph):
                         b = self.get_node(graph_id_b)
                         
                         # Ignore weight in testing phase
+                        #TODO , don't save entity in graph , reduce the memory usage
                         arc = Arc(data= trip)             
                         arc.link(a,b)
                         self.add_arc(arc)       

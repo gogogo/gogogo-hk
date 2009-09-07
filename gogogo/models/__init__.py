@@ -493,7 +493,7 @@ class FareStop(db.Model):
         return unicode(self.key().id_or_name())
 
 class FarePair(db.Model):
-    owner = db.ReferenceProperty(FareStop,collection_name="pair")
+    owner = db.ReferenceProperty(FareStop,collection_name="pair_set")
 
     # Start stop
     from_stop = db.ReferenceProperty(Stop,collection_name="fair_pair_from")
