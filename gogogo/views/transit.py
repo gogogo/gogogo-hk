@@ -87,6 +87,7 @@ def agency(request,agency_id):
     agency_loader.load(request)
 
     agency = trEntity(agency_loader.get_agency_entity(),request)
+    agency["type"] = TransitTypeProperty.get_type_name(agency["type"])
     
     pathbar = Pathbar(agency=(agency,))
    

@@ -48,6 +48,8 @@ class TransitTypeProperty(db.IntegerProperty):
             return _("Gondola, Suspended cable car")
         elif type == 7:
             return _("Funicular")
+        else:
+            return ""
             
     get_type_name = staticmethod(get_type_name)
 

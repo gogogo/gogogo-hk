@@ -449,6 +449,9 @@ class FareTrip(db.Model):
     payment_method = PaymentMethodProperty()
     
     fares = NumberListProperty(float)
+    
+    def __unicode__(self):
+        return unicode(self.key().id_or_name())
 
     @permalink
     def get_absolute_url(self):

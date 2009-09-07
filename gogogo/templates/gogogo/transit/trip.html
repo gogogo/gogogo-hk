@@ -67,8 +67,14 @@
 
     <tr>
         <td>Fare : </td>
-        <td><ul>{% for faretrip in faretrip_list %}
-        <li>{{faretrip.name}} {{faretrip.fare_range}}</li>
+        <td><ul >{% for faretrip in faretrip_list %}
+        <li>{{faretrip.name}} {{faretrip.fare_range}}
+        
+           {%if user.is_staff %}
+            <a href="{%url gogogo.views.db.edit faretrip_kind,faretrip.id %}">{% trans "Edit" %}</a>
+           {%endif %}
+        
+        </li>
         {%endfor%}</ul>
         </td>
     </tr>
