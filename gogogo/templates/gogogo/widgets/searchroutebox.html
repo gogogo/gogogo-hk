@@ -1,6 +1,9 @@
 {%load i18n%}
 
 <style type="text/css">
+    .searchroutebox {
+        float:right;
+    }
 	.searchroutebox .default {
 		color: #cccccc;
 	}   
@@ -17,7 +20,7 @@
     });
 </script>
 
-<div style="float:right" class="searchroutebox">
+<div class="searchroutebox">
 <form action="{%url gogogo.views.db.route.search%}" method="GET">
 <input type="text" name="keyword" class="default" />
 <input type="submit" value="{%trans "Route Search"%}"  />
