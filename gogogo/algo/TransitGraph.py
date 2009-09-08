@@ -7,6 +7,21 @@ from ragendja.dbutils import prefetch_references
 import logging
 from gogogo.models.loaders import ListLoader , FareStopLoader , TripLoader
 
+class TransitArc(Arc):
+    def __init__(self , **kwargs):
+        self.agency = None
+        self.trip = None
+        
+        if "agency" in kwargs:
+            self.agency = kwargs["agency"]
+            del kwargs["agency"]
+            
+        if "trip" in kwargs:
+            self.trip = kwargs["trip"]
+            del kwargs["trip"]
+            
+        Arc.__init__(self,**kwargs)
+
 class TransitGraph(Graph):
     """
     A graph built by transit information
@@ -163,7 +178,7 @@ class TransitGraph(Graph):
                     b = self.get_node_by_stop(pair["to_stop"])
                     
                     #TODO , don't save entity in graph , reduce the memory usage
-                    arc = Arc(data = (agency,farestop) ,weight = pair["fare"] )
+                    arc = TransitArc(agency = agency.key().id_or_name() ,weight = pair["fare"] )
                     arc.link(a,b)
                     self.add_arc(arc)
         
@@ -198,7 +213,7 @@ class TransitGraph(Graph):
                         
                         # Ignore weight in testing phase
                         #TODO , don't save entity in graph , reduce the memory usage
-                        arc = Arc(data= trip ,weight = loader.calc_fare(
+                        arc = TransitArc(trip = trip["id"] ,weight = loader.calc_fare(
                             cluster_group[from_cluster_name] , to_stop) )
                             
                         arc.link(a,b)
