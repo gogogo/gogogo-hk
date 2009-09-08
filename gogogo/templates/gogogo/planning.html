@@ -252,7 +252,6 @@
 			planner.suggest ($("#startAddress").val() , $("#endAddress").val(),function(){
 				planningOutput.empty();
 				var plan_list = planner.getTransitPlanList();
-                console.log(plan_list);
                 for (var i = 0 ; i < plan_list.length  ;  i++){
                     var div = $("<div></div>");
                     $(div).append(i+1);

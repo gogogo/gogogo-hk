@@ -68,7 +68,7 @@ class StopAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
     list_display = ('Stop_ID','Stop_Name',)
-    
+    list_filter = ('agency',)    
     exclude = ('log_message',)
 
     change_form_template = "gogogo/admin/change_form.html"
