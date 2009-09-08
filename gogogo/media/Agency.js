@@ -13,3 +13,6 @@ extend(gogogo.Agency,gogogo.Model);
 
 gogogo.Agency.prototype.modelType = "agency";
 
+gogogo.Agency.prototype.getName = function() {
+    return this.info.name;
+}
