@@ -172,7 +172,7 @@ def edit(request,kind,object_id):
                 updateCachedObject(new_object)
                 #TODO - Update loader cache
                 
-                message = _("The form is successfully saved. <a href='%s'>View.</a> ") % object.get_absolute_url()
+                return HttpResponseRedirect(new_object.get_absolute_url())
             else:
                 message = _("Nothing changed. The form will not be saved")
 
