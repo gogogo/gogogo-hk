@@ -7,7 +7,10 @@
 gogogo.ModelManager = function(){
 	
 	// Shape dictionary
-	this.shapes = Object();
+	this.shape_table = {}
+    
+    // Agency dictionary
+    this.agency_table = {}
 }
 
 /** Query an object with a type from server(internal function)
@@ -49,6 +52,19 @@ gogogo.ModelManager.prototype._query = function(model,dict,id,callback){
 	}
 }
 
+/** Query ageny information from server
+ * 
+ */
+
+gogogo.ModelManager.prototype.queryAgency = function(id,callback) {
+    
+	return this._query(gogogo.Agency,this.agency_table,id,callback)
+}
+
+/** Query shape from server
+ * 
+ */
+
 gogogo.ModelManager.prototype.queryShape = function(id,callback) {
-	return this._query(gogogo.Shape,this.shapes,id,callback)
+	return this._query(gogogo.Shape,this.shape_table,id,callback)
 }
