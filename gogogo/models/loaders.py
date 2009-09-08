@@ -22,6 +22,53 @@ import sys
 
 _default_cache_time = 3600
 
+class ListLoader:
+    """
+    Load all entity of a model from memcache or bigtable
+    """
+    
+    cache_key_prefix = "gogogo_list_loader_"
+    
+    def __init__(self,model):
+        self.model = model
+        self.data = None
+
+    def get_cache_key(self,num):
+        return "%s_%s_%d" % (ListLoader.cache_key_prefix , self.model.kind() , num)
+
+    def load(self,batch_size=1000):
+        if self.data != None: #already loaded
+            return
+            
+        n = 0            
+        batch = self.load_batch(n,batch_size)
+        
+        while len(batch) == batch_size:
+            n+=1
+            batch += self.load_batch(n , batch_size , batch[-1].key() )
+        
+        self.data = batch
+        
+        return self.data
+
+    def load_batch(self,num,limit = 1000,key = None):
+        cache_key = self.get_cache_key(num)
+        cache = memcache.get(cache_key)
+        if cache == None:
+            if key:
+                entities = self.model.all().filter('__key__ >',key).fetch(limit)
+            else:
+                entities = self.model.all().fetch(limit)
+            
+            cache = [entity for entity in entities]
+            memcache.add(cache_key, cache, _default_cache_time)
+        
+        ret = cache
+        return ret
+                
+    def get_data(self):
+        return self.data
+
 class Loader:
     """
     Abstract based class for all Loader class.
@@ -369,45 +416,6 @@ class RouteLoader(Loader):
 	def get_trip_list(self):
 		return self.trip_list
 
-################################
-# List loader
-################################
-
-class ListLoader:
-    """
-    Load all entity of a model from memcache or bigtable
-    """
-    
-    cache_key_prefix = "gogogo_list_loader_"
-    
-    def __init__(self,model):
-        self.model = model
-        self.data = None
-        self.cache_key = ListLoader.cache_key_prefix + self.model.kind()
-        
-
-    def load(self):
-        if self.data != None: #already loaded
-            return
-            
-        cache = memcache.get(self.cache_key)
-        
-        if cache == None:
-            cache = []
-            
-            query = self.model.all()
-            for entry in query:
-                cache.append(entry)
-                
-            memcache.add(self.cache_key, cache, _default_cache_time)
-        
-        self.data = cache
-        
-	def remove_cache(self):
-		memcache.delete(self.cache_key)
-        
-    def get_data(self):
-        return self.data
 
 class RouteListLoader:
     """
