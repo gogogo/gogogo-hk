@@ -34,6 +34,8 @@ def plan(request):
     b = graph.get_node(to_cluster)
     arcs = graph.search_arcs(a,b)
     
+    #logging.info(graph.to_entity())
+    
     paths = []
     for arc in arcs:
         entity = {
@@ -42,7 +44,8 @@ def plan(request):
             "weight" : arc.weight 
         }
         paths.append(entity)
-    
+        logging.info(arc.to_entity())
+        
     result = {
         "from" : a.id,
         "to" : b.id,

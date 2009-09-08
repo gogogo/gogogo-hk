@@ -6,6 +6,10 @@ from gogogo.models import *
 from ragendja.dbutils import prefetch_references
 import logging
 from gogogo.models.loaders import ListLoader , FareStopLoader , TripLoader
+from google.appengine.api import memcache
+
+# Cache for whole day
+_default_cache_time = 3600 * 24
 
 class TransitArc(Arc):
     def __init__(self , **kwargs):
@@ -21,31 +25,58 @@ class TransitArc(Arc):
             del kwargs["trip"]
             
         Arc.__init__(self,**kwargs)
+        
+    def to_entity(self):
+        entity = Arc.to_entity(self)
+        
+        if self.agency :
+            entity["agency"] = self.agency
+
+        if self.trip :
+            entity["trip"] = self.trip         
+            
+        return entity
+        
+    def from_entity(self,graph,entity):
+        self.agency = None
+        self.trip = None
+        
+        Arc.from_entity(self,graph,entity)
+        
+        if "agency" in entity:
+            self.agency = entity["agency"]
+            
+        if "trip" in entity:
+            self.trip = entity["trip"]
 
 class TransitGraph(Graph):
     """
     A graph built by transit information
     """
+    
+    cache_key = "gogogo_transit_graph"
+    
 
     def create():
         """
         Try to load a instance from memcache, if not found,
         it will create a new transit graph.
         """
-        #TODO - Enable memcache
+        entity = memcache.get(TransitGraph.cache_key)
+        
         graph = TransitGraph()
-        graph.load()
+        if entity == None:
+            graph.load()
+            memcache.add(TransitGraph.cache_key, graph.to_entity(), _default_cache_time)
+        else:
+            graph.from_entity(entity)
+            
         return graph
         
     create = staticmethod(create)
 
     def __init__(self):
         Graph.__init__(self)
-        self.agency_table = {}
-        #self.stop_table = {}
-        self.cluster_table = {}
-        self.route_table = {}
-        self.trip_table = {}
         
         # stop to cluster matching
         self.stop_to_cluster = {}
@@ -94,7 +125,7 @@ class TransitGraph(Graph):
         
     def load(self):
         """
-       Load graph from database
+       Load graph from bigtable
         """
         
         route_list = []
@@ -102,23 +133,12 @@ class TransitGraph(Graph):
         cluster_list = []
         trip_list = []
         
-        # TODO : Replace by ListLoader
-        # For testing
         query = Agency.all().filter("no_service = " ,False)
         
         for agency in query:
-            self.agency_table[agency.key().id_or_name()] = agency
             agency_list.append(agency)
         
-        # TODO: Dump all route
-        #query = Route.all()
-        #for route in query:
-            #route_list.append(route)
-            #self.route_table[route.key().id_or_name() ] = route
-            
-        #prefetch_references(route_list,"agency",agency_list)
-
-        # Load all the trip
+        # Load all the trip by using TripLoader
         trip_loader_list = []
         stop_table = {}
         limit = 1000
@@ -134,18 +154,16 @@ class TransitGraph(Graph):
                 
                 agency = loader.get_agency()
                 
-                if agency["free_transfer"] == False: # Ignore free transfer trip
+                if agency["free_transfer"] == False: # Ignore agency with free transfer service
                     trip_loader_list.append(loader)
                                 
             entities = Trip.all(keys_only=True).filter('__key__ >', entities[-1]).fetch(limit)
-                        
-        prefetch_references(trip_list,"route",route_list)
-        
+                               
+        #Load all cluster
         query = Cluster.all()
         for cluster in query:
             cluster_list.append(cluster)
             cluster_name = cluster.key().id_or_name()
-            self.cluster_table[cluster_name] = cluster
 
             node = Node(name = cluster.key().id_or_name())
 
@@ -156,7 +174,7 @@ class TransitGraph(Graph):
             for key in cluster.members:
                 name = key.id_or_name()
                 if name in stop_table:
-                    self.stop_to_cluster[name] = cluster
+                    self.stop_to_cluster[name] = cluster_name
         
         # Process agency with "free_transfer"
         for agency in agency_list:
@@ -202,8 +220,7 @@ class TransitGraph(Graph):
                     logging.error( "Stop(%s) not found" % id)
                     continue
                 
-                cluster = self.stop_to_cluster[to_stop["id"]]
-                cluster_name = cluster.key().id_or_name()
+                cluster_name = self.stop_to_cluster[to_stop["id"]]
                 if cluster_name not in cluster_group: # ignore self-looping
                     
                     for from_cluster_name in cluster_group:
@@ -214,12 +231,24 @@ class TransitGraph(Graph):
                         # Ignore weight in testing phase
                         #TODO , don't save entity in graph , reduce the memory usage
                         arc = TransitArc(trip = trip["id"] ,weight = loader.calc_fare(
-                            cluster_group[from_cluster_name] , to_stop) )
+                            cluster_group[from_cluster_name] , id) )
                             
                         arc.link(a,b)
                         self.add_arc(arc)       
                     
-                    cluster_group[cluster_name] = to_stop
+                    cluster_group[cluster_name] = id
                         
-
+    def to_entity(self):
+        entity = Graph.to_entity(self)
+        
+        logging.info(self.stop_to_cluster)
+        entity["stop_to_cluster"] = self.stop_to_cluster
+        entity["cluster_to_node_id"] = self.cluster_id
+        return entity
+        
+    def from_entity(self,entity):
+        Graph.from_entity(self,entity,arcClass = TransitArc)
+        
+        self.stop_to_cluster = entity["stop_to_cluster"]
+        self.cluster_id = entity["cluster_to_node_id"]
         

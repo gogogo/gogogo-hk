@@ -31,7 +31,37 @@ class Arc:
         
     def dump(self):
         return "%02d => %02d (%0.3f) " % (self.src.id , self.dest.id , self.weight)
+
+    def to_entity(self):
+        """
+       Convert the arc to entity format
+        """
         
+        src = None
+        dest = None
+        if self.src:
+            src = self.src.id
+        
+        if self.dest:
+            dest = self.dest.id
+        
+        entity = {
+            "src" : src, # Save the ID instead of the instance
+            "dest" : dest,
+            "weight" : self.weight,
+        }
+        return entity
+        
+    def from_entity(self,graph,entity):
+        """
+        Set from entity
+        """
+        self.arcs = []
+        
+        src = graph.get_node(entity["src"])
+        dest = graph.get_node(entity["dest"])
+        self.weight = entity["weight"]
+        self.link(src,dest)
 
 class Node:
     def __init__(self,name = None, data = None):
@@ -47,13 +77,47 @@ class Node:
         if self.id == other.id:
             return True
         return False
+        
+    def __cmp__(self,other):
+        if self.id > other.id:
+            return 1
+        elif self.id == other.id:
+            return 0
+        return -1
+        
+    def to_entity(self):
+        """
+       Convert the node to entity format
+       
+       >>> print Node(name = "Test" ).to_entity()
+       {'name': 'Test', 'id': None}
+        """
+        entity = {
+            "name" : self.name,
+            "id" : self.id,
+        }
+        return entity
+        
+    def from_entity(self,entity):
+        """
+        Set from entity
+        """
+        self.arcs = []
+        self.name = entity["name"]
+        self.id = entity["id"]
 
 class Graph:
     
     def __init__(self):
         
-        # An array of 3-tuple( node, arc with source equal to the node , 
-        # arc with dest equal to the node )
+        # An array of 3-tuple( node, arc with source equal to the node(outgoing) , 
+        # arc with dest equal to the node (incoming))
+        self.nodes = []
+        
+    def clear(self):
+        """
+        Clear the graph
+        """
         self.nodes = []
         
     def add_node(self,node):
@@ -64,6 +128,9 @@ class Graph:
         self.nodes.append( (node,[],[]) )
 
         return node.id
+        
+    def add_node_by_id(self,node,id):
+        self.nodes[id] = (node,[],[])
         
     def get_node(self,id):
         (ret,s,d) = self.nodes[id]
@@ -77,6 +144,12 @@ class Graph:
         
     def get_node_count(self):
         return len(self.nodes)
+        
+    def get_all_nodes(self):
+        """
+        Get all the nodes
+        """
+        return [node for (node,out_arcs,in_arcs) in self.nodes]
         
     def add_arc(self,arc):
        
@@ -125,6 +198,15 @@ class Graph:
         else:
             (src, tmp , dest_arcs) = self.get_node_detail(dest.id)
         return dest_arcs
+
+    def get_all_arcs(self):
+        """
+        Get all the nodes
+        """
+        arcs = []
+        for (node,out_arcs,in_arcs) in self.nodes:
+            arcs += out_arcs
+        return arcs
         
     def contains(self,data):
         ret = False
@@ -173,6 +255,44 @@ class Graph:
                 text += "%s (%0.3f) "  % (arc.dest.name , arc.weight)
             text+="\n"
         return text
+        
+    def to_entity(self):
+        """
+       Convert the graph to entity format
+        """
+        
+        nodes = self.get_all_nodes()
+        arcs = self.get_all_arcs()
+        
+        nodes_entity = [node.to_entity() for node in nodes]
+        arcs_entity = [arc.to_entity() for arc in arcs]
+        
+        return {
+            "nodes" : nodes_entity,
+            "arcs" : arcs_entity
+        }
+        
+    def from_entity(self,entity,arcClass = Arc):
+            
+        self.clear()
+        
+        nodes_entity = entity["nodes"]
+        arcs_entity = entity["arcs"]
+        
+        nodes = []
+        for entity in nodes_entity:
+            node = Node()
+            node.from_entity(entity)
+            nodes.append(node)
+        
+        self.nodes = [None] * len(nodes)
+        for node in nodes:
+            self.add_node_by_id(node,node.id)
+            
+        for entity in arcs_entity:
+            arc = arcClass()
+            arc.from_entity(self,entity)
+            self.add_arc(arc)
 
 if __name__ == "__main__":
 	import doctest
