@@ -9,6 +9,8 @@ def setting_converter(**kwargs):
 var gogogo = {}
 gogogo.DEFAULT_ZOOM=%d;
 gogogo.DEFAULT_LOCATION = [%f,%f];
+gogogo.GEOHASH_PREFIX_LENGTH = 6;
+
 """ % (django_settings.GOGOGO_DEFAULT_ZOOM,
 	django_settings.GOGOGO_DEFAULT_LOCATION[0],
 	django_settings.GOGOGO_DEFAULT_LOCATION[1])
@@ -46,6 +48,7 @@ settings.add_app_media('combined-%(LANGUAGE_CODE)s-gogogo.js',
 	'gogogo/Stop.js',
 	'gogogo/StopManager.js',
 	'gogogo/Shape.js',
+    'gogogo/Cluster.js',
 	'gogogo/ClusterManager.js',
 	'gogogo/Trip.js',
 	'gogogo/Address.js',
