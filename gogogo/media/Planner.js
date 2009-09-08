@@ -27,6 +27,9 @@ gogogo.Planner = function(map,output,clusterManager) {
 	/// Array of address point (start , end)
 	this.points = [new gogogo.Address(map,"A") , new gogogo.Address(map,"B") ]
 	
+    /// Storage of TransitPlan instance
+    this.plan_list = []
+    
 	this._bindCallback(0);
 	this._bindCallback(1);
 }
@@ -161,27 +164,32 @@ gogogo.Planner.prototype._plan = function (start_clusters, goal_clusters ,callba
     var plan = []
     var count = 0;
 
-    //@TODO - Implement the real trip planner code
-    if (callback != undefined) {
-        callback(planner.points[0].getAddress(), planner.points[1].getAddress());	
-    }
+    var planner = this;
 
+    planner.plan_list = []
     
-    for (var i = 0 ; i< start_clusters; i++) {
-        for (var j = 0 ; j < goal_clusters; j++) {
+    for (var i = 0 ; i< start_clusters.length; i++) {
+        for (var j = 0 ; j < goal_clusters.length; j++) {
             api = "/api/plan?from=" + start_clusters[i].getID()  + "&to=" + goal_clusters[i].getID();
             $.getJSON(api, null , function(response) {	
                 
-                if (response.stat == "ok"){
-                    model.error = false;
-                    model.updateFromJson(response.data);
-                    model.complete = true;
+                if (response.stat == "ok") {
+                    var plans = response.data.plans;
+                    
+                    for (var k = 0 ; k < plans.length;k++) {
+                        var json = plans[k];
+                        var plan = new gogogo.TransitPlan(json);
+                        planner.plan_list.push(plan);
+                    }
                 }
 
                 count ++;
                 if (count == total){
+                    if (callback != undefined) {
+                        callback();	
+                    }
                                     
-                }        
+                }
 
             });
 
@@ -201,5 +209,9 @@ gogogo.Planner.prototype.suggest = function(start,end,callback) {
 	
     this._prepare(callback);
 
+}
+
+gogogo.Planner.prototype.getTransitPlanList = function(){
+    return this.plan_list;
 }
 

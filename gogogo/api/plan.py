@@ -47,14 +47,14 @@ def plan(request):
             "fare" : arc.weight 
         }
 
-        entity = {
+        plan = {
             "fare" : arc.weight ,
             "transits" : [tranit]
         }
 
-        result.append(entity)
+        result.append(plan)
         
     result = {
-        "plan" : result
+        "plans" : result
     }
     return ApiResponse(data=result)

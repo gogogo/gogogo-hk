@@ -249,10 +249,17 @@
             if (!notEmpty)
                 return;
 
-			planner.suggest ($("#startAddress").val() , $("#endAddress").val(),function(start,end){
+			planner.suggest ($("#startAddress").val() , $("#endAddress").val(),function(){
 				planningOutput.empty();
-				query = "from:" + $(addressList[0]).val() + " to: " + $(addressList[1]).val();
-				directions.load(query);
+				var plan_list = planner.getTransitPlanList();
+                console.log(plan_list);
+                for (var i = 0 ; i < plan_list.length  ;  i++){
+                    var div = $("<div></div>");
+                    $(div).append(i+1);
+                    $(div).append(". ");
+                    $(div).append(plan_list[i].getSummary());
+                    $(planningOutput).append(div);
+                }
 			});
 		});
 
