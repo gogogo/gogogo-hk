@@ -5,7 +5,7 @@ from graphs import Graph , Node , Arc
 from gogogo.models import *
 from ragendja.dbutils import prefetch_references
 import logging
-from gogogo.models.loaders import ListLoader , FareStopLoader
+from gogogo.models.loaders import ListLoader , FareStopLoader , TripLoader
 
 class TransitGraph(Graph):
     """
@@ -27,7 +27,7 @@ class TransitGraph(Graph):
     def __init__(self):
         Graph.__init__(self)
         self.agency_table = {}
-        self.stop_table = {}
+        #self.stop_table = {}
         self.cluster_table = {}
         self.route_table = {}
         self.trip_table = {}
@@ -96,37 +96,51 @@ class TransitGraph(Graph):
             agency_list.append(agency)
         
         # TODO: Dump all route
-        query = Route.all()
-        for route in query:
-            route_list.append(route)
-            self.route_table[route.key().id_or_name() ] = route
+        #query = Route.all()
+        #for route in query:
+            #route_list.append(route)
+            #self.route_table[route.key().id_or_name() ] = route
             
-        prefetch_references(route_list,"agency",agency_list)
+        #prefetch_references(route_list,"agency",agency_list)
 
-        # TODO: Dump all trip
-        query = Trip.all()
-        for trip in query:
-            trip_list.append(trip)
-            self.trip_table[trip.key().id_or_name()] = trip
-            
+        # Load all the trip
+        trip_loader_list = []
+        stop_table = {}
+        limit = 1000
+        entities = Trip.all(keys_only=True).fetch(limit)
+        while entities:
+            for key in entities:
+                loader = TripLoader(key.id_or_name())
+                loader.load(stop_table = stop_table)
+                
+                stop_list = loader.get_stop_list()
+                for stop in stop_list:
+                    stop_table [stop["id"]] = stop
+                
+                agency = loader.get_agency()
+                
+                if agency["free_transfer"] == False: # Ignore free transfer trip
+                    trip_loader_list.append(loader)
+                                
+            entities = Trip.all(keys_only=True).filter('__key__ >', entities[-1]).fetch(limit)
+                        
         prefetch_references(trip_list,"route",route_list)
-        
-        # Fetch all the database record make fewer DB access call than filter("agency  in")
-        query = Stop.all()
-        for stop in query:
-            self.stop_table[stop.key().id_or_name()] = stop
         
         query = Cluster.all()
         for cluster in query:
             cluster_list.append(cluster)
-            self.cluster_table[cluster.key().id_or_name()] = cluster
-            node = Node(name = cluster.key().id_or_name() , data = cluster)
+            cluster_name = cluster.key().id_or_name()
+            self.cluster_table[cluster_name] = cluster
+
+            node = Node(name = cluster.key().id_or_name())
+
+            # Cluster to ID matching            
             self.cluster_id [cluster.key().id_or_name()] = self.add_node(node)
             #logging.info(cluster.key().id_or_name())
             
             for key in cluster.members:
                 name = key.id_or_name()
-                if name in self.stop_table:
+                if name in stop_table:
                     self.stop_to_cluster[name] = cluster
         
         # Process agency with "free_transfer"
@@ -153,26 +167,27 @@ class TransitGraph(Graph):
                     arc.link(a,b)
                     self.add_arc(arc)
         
-        for trip in trip_list:           
-            if trip.route.agency.free_transfer == True: 
-                #Those trips are already processed in the previous block
-                continue
+        # Process trip not in agency with free_transfer service
+        for loader in trip_loader_list:
+            trip = loader.get_trip()
                 
-            logging.info(trip.key().id_or_name())                
+            logging.info(trip["id"])                
             cluster_group = {}
             
-            for key in trip.stop_list:
+            for id in trip["stop_list"]:
+                logging.info(id)
                 try:
-                    to_stop = self.stop_table[key.id_or_name()]
+                    to_stop = stop_table[id]
                 except KeyError:
-                    logging.error( "Stop(%s) not found" % key.id_or_name())
+                    logging.error( "Stop(%s) not found" % id)
                     continue
                 
-                cluster = self.stop_to_cluster[to_stop.key().id_or_name()]
+                cluster = self.stop_to_cluster[to_stop["id"]]
                 cluster_name = cluster.key().id_or_name()
                 if cluster_name not in cluster_group: # ignore self-looping
                     
                     for from_cluster_name in cluster_group:
+                        logging.info("%s to %s" % (from_cluster_name ,cluster_name))
                         a  = self.get_node(from_cluster_name)
                         b  = self.get_node(cluster_name)
                         

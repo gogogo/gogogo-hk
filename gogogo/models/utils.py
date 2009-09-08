@@ -20,41 +20,42 @@ def id_or_name(id):
 	return ret
 
 def createEntity(object):
-	"""  Create an entity from model instance object which is 
-	suitable for data import and export. 
+    """  Create an entity from model instance object which is 
+    suitable for data import and export. 
 
-	Operations:
-	- Convert all ReferenceProperty to the key_name/key
-	- set 'id' attribute (= id_or_name()
-	- set 'instance' attribute , the reference to the model instance
-	
-	@return A dict object contains the entity of the model instance. The fields are not translated , use trEntity to translate to user's locale
+    Operations:
+    - Convert all ReferenceProperty to the key_name/key
+    - set 'id' attribute (= id_or_name()
+    - set 'instance' attribute , the reference to the model instance
 
-	"""
-	entity = {}
-	
-	for prop in object.properties().values():
-		datastore_value = prop.get_value_for_datastore(object)
-		if not datastore_value == []:
-			entity[prop.name] = datastore_value
-			
-			if isinstance(prop,db.ReferenceProperty):
-				if datastore_value:
-					entity[prop.name] = datastore_value.id_or_name()
-			elif isinstance(prop,MLStringProperty):
-				entity[prop.name] = u'|'.join(datastore_value)
-			elif isinstance(prop,KeyListProperty):
-				logging.info("KeyListProperty is not supported")
-				del entity[prop.name]
-			
-	#entity['key_name'] = object.key().id_or_name()
-	
-	# The client side do not know the different between id and key_name, they just 
-	# "id" as the unique identifier of an entry
-	if object.is_saved():
-		entity['id'] = object.key().id_or_name()
-	entity['instance'] = object
-	return entity
+    @return A dict object contains the entity of the model instance. The fields are not translated , use trEntity to translate to user's locale
+
+    """
+    entity = {}
+
+    for prop in object.properties().values():
+        datastore_value = prop.get_value_for_datastore(object)
+        if not datastore_value == []:
+            entity[prop.name] = datastore_value
+            
+            if isinstance(prop,db.ReferenceProperty):
+                if datastore_value:
+                    entity[prop.name] = datastore_value.id_or_name()
+            elif isinstance(prop,MLStringProperty):
+                entity[prop.name] = u'|'.join(datastore_value)
+            elif isinstance(prop,KeyListProperty):
+                entity[prop.name] = [ key.id_or_name() for key in datastore_value ]
+            
+    #entity['key_name'] = object.key().id_or_name()
+
+    # The client side do not know the different between id and key_name, they just 
+    # "id" as the unique identifier of an entry
+    if object.is_saved():
+        entity['id'] = object.key().id_or_name()
+        
+    # Going to deprecate
+    entity['instance'] = object
+    return entity
 
 def trEntity(entity,request):
 	"""

@@ -255,12 +255,14 @@ class TripLoader(Loader):
         self.id = id_or_name(id)
         self.cache_key_prefix = "gogogo_trip_loader_"
 
-    def load(self):
+    def load(self,stop_table = None):
         """
         Load trip and all related objects from memecache or bigtable.
         
         If you only want to load a single entry of Trip , please use
         getCachedEntityOr404 instead.
+        
+        @param stop_table A dict of stop entities. 
         """
         
         cache_key = self.get_cache_key()
@@ -288,6 +290,9 @@ class TripLoader(Loader):
             stop_entity_list = []
             for key in trip.stop_list:
                 stop_id = key.id_or_name()
+                if stop_table and stop_id in stop_table:
+                    stop_entity_list.append(stop_table[stop_id])
+                    continue
                 try:
                     stop = getCachedEntityOr404(Stop,id_or_name= stop_id)
                     stop_entity_list.append(stop)
