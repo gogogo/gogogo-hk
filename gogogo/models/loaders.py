@@ -11,7 +11,7 @@ from gogogo.geo.geohash import Geohash
 from django.http import Http404
 
 from utils import createEntity , entityToText , id_or_name
-from cache import getCachedEntityOr404 , getCachedObjectOr404
+from cache import getCachedEntityOr404 , getCachedObjectOr404, removeCache
 from MLStringProperty import MLStringProperty
 
 from google.appengine.api import memcache
@@ -35,6 +35,9 @@ class ListLoader:
 
     def get_cache_key(self,num):
         return "%s_%s_%d" % (ListLoader.cache_key_prefix , self.model.kind() , num)
+        
+    def get_info_cache_key(self):
+        return "%s_info_%s" % (ListLoader.cache_key_prefix , self.model.kind() )
 
     def load(self,batch_size=1000):
         if self.data != None: #already loaded
@@ -49,6 +52,8 @@ class ListLoader:
         
         self.data = batch
         
+        memcache.add(self.get_info_cache_key(), len(self.data) , _default_cache_time * 2)
+        
         return self.data
 
     def load_batch(self,num,limit = 1000,key = None):
@@ -61,13 +66,24 @@ class ListLoader:
                 entities = self.model.all().fetch(limit)
             
             cache = [entity for entity in entities]
-            memcache.add(cache_key, cache, _default_cache_time)
+            memcache.set(cache_key, cache, _default_cache_time)
         
         ret = cache
         return ret
                 
     def get_data(self):
         return self.data
+        
+    def remove_cache(self,limit = 1000):
+        count = memcache.get(self.get_info_cache_key())
+        if count == None:
+            count = 1
+            
+        i = 0
+        while count >0:            
+            cache_key = self.get_cache_key(i)
+            memcache.delete(cache_key)
+            count -= limit
 
 class Loader:
     """
@@ -168,6 +184,10 @@ class FareStopLoader(Loader):
         return ret
     
     load_for_agency = staticmethod(load_for_agency)
+    
+    def remove_cache(self):
+        Loader.remove_cache(self)
+        removeCache(db.Key.from_path(Agency,self.id) )
         
 
 class AgencyLoader(Loader):

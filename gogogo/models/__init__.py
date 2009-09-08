@@ -99,14 +99,16 @@ class Agency(db.Model):
         return ('gogogo.views.transit.agency',[self.key().id_or_name()]) 
        
 def agency_pre_save(sender, **kwargs):
-    from gogogo.models.loaders import AgencyLoader
+    from gogogo.models.loaders import AgencyLoader,ListLoader
     from gogogo.models.cache import removeCache
     instance = kwargs['instance']
     
     if instance.is_saved():   
-        removeCache(instance)
         loader = AgencyLoader(instance.key().id_or_name())
         loader.remove_cache()
+        list_loader = ListLoader(Agency)
+        list_loader.remove_cache()
+        
 
 pre_save.connect(agency_pre_save, sender=Agency)
 		

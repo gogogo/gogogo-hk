@@ -99,12 +99,16 @@ def removeCache(object):
     """
     Remove the cache of the object
     """
+    if isinstance(object,db.Key):
+        key = object
+    else:
+        key = object.key()
 
-    cache_key = getCacheObjectKey(key = object.key() )
+    cache_key = getCacheObjectKey(key = key )
 
     memcache.delete(cache_key)
 
-    cache_key = getCacheEntityKey(key = object.key())
+    cache_key = getCacheEntityKey(key = key )
 
     memcache.delete(cache_key)    
     
