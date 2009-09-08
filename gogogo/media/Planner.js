@@ -15,10 +15,11 @@
  * 
  */
 
-gogogo.Planner = function(map,output) {
+gogogo.Planner = function(map,output,clusterManager) {
 	this.geocoder = new GClientGeocoder();
     
     this.map = map;
+    this.clusterManager = clusterManager;
     this.output = output;
 	
 	/// Array of address point (start , end)
@@ -64,6 +65,52 @@ gogogo.Planner.prototype.clearWaitingActions = function() {
 	
 }
 
+/** Query the cluster near to the address.
+ * 
+ * @param index The index of address
+ */
+
+gogogo.Planner.prototype.queryCluster = function (index,callback){
+    var address = this.getAddress(index);
+    var location = address.getLocation();
+        
+    var center = hashLatLng(location,gogogo.GEOHASH_PREFIX_LENGTH);
+    var top = calculateAdjacent(center,"top");
+    var left = calculateAdjacent(center,"left");
+    var right = calculateAdjacent(center,"right");
+    var bottom = calculateAdjacent(center,"bottom");
+    
+    var tl = calculateAdjacent(top,"left");
+    var tr = calculateAdjacent(top,"right");
+    
+    var bl = calculateAdjacent(bottom,"left");
+    var br = calculateAdjacent(bottom,"right");
+    
+    var prefix_list = [tl,top ,tr, left,center , right,bl,bottom,br];
+    var prefix_recv_count = 0;
+    var cluster_list = []
+
+    for (var i = 0 ; i<prefix_list.length ; i++){            
+        var prefix = prefix_list[i];
+        
+        this.clusterManager.search(prefix , function(clusters){
+            prefix_recv_count++;
+            
+            for (var i =0 ; i < clusters.length;i++) {
+                var cluster = clusters[i];
+                var center = cluster.getCenter();
+                if (center.distanceFrom(location) < gogogo.EXPECTED_WALKING_DISTANCE * 1000)
+                    cluster_list.push(cluster)
+            }
+            
+            if (prefix_recv_count == 9){
+                callback(cluster_list);
+            }
+        });
+    
+    }
+}
+
 /**
  * Suggest the trip from start to end address
  * @param start  
@@ -76,7 +123,14 @@ gogogo.Planner.prototype.suggest = function(start,end,callback) {
 	var planner = this;
 	
 	planner.points[0].queryLocation(function(location){
+        
 		planner.points[1].queryLocation(function(location) {
+            
+            planner.queryCluster(0,function(clusters){
+                //console.log(clusters);
+            });
+
+            
 			//@TODO - Implement the real trip planner code
 			if (callback != undefined) {
 				callback(planner.points[0].getAddress(), planner.points[1].getAddress());	

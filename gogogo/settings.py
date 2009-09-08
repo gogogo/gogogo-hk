@@ -11,6 +11,9 @@ gogogo.DEFAULT_ZOOM=%d;
 gogogo.DEFAULT_LOCATION = [%f,%f];
 gogogo.GEOHASH_PREFIX_LENGTH = 6;
 
+// Expected Walking distance. (~ 300m)
+gogogo.EXPECTED_WALKING_DISTANCE = 0.3;
+
 """ % (django_settings.GOGOGO_DEFAULT_ZOOM,
 	django_settings.GOGOGO_DEFAULT_LOCATION[0],
 	django_settings.GOGOGO_DEFAULT_LOCATION[1])
