@@ -37,6 +37,7 @@ def plan(request):
     result = {
         "from" : a.id,
         "to" : b.id,
-        "count" : len(arcs)
+        "count" : len(arcs),
+        "fares" : [ arc.weight for arc in arcs]
     }
     return ApiResponse(data=result)

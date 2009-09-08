@@ -174,6 +174,11 @@ class TransitGraph(Graph):
             logging.info(trip["id"])                
             cluster_group = {}
             
+            faretrip = loader.get_default_faretrip()
+
+            if faretrip == None: # No default faretrip data found
+                continue
+            
             for id in trip["stop_list"]:
                 logging.info(id)
                 try:
@@ -193,11 +198,13 @@ class TransitGraph(Graph):
                         
                         # Ignore weight in testing phase
                         #TODO , don't save entity in graph , reduce the memory usage
-                        arc = Arc(data= trip)
+                        arc = Arc(data= trip ,weight = loader.calc_fare(
+                            cluster_group[from_cluster_name] , to_stop) )
+                            
                         arc.link(a,b)
                         self.add_arc(arc)       
                     
-                    cluster_group[cluster_name] = cluster;
+                    cluster_group[cluster_name] = to_stop
                         
 
         

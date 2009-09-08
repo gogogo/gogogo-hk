@@ -369,7 +369,37 @@ class TripLoader(Loader):
         
     def get_faretrip_list(self):
         return self.faretrip_entity_list
-		
+        
+    def get_default_faretrip(self):
+        ret = None
+        for faretrip in self.faretrip_entity_list:
+            if faretrip["default"] == True:
+                return faretrip
+                
+    def calc_fare(self,from_stop,to_stop):
+        faretrip = self.get_default_faretrip()
+        if faretrip == None:
+            return -1
+            
+        fare = faretrip['max_fare']
+        
+        try:
+            if faretrip['payment_type'] == 0:
+                for (i,stop) in enumerate(self.stop_entity_list):
+                    if stop["id"] == from_stop:
+                        fare = fares[i]
+            else: #payment_type = 1
+                for (i,stop) in enumerate(self.stop_entity_list):
+                    if stop["id"] == to_stop:
+                        fare = fares[i]            
+        except KeyError:
+            logging.warning("FareTrip[%s] is incomplete. Fare of %s or %s are missed" % 
+            
+                (faretrip["id"],from_stop,to_stop) )
+            
+        return fare
+
+        
 class RouteLoader(Loader):
 	"""
 	Route and related objects loader and cache management
