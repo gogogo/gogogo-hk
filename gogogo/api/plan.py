@@ -36,20 +36,25 @@ def plan(request):
     
     #logging.info(graph.to_entity())
     
-    paths = []
+    result = []
     for arc in arcs:
-        entity = {
+        
+        tranit = {
             "agency" : arc.agency,
             "trip" : arc.trip,
-            "weight" : arc.weight 
+            "on" : arc.src.name,
+            "off" : arc.dest.name,
+            "fare" : arc.weight 
         }
-        paths.append(entity)
-        logging.info(arc.to_entity())
+
+        entity = {
+            "fare" : arc.weight ,
+            "transits" : [tranit]
+        }
+
+        result.append(entity)
         
     result = {
-        "from" : a.id,
-        "to" : b.id,
-        "count" : len(arcs),
-        "paths" : paths
+        "plan" : result
     }
     return ApiResponse(data=result)

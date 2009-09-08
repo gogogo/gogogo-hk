@@ -9,7 +9,10 @@ from gogogo.models.loaders import ListLoader , FareStopLoader , TripLoader
 from google.appengine.api import memcache
 
 # Cache for whole day
-_default_cache_time = 3600 * 24
+#_default_cache_time = 3600 * 24
+
+# Cache for 5 minutes only , for testing purpose
+_default_cache_time = 300
 
 class TransitArc(Arc):
     def __init__(self , **kwargs):
@@ -203,6 +206,7 @@ class TransitGraph(Graph):
         # Process trip not in agency with free_transfer service
         for loader in trip_loader_list:
             trip = loader.get_trip()
+            agency = loader.get_agency()
                 
             logging.info(trip["id"])                
             cluster_group = {}
@@ -230,7 +234,7 @@ class TransitGraph(Graph):
                         
                         # Ignore weight in testing phase
                         #TODO , don't save entity in graph , reduce the memory usage
-                        arc = TransitArc(trip = trip["id"] ,weight = loader.calc_fare(
+                        arc = TransitArc(agency=agency["id"],trip = trip["id"] ,weight = loader.calc_fare(
                             cluster_group[from_cluster_name] , id) )
                             
                         arc.link(a,b)

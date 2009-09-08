@@ -13,6 +13,8 @@
  * 
  * tripReady(data)
  * 
+ * error(message)
+ * 
  */
 
 gogogo.Planner = function(map,output,clusterManager) {
@@ -66,11 +68,18 @@ gogogo.Planner.prototype.clearWaitingActions = function() {
 }
 
 /** Query the cluster near to the address.
+ *
+ * Signals :
  * 
+ * noClusterFound - Emitted if no any cluster found
+ *  
  * @param index The index of address
+ * @param callback Called if any cluster was found near to the address
+ *
  */
 
 gogogo.Planner.prototype.queryCluster = function (index,callback){
+    var planner = this;
     var address = this.getAddress(index);
     var location = address.getLocation();
         
@@ -104,11 +113,81 @@ gogogo.Planner.prototype.queryCluster = function (index,callback){
             }
             
             if (prefix_recv_count == 9){
-                callback(cluster_list);
+                if (cluster_list.length > 0) {
+                    callback(cluster_list);
+                } else {
+                    $(planner).trigger("noClusterFound",address);                    
+                }
             }
         });
     
     }
+}
+
+/** Prepare required information for trip planning
+ */
+
+gogogo.Planner.prototype._prepare = function(callback) {
+
+	var planner = this;
+    var start_clusters = [];
+    var goal_clusters = [];
+
+	planner.points[0].queryLocation(function(location){
+		planner.points[1].queryLocation(function(location) {            
+            planner.queryCluster(0,function(clusters) {
+                start_clusters = clusters;
+                planner.queryCluster(1,function(clusters) {
+                    goal_clusters = clusters;
+                    planner._plan(start_clusters,goal_clusters,callback);
+                });
+            });
+                    
+		});
+		
+	});
+}
+
+/** Query the "plan" from start clusters to goal_cluster
+ * 
+ */
+
+gogogo.Planner.prototype._plan = function (start_clusters, goal_clusters ,callback){
+    var total = start_clusters.length * goal_clusters.length;
+    
+    var cache = jQuery.ajaxSettings.cache;
+	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
+    
+    var plan = []
+    var count = 0;
+
+    //@TODO - Implement the real trip planner code
+    if (callback != undefined) {
+        callback(planner.points[0].getAddress(), planner.points[1].getAddress());	
+    }
+
+    
+    for (var i = 0 ; i< start_clusters; i++) {
+        for (var j = 0 ; j < goal_clusters; j++) {
+            api = "/api/plan?from=" + start_clusters[i].getID()  + "&to=" + goal_clusters[i].getID();
+            $.getJSON(api, null , function(response) {	
+                
+                if (response.stat == "ok"){
+                    model.error = false;
+                    model.updateFromJson(response.data);
+                    model.complete = true;
+                }
+
+                count ++;
+                if (count == total){
+                                    
+                }        
+
+            });
+
+        }
+    }
+    jQuery.ajaxSettings.cache = cache;	
 }
 
 /**
@@ -117,28 +196,10 @@ gogogo.Planner.prototype.queryCluster = function (index,callback){
  */
 
 gogogo.Planner.prototype.suggest = function(start,end,callback) {
-
 	this.points[0].setAddress(start);
 	this.points[1].setAddress(end);
-	var planner = this;
 	
-	planner.points[0].queryLocation(function(location){
-        
-		planner.points[1].queryLocation(function(location) {
-            
-            planner.queryCluster(0,function(clusters){
-                //console.log(clusters);
-            });
-
-            
-			//@TODO - Implement the real trip planner code
-			if (callback != undefined) {
-				callback(planner.points[0].getAddress(), planner.points[1].getAddress());	
-			}
-		});
-		
-	});
-
+    this._prepare(callback);
 
 }
 
