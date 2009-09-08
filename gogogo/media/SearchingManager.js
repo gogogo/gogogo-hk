@@ -112,3 +112,11 @@ gogogo.SearchingManager.prototype.search = function(prefix,callback) {
         callback(this.geohash_prefix_list[prefix]);
     }
 }
+
+/** Enable/disable auto overlay creation 
+ * 
+ */
+
+gogogo.SearchingManager.prototype.setAutoCreateOverlay = function(val){
+    this.autoRefresh = val;
+}
