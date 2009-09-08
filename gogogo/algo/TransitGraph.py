@@ -245,7 +245,6 @@ class TransitGraph(Graph):
     def to_entity(self):
         entity = Graph.to_entity(self)
         
-        logging.info(self.stop_to_cluster)
         entity["stop_to_cluster"] = self.stop_to_cluster
         entity["cluster_to_node_id"] = self.cluster_id
         return entity

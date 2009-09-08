@@ -404,17 +404,16 @@ class TripLoader(Loader):
         fare = faretrip['max_fare']
         
         try:
-            if faretrip['payment_type'] == 0:
+            if faretrip['payment_method'] == 0:
                 for (i,stop) in enumerate(self.stop_entity_list):
                     if stop["id"] == from_stop:
-                        fare = fares[i]
+                        fare = faretrip["fares"][i]
             else: #payment_type = 1
                 for (i,stop) in enumerate(self.stop_entity_list):
                     if stop["id"] == to_stop:
-                        fare = fares[i]            
-        except KeyError:
+                        fare = faretrip["fares"][i]            
+        except KeyError,e:
             logging.warning("FareTrip[%s] is incomplete. Fare of %s or %s are missed" % 
-            
                 (faretrip["id"],from_stop,to_stop) )
             
         return fare
