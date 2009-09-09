@@ -10,6 +10,16 @@
 	.default {
 		color: #cccccc;
 	}
+    
+    .transit_plan {
+        margin-top : 0.8em;
+    }
+    
+    .transit_plan div {
+        display: inline;
+        margin-right : 5px;
+    }
+    
 	</style>
 {% endblock %}
 
@@ -246,29 +256,11 @@
 				planningOutput.empty();
 				var plan_list = planner.getTransitPlanList();
                 for (var i = 0 ; i < plan_list.length  ;  i++){
-                    var result_div = $("<div></div>");
-                    $(planningOutput).append(result_div);
                     
                     var plan = plan_list[i];
-                    
-                    $(result_div).append(i+1);
-                    $(result_div).append(". ");
-                    
-                    var transits = plan.getTransitIDList();
-                        
-                    $.each(transits, function(j,transit){
-                        console.log(transit);
-                        var transit_div = $("<div></div>");
-                        $(result_div).append(transit_div);
-                        
-                        var div = $("<div></div>");
-                        $(div).append(transit[0]);
-                        $(transit_div).append(div);
-                        modelManager.queryAgency(transit[0],function(agency){
-                            $(div).empty();
-                            $(div).append(agency.getName());
-                        });
-                    });
+                    var div = plan.createDiv(i+1,modelManager);
+                    $(planningOutput).append(div);
+
                 }
 			});
 		});
