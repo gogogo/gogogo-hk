@@ -217,34 +217,7 @@
 		});
         
         $(stopManager).bind("markerAdded",function(e,marker,stop) {
-            GEvent.addListener(marker,'infowindowopen',function(){
-                var cache = jQuery.ajaxSettings.cache;
-                jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter			
-                $('#markerwin').load(
-                    '/api/stop/markerwin/' + stop.id, null,
-                    function(){
-                        var win = map.getInfoWindow();
-                        var content = $('#markerwin');
-                        win.reset(
-                            win.getPoint(), win.getTabs(),
-                            new GSize(content.width(), content.height()),
-                            null, null
-                        );
-                        
-                        $('#markerwin > a').click(function(e) {
-                            console.log(this);
-                           e.preventDefault(); 
-                        });
-                        
-                    }
-                );
-                jQuery.ajaxSettings.cache = cache;	
-                
-            });
-
-            GEvent.addListener(marker,"click",function(){
-                marker.openInfoWindowHtml('<object id="markerwin">Loading...</object>');
-            });
+            var markerWin = gogogo.MarkerWin(stop,marker,modelManager);
             
         });
 
