@@ -24,7 +24,7 @@
 
 {# I am very sorry for the one-liner started with agency_list, but this is the only way to make the :empty selector work :( #}
 <ul id="tree" class="treeview-gray">
-	{% for agency_type_name in agency_type_list %}
+	{% for agency_type_name in agency_type_name_list %}
 	<li>{{ agency_type_name }}
 		<ul>{% for agency in agency_list %}{% ifequal agency.type_name agency_type_name %}<li><a href="{%url gogogo.views.transit.agency agency_id=agency.id%}">{{agency.name}}</a></li>{% endifequal %}{% endfor %}</ul>
 	</li>

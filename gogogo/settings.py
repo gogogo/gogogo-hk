@@ -70,6 +70,7 @@ settings.add_app_media('combined-%(LANGUAGE_CODE)s-gogogo.js',
     'gogogo/TransitPlan.js',
 	'gogogo/Planner.js',
     'gogogo/StopListEditor.js',
+    'gogogo/Report.js'
     # ...
 )
 

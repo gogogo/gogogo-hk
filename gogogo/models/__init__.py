@@ -86,6 +86,8 @@ class Agency(db.Model):
     show_map_in_transit_page = db.BooleanProperty(default=True)
     
     type = TransitTypeProperty()
+    
+    priority = db.IntegerProperty(default = 0 ,choices = range(0,6) )
 
     class Meta:
         verbose_name = _('Transport Agency')
