@@ -6,8 +6,29 @@
 	padding-right:5px;
 	padding-top:2px;
 	padding-bottom:5px;
+	background:#333 url(fdr-bg.jpg);
+	color:#e5e5e5;
+}
+#header a {
+	color:#ddd;
+	text-shadow:0 -1px 0 #999;
+	text-decoration:none;
+}
+#header a:hover {
+	color:#fff;
 }
 
+#header span.setlang_link {
+	color:#59b4d4;
+}
+#header span.usr-highlight {
+	border: 1px solid #666;
+	margin:0.4em;
+	padding: 0 0.4em;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius:5px;
+}
 .left_menu {
 	float : left;
 }

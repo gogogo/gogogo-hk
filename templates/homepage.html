@@ -6,19 +6,31 @@
 <style type="text/css">
     .menubox {
         float:right;
-        
+        border-left: 1px solid #ccc;
+		margin:1.7em 0 0;
+		width:140px;
     }
     
     .menubox ul li {
         list-style-type : none;
     }
-
+	#first-row {
+		-moz-border-radius: 10px;
+		-webkit-border-radius: 10px;
+		border-radius:10px;
+		border: 1px solid #ccc;	
+		padding:20px;
+		margin-bottom:1.5em;
+	}
+	#welcome-button {
+		text-align:right;
+	}
 </style>
 
 <div id="first-row" class="span-24 last">
 <div class="menubox">
     <ul>
-        <li><a href="http://dev.gogogo.hk">{%trans "Recent news"%}</a></li>
+        <li><a href="http://dev.gogogo.hk">{%trans "Recent News"%}</a></li>
         <li><a href="http://dev.gogogo.hk">{%trans "Development Blog"%}</a></li>
         <li><a href="http://dev.gogogo.hk">{%trans "Discussion Forum"%}</a></li>
     </ul>
@@ -38,27 +50,28 @@
 <h1>欢迎来到Gogogo计划！</h1>
 {% endifequal %}
 </div> 
-
-<p>
+<div id="welcome" class="span-13">
 <p>
 The Gogogo Project aims to provide a comprehensive and easy-to-use transit planning service for Hong Kong. We want Gogogo to be the service you can rely on whenever you want to find out how to get from point A to point B within Hong Kong.
+</p>
+<p></p>
 <p>
-<p>
-The Gogogo Project is currently building the service and maintaining the transit database with team members collaborating using open source methods. If you are interested join us! Apart from software developers, we also need contributors who can look after the community-maintained transit database
-
-<hr/>
-
+The Gogogo Project is currently building the service and maintaining the transit database with team members collaborating using open source methods. If you are interested join us! Apart from software developers, we also need contributors who can look after the community-maintained transit database</p>
+</div>
+<div id="welcome-button" class="span-7 last">
+<img src="{{ MEDIA_URL }}global/gbutton-w.png" />
+</div>
 </div> <!-- end of first row //-->
 
-<div class="span-11 colborder" style="height:430px">
-Images...
-</div>
-
-<div class="span-12 last">
+<div class="span-12 colborder" style="height:480px">
 <h3 class="alt"> Video </h3>
 <object width="480" height="385"><param name="movie" value="http://www.youtube.com/p/60B78A86187B0D5C&hl=zh_TW&fs=1"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/p/60B78A86187B0D5C&hl=zh_TW&fs=1" type="application/x-shockwave-flash" width="480" height="385" allowscriptaccess="always" allowfullscreen="true"></embed></object>
 </div>
 
+<div class="span-12 last">
+<h3 class="alt"> Updates </h3>
+<div id="sidebar2"></div>
+</div>
 
 
 {% endblock %}

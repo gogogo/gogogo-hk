@@ -43,7 +43,7 @@
 			
 			<div class="right_menu" >
           {% if user.is_authenticated %}
-          	{{ user.username }} |
+				<span class="usr-highlight">{{ user.username }}</span> |
           		{% if user.is_staff %}
 				<a href="/admin/" class="link_button">{% trans "Admin" %}</a> |
           		{% endif %}
