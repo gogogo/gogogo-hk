@@ -1,7 +1,7 @@
 {% extends 'gogogo/base.html' %}
 {%load i18n%}
 {% block content %}
-{%include 'gogogo/route/search-box.html' %}
+{%include 'gogogo/widgets/searchroutebox.html' %}
 <h2>{%trans "Route Search Result" %}</h2>
 <div id="route-search result">
 {% if result|length %}

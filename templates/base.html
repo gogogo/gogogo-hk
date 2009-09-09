@@ -36,8 +36,8 @@
           		<a href="{%url gogogo.views.transit.index %}" class="link_button">{%trans "Transit information" %}</a> |
           		{#{% if user.is_staff %}<a href="/" class="link_button">{%trans "Database" %}</a> |{% endif %}#}
           		{% if user.is_authenticated %}
-          		<a href="{%url gogogo.views.db.changelog.list %}">{% trans "Recently changed" %}</a> | 
-          		<a href="{%url gogogo.views.db.report.list %}">{% trans "Recently reported" %}</a> | {% endif %} 
+          		<a href="{%url gogogo.views.db.changelog.list %}">{% trans "Changelog" %}</a> | 
+          		{% endif %} 
           		<a href="/about" class="link_button">{% trans "About" %}</a>
 			</div>
 			

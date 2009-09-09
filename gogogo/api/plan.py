@@ -34,9 +34,27 @@ def plan(request):
     b = graph.get_node(to_cluster)
     arcs = graph.search_arcs(a,b)
     
+    #logging.info(graph.to_entity())
+    
+    result = []
+    for arc in arcs:
+        
+        tranit = {
+            "agency" : arc.agency,
+            "trip" : arc.trip,
+            "on" : arc.src.name,
+            "off" : arc.dest.name,
+            "fare" : arc.weight 
+        }
+
+        plan = {
+            "fare" : arc.weight ,
+            "transits" : [tranit]
+        }
+
+        result.append(plan)
+        
     result = {
-        "from" : a.id,
-        "to" : b.id,
-        "count" : len(arcs)
+        "plans" : result
     }
     return ApiResponse(data=result)

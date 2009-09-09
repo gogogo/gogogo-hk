@@ -69,6 +69,7 @@
 			map = new GMap2(document.getElementById("map"));
 			gogogo.mapSetup(map);
 			stopManager = new gogogo.StopManager(map);
+            stopManager.setAutoCreateOverlay(false);
 			
 			var trip_id_list = "{{ trip_id_list|join:"," }}";
 			trip_id_list = trip_id_list.split(",");

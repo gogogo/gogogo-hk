@@ -24,7 +24,7 @@ gogogo.ClusterManager.prototype._createOverlays = function(items) {
 	var ret = []
 	var manager = this;
 	$(items).each(function(i,item){		            
-		manager.modelManager.queryShape(item.shape,function(shape){
+		manager.modelManager.queryShape(item.getShape(),function(shape){
             if (!shape.error) {
 			var overlay = shape.createOverlay();
 			manager.map.addOverlay(overlay);
@@ -51,8 +51,11 @@ gogogo.ClusterManager.prototype._search = function(prefix,callback){
 			$.each(data.data, function(i, item){
 				
 				if (manager.clusters[item.id] == undefined ) {
-					manager.clusters[item.id] = item;
-					
+                    
+                    var cluster = new gogogo.Cluster(item.id);
+					cluster.updateFromJson(item);
+                    
+					manager.clusters[item.id] = cluster;
 				}
 				list.push(manager.clusters[item.id]);
 			});

@@ -61,20 +61,6 @@ class ApiResponse(HttpResponse):
 		
 		return text.getvalue()
 
-def agency_list(request):
-	"""
-	Handle api/agency/list
-	"""
-	query = Agency.all()
-	text = StringIO()
-	
-	result = []
-	for agency in query:
-		result.append(create_entity(agency,request))
-	
-	return ApiResponse(data=result)
-
-
 def trip_get(request):
     if "id" not in request.GET:
         return ApiResponse(error="ID missing")

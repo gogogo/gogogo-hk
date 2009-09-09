@@ -9,9 +9,23 @@ def setting_converter(**kwargs):
 var gogogo = {}
 gogogo.DEFAULT_ZOOM=%d;
 gogogo.DEFAULT_LOCATION = [%f,%f];
+gogogo.GEOHASH_PREFIX_LENGTH = 6;
+gogogo.COUNTRY_CODE = "%s"
+gogogo.BOUNDARY_BOX = [%f,%f,%f,%f];
+
+// Expected Walking distance. (~ 300m)
+gogogo.EXPECTED_WALKING_DISTANCE = 0.3;
+
 """ % (django_settings.GOGOGO_DEFAULT_ZOOM,
 	django_settings.GOGOGO_DEFAULT_LOCATION[0],
-	django_settings.GOGOGO_DEFAULT_LOCATION[1])
+	django_settings.GOGOGO_DEFAULT_LOCATION[1],
+    django_settings.GOGOGO_COUNTRY_CODE,
+    django_settings.GOGOGO_BOUNDARY_BOX[0],
+    django_settings.GOGOGO_BOUNDARY_BOX[1],
+    django_settings.GOGOGO_BOUNDARY_BOX[2],
+    django_settings.GOGOGO_BOUNDARY_BOX[3],
+    
+    )
 	return ret
 
 settings.add_app_media('combined-%(LANGUAGE_CODE)s.js',
@@ -48,9 +62,11 @@ settings.add_app_media('combined-%(LANGUAGE_CODE)s-gogogo.js',
 	'gogogo/Stop.js',
 	'gogogo/StopManager.js',
 	'gogogo/Shape.js',
+    'gogogo/Cluster.js',
 	'gogogo/ClusterManager.js',
 	'gogogo/Trip.js',
 	'gogogo/Address.js',
+    'gogogo/TransitPlan.js',
 	'gogogo/Planner.js',
     'gogogo/StopListEditor.js',
     # ...

@@ -68,7 +68,7 @@ class StopAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
     list_display = ('Stop_ID','Stop_Name',)
-    
+    list_filter = ('agency',)    
     exclude = ('log_message',)
 
     change_form_template = "gogogo/admin/change_form.html"
@@ -100,10 +100,14 @@ class RouteAdmin(admin.ModelAdmin):
 
     form = RouteBasicForm
     list_filter = ('agency',)
-    list_display = ('Route_ID',)
+    list_display = ('Route_ID','Route_Name')
+    search_fields = ('long_name',)
     
     def Route_ID(self,obj):
         return obj.key().id_or_name()
+        
+    def Route_Name(self,obj):
+        return "%s , %s" % (obj.short_name , u' | '.join(obj.long_name))
 
     def save_model(self,request,obj,form,change):
         if change:

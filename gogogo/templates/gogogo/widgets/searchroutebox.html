@@ -1,0 +1,28 @@
+{%load i18n%}
+
+<style type="text/css">
+    .searchroutebox {
+        float:right;
+    }
+	.searchroutebox .default {
+		color: #cccccc;
+	}   
+</style>
+<script type="text/javascript">
+    $(document).ready( function(){
+        $(".searchroutebox input[type=text]").val("{% trans 'Example: 42c' %}");
+        
+        $(".searchroutebox input[type=text]").one("focus",function(){
+           $(this).val("");
+           $(this).removeClass("default");
+        });
+        
+    });
+</script>
+
+<div class="searchroutebox">
+<form action="{%url gogogo.views.db.route.search%}" method="GET">
+<input type="text" name="keyword" class="default" />
+<input type="submit" value="{%trans "Route Search"%}"  />
+</form>
+</div>

@@ -11,7 +11,7 @@ from gogogo.geo.geohash import Geohash
 from django.http import Http404
 
 from utils import createEntity , entityToText , id_or_name
-from cache import getCachedEntityOr404 , getCachedObjectOr404
+from cache import getCachedEntityOr404 , getCachedObjectOr404, removeCache
 from MLStringProperty import MLStringProperty
 
 from google.appengine.api import memcache
@@ -21,6 +21,69 @@ import logging
 import sys
 
 _default_cache_time = 3600
+
+class ListLoader:
+    """
+    Load all entity of a model from memcache or bigtable
+    """
+    
+    cache_key_prefix = "gogogo_list_loader_"
+    
+    def __init__(self,model):
+        self.model = model
+        self.data = None
+
+    def get_cache_key(self,num):
+        return "%s_%s_%d" % (ListLoader.cache_key_prefix , self.model.kind() , num)
+        
+    def get_info_cache_key(self):
+        return "%s_info_%s" % (ListLoader.cache_key_prefix , self.model.kind() )
+
+    def load(self,batch_size=1000):
+        if self.data != None: #already loaded
+            return
+            
+        n = 0            
+        batch = self.load_batch(n,batch_size)
+        
+        while len(batch) == batch_size:
+            n+=1
+            batch += self.load_batch(n , batch_size , batch[-1].key() )
+        
+        self.data = batch
+        
+        memcache.add(self.get_info_cache_key(), len(self.data) , _default_cache_time * 2)
+        
+        return self.data
+
+    def load_batch(self,num,limit = 1000,key = None):
+        cache_key = self.get_cache_key(num)
+        cache = memcache.get(cache_key)
+        if cache == None:
+            if key:
+                entities = self.model.all().filter('__key__ >',key).fetch(limit)
+            else:
+                entities = self.model.all().fetch(limit)
+            
+            cache = [entity for entity in entities]
+            memcache.set(cache_key, cache, _default_cache_time)
+        
+        ret = cache
+        return ret
+                
+    def get_data(self):
+        return self.data
+        
+    def remove_cache(self,limit = 1000):
+        count = memcache.get(self.get_info_cache_key())
+        if count == None:
+            count = 1
+            
+        i = 0
+        while count >0:            
+            cache_key = self.get_cache_key(i)
+            memcache.delete(cache_key)
+            count -= limit
 
 class Loader:
     """
@@ -121,6 +184,10 @@ class FareStopLoader(Loader):
         return ret
     
     load_for_agency = staticmethod(load_for_agency)
+    
+    def remove_cache(self):
+        Loader.remove_cache(self)
+        removeCache(db.Key.from_path(Agency,self.id) )
         
 
 class AgencyLoader(Loader):
@@ -208,12 +275,14 @@ class TripLoader(Loader):
         self.id = id_or_name(id)
         self.cache_key_prefix = "gogogo_trip_loader_"
 
-    def load(self):
+    def load(self,stop_table = None):
         """
         Load trip and all related objects from memecache or bigtable.
         
         If you only want to load a single entry of Trip , please use
         getCachedEntityOr404 instead.
+        
+        @param stop_table A dict of stop entities. 
         """
         
         cache_key = self.get_cache_key()
@@ -241,6 +310,9 @@ class TripLoader(Loader):
             stop_entity_list = []
             for key in trip.stop_list:
                 stop_id = key.id_or_name()
+                if stop_table and stop_id in stop_table:
+                    stop_entity_list.append(stop_table[stop_id])
+                    continue
                 try:
                     stop = getCachedEntityOr404(Stop,id_or_name= stop_id)
                     stop_entity_list.append(stop)
@@ -262,6 +334,7 @@ class TripLoader(Loader):
             faretrip_entity_list = []
             for faretrip in trip.faretrip_set:
                 entity = createEntity(faretrip)
+                del entity['instance']
                 min = sys.maxint
                 max = 0
                 for fare in faretrip.fares:
@@ -316,7 +389,36 @@ class TripLoader(Loader):
         
     def get_faretrip_list(self):
         return self.faretrip_entity_list
-		
+        
+    def get_default_faretrip(self):
+        ret = None
+        for faretrip in self.faretrip_entity_list:
+            if faretrip["default"] == True:
+                return faretrip
+                
+    def calc_fare(self,from_stop,to_stop):
+        faretrip = self.get_default_faretrip()
+        if faretrip == None:
+            return -1
+            
+        fare = faretrip['max_fare']
+        
+        try:
+            if faretrip['payment_method'] == 0:
+                for (i,stop) in enumerate(self.stop_entity_list):
+                    if stop["id"] == from_stop:
+                        fare = faretrip["fares"][i]
+            else: #payment_type = 1
+                for (i,stop) in enumerate(self.stop_entity_list):
+                    if stop["id"] == to_stop:
+                        fare = faretrip["fares"][i]            
+        except KeyError,e:
+            logging.warning("FareTrip[%s] is incomplete. Fare of %s or %s are missed" % 
+                (faretrip["id"],from_stop,to_stop) )
+            
+        return fare
+
+        
 class RouteLoader(Loader):
 	"""
 	Route and related objects loader and cache management
@@ -368,45 +470,6 @@ class RouteLoader(Loader):
 	def get_trip_list(self):
 		return self.trip_list
 
-################################
-# List loader
-################################
-
-class ListLoader:
-    """
-    Load all entity of a model from memcache or bigtable
-    """
-    
-    cache_key_prefix = "gogogo_list_loader_"
-    
-    def __init__(self,model):
-        self.model = model
-        self.data = None
-        self.cache_key = ListLoader.cache_key_prefix + self.model.kind()
-        
-
-    def load(self):
-        if self.data != None: #already loaded
-            return
-            
-        cache = memcache.get(self.cache_key)
-        
-        if cache == None:
-            cache = []
-            
-            query = self.model.all()
-            for entry in query:
-                cache.append(entry)
-                
-            memcache.add(self.cache_key, cache, _default_cache_time)
-        
-        self.data = cache
-        
-	def remove_cache(self):
-		memcache.delete(self.cache_key)
-        
-    def get_data(self):
-        return self.data
 
 class RouteListLoader:
     """

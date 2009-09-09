@@ -46,8 +46,7 @@ gogogo.SearchingManager = function (map){
 	     if (manager.autoRefresh 
 		    && manager.map.getZoom() >= manager.minZoom) {
 		    
-		    /// @FIXME - Fix for user who own an extremely large monitor?
-		    var prefix = hashBounds(manager.map.getBounds(), 6);
+		    var prefix = hashBounds(manager.map.getBounds(), gogogo.GEOHASH_PREFIX_LENGTH);
 		    
             $(prefix).each( function(i,prefix){
                 manager.search(prefix,function (result){
@@ -96,7 +95,7 @@ gogogo.SearchingManager.prototype.getBounds = function() {
  * Search items in specific region. 
  * 
  * @param prefix The prefix of the region (geohash)
- * @param callback A callback function that will be involved for every element found in the region
+ * @param callback A callback function that will be involved when finished the query. It pass an array of cluster found as the first argument to the callback.
  */
 
 gogogo.SearchingManager.prototype.search = function(prefix,callback) {
@@ -112,4 +111,12 @@ gogogo.SearchingManager.prototype.search = function(prefix,callback) {
     } else if (callback){
         callback(this.geohash_prefix_list[prefix]);
     }
+}
+
+/** Enable/disable auto overlay creation 
+ * 
+ */
+
+gogogo.SearchingManager.prototype.setAutoCreateOverlay = function(val){
+    this.autoRefresh = val;
 }

@@ -28,7 +28,7 @@ gogogo.Address = function(map,name) {
 	this.markermanager = new MarkerManager(map,options);
 }
 
-gogogo.Address.geocoder = new GClientGeocoder();
+gogogo.Address.geocoder = undefined;
 
 /** Set the address. If the new address do not match with the old address,
  * the location of previous address will be cleared.
@@ -99,6 +99,17 @@ gogogo.Address.prototype.parseLatLngAddress = function (ret) {
  * @param callback The callback to be involved. 
  */
 gogogo.Address.prototype.queryLocation = function(callback) {
+    if (gogogo.Address.geocoder == undefined ) {
+        gogogo.Address.geocoder = new GClientGeocoder();
+        gogogo.Address.geocoder.setBaseCountryCode(gogogo.COUNTRY_CODE);        
+        
+        var sw = new GLatLng(gogogo.BOUNDARY_BOX[0],gogogo.BOUNDARY_BOX[1]);
+        var ne = new GLatLng(gogogo.BOUNDARY_BOX[2],gogogo.BOUNDARY_BOX[3]);
+        var bounds = new GLatLngBounds(sw,ne);
+        
+        gogogo.Address.geocoder.setViewport(bounds);        
+    }
+
 	var address = this;
     
     var latlng = [];

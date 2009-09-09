@@ -63,6 +63,7 @@
 		return false;
 	}
     
+    /// Bind events from the marker used in local search
     function bindLocalSearchMarker(link,marker,index,result) {
         $(link).click(function(){
             var address = planner.getAddress(index);
@@ -114,8 +115,13 @@
 
 
 		planningOutput = $("#planningOutput");
-        planner = new gogogo.Planner(map,planningOutput);
-
+        planner = new gogogo.Planner(map,planningOutput,clusterManager);
+        
+        $(planner).bind("noClusterFound",function (e,address) {
+              planningOutput.empty();
+              
+              planningOutput.append("No stations was found near to : " +address.getAddress() );
+        });
 		
 		var panButtonList = ["#planStartAddress" , "#planEndAddress"];
 
@@ -243,10 +249,16 @@
             if (!notEmpty)
                 return;
 
-			planner.suggest ($("#startAddress").val() , $("#endAddress").val(),function(start,end){
+			planner.suggest ($("#startAddress").val() , $("#endAddress").val(),function(){
 				planningOutput.empty();
-				query = "from:" + $(addressList[0]).val() + " to: " + $(addressList[1]).val();
-				directions.load(query);
+				var plan_list = planner.getTransitPlanList();
+                for (var i = 0 ; i < plan_list.length  ;  i++){
+                    var div = $("<div></div>");
+                    $(div).append(i+1);
+                    $(div).append(". ");
+                    $(div).append(plan_list[i].getSummary());
+                    $(planningOutput).append(div);
+                }
 			});
 		});
 
