@@ -197,3 +197,11 @@ gogogo.Trip.prototype.zoomAndPan = function(map){
 gogogo.Trip.prototype.getName = function() {
     return this.info.name;
 }
+
+/** Get the headsign of the trip
+ * 
+ */
+
+gogogo.Trip.prototype.getHeadsign = function() {
+    return this.info.headsign;
+}

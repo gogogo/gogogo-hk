@@ -62,15 +62,28 @@ gogogo.Stop.prototype.getName = function(){
     return this.info.name;
 }
 
-/** Get the parent station
+/** Query the parent station
  * 
  */
 
-gogogo.Stop.prototype.getParentStation = function(manager,callback){
+gogogo.Stop.prototype.queryParentStation = function(manager,callback){
     
     if (this.info.parent_station == undefined){
         callback();
     } else {
         manager.queryStop(this.info.parent_station,callback);
+    }
+}
+
+/** Query the parent agency
+ * 
+ */
+
+gogogo.Stop.prototype.queryAgency = function(manager,callback){
+    
+    if (this.info.agency == undefined){
+        callback();
+    } else {
+        manager.queryAgency(this.info.agency,callback);
     }
 }

@@ -61,7 +61,7 @@ gogogo.Model.prototype.query = function(callback) {
 	
 	this.querying = true;
 	
-	api = "/api/" + this.modelType + "/get?id=" + this.id;
+	var api = "/api/" + this.modelType + "/get?id=" + this.id;
 	var cache = jQuery.ajaxSettings.cache;
 	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
 	
