@@ -36,17 +36,19 @@ COMBINE_MEDIA = {
         '.site_data.js',
     ),
 	'combined-%(LANGUAGE_CODE)s-gogogo.js': (
-        # See documentation why site_data can be useful:
-        # http://code.google.com/p/app-engine-patch/wiki/MediaGenerator
         '.site_data.js',
     ),
 	'combined-plugins.js': (
-        # See documentation why site_data can be useful:
-        # http://code.google.com/p/app-engine-patch/wiki/MediaGenerator
         '.site_data.js',
     ),
+	'global/ie6.js': (
+        '.site_data.js',
+		'global/ie6-warning.js'
+	),
     'combined-%(LANGUAGE_DIR)s.css': (
         'global/gogogo-hk.css',
+		'global/jquery-ui-1.7.2.custom.css',
+		'gogogo/jquery.button.css'
     ),
     'combined-plugins.css': (
     ),

@@ -1,25 +1,26 @@
 {% extends 'gogogo/base.html' %}
-
+{%load i18n%}
 {% block content %}
-
 {%include 'gogogo/widgets/searchroutebox.html' %}
-
+<h2>{%trans "Route Search Result" %}</h2>
+<div id="route-search result">
 {% if result|length %}
 
-	<table>
-	</table>
+	<ol>
 
 	{% for route in result%}
-		<tr>
-			<td><a href="{%url gogogo.views.transit.route route.agency route.id %}">{{route.short_name}}</a></td>
-	    </tr>
+		<li>
+			<a href="{%url gogogo.views.transit.route route.agency route.id %}">{{route.short_name}}</a>
+	    </li>
 	{%endfor%}
 
+	</ol>
 {%else%}
 
-No matching result
+{%trans "No matching result" %}
 
 {%endif%}
 
 
 {% endblock %}
+</div>

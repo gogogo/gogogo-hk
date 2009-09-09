@@ -14,6 +14,7 @@
 
     {% block js %}
         <script type="text/javascript" src="{{ MEDIA_URL }}combined-{{ LANGUAGE_CODE }}.js"></script>
+		<!--[if lte IE 6]><script src="{{ MEDIA_URL }}ie6.js"></script><script>window.onload=function(){e("ie6/")}</script><![endif]-->
 		<script type="text/javascript">
 		  $(document).ready(function() {
 				$(".setlang_link").click(function(){
@@ -88,10 +89,29 @@
     </div>
     {%endblock%}
     
-    		{# Hidden language selection form #}
- 			<form id="setlang_form" action="/i18n/setlang/" method="post">
-			<input name="next" type="hidden" value="{{ request.get_full_path|urlencode }}" />
-			<input id="setlang_input" name="language"  type="hidden">
-			</select>
+	{# Hidden language selection form #}
+	<form id="setlang_form" action="/i18n/setlang/" method="post">
+		<input name="next" type="hidden" value="{{ request.get_full_path|urlencode }}" />
+		<input id="setlang_input" name="language"  type="hidden">
+	</form>
+			
+	<script type="text/javascript">
+	$(function() {
+		$('.ui-button,.ui-icon-container').hover(
+			function(){ 
+				$(this).addClass("ui-state-hover"); 
+			},
+			function(){ 
+				$(this).removeClass("ui-state-hover"); 
+			}
+		).mousedown(function(){
+			$(this).addClass("ui-state-active"); 
+		})
+		.mouseup(function(){
+				$(this).removeClass("ui-state-active");
+		});
+
+	});
+	</script>
   </body>
 </html>

@@ -30,13 +30,15 @@ gogogo.EXPECTED_WALKING_DISTANCE = 0.3;
 
 settings.add_app_media('combined-%(LANGUAGE_CODE)s.js',
     setting_converter,
+    'gogogo/jquery-ui-1.7.1.custom.min.js',
 )
 settings.add_app_media('combined-plugins.js',
-	'gogogo/jquery.treeview.min.js'
+	'gogogo/jquery.treeview.min.js',
+	'gogogo/jquery.hint.js',
+	'gogogo/jquery.button.js'
 )
 settings.add_app_media('combined-%(LANGUAGE_CODE)s-gogogo.js',
     
-    'gogogo/jquery-ui-1.7.1.custom.min.js',
     'gogogo/jquery.layout.js',
     #Marker Manager v1.1  
     # http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/1.1/src/markermanager_packed.js
@@ -76,5 +78,5 @@ settings.add_app_media('combined-%(LANGUAGE_DIR)s.css',
     # ...
 )
 settings.add_app_media('combined-plugins.css',
-	'gogogo/jquery.treeview.css',
+	'gogogo/jquery.treeview.css'
 )

@@ -1,18 +1,20 @@
 
 input[type="text"] {
-	border:1px solid #CCCCCC;
+	border:1px solid #999;
 	width:20em;
-	margin-right: 1em;
+	margin-right: 0.2em;
 }
-
+/*
 input[type="submit"] {
 	border-color:#DDDDDD #AAAAAA #AAAAAA #DDDDDD;
 	border-style:solid;
 	border-width:1px;
 	color:black;
 	padding:3px;
+}*/
+input.input-blur {
+	color:#CCC;
 }
-
 /* Form handling */
 
 fieldset.form  {

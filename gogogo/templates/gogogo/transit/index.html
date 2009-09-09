@@ -2,34 +2,25 @@
 {%load i18n%}
 {% block css %}
 {{block.super}}
-<link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}combined-plugins.css" />
 <style type="text/css">
 #tree li {background-repeat:no-repeat;}
 </style>
 {% endblock %}
 {% block js %}
 {{block.super}}
-<script type="text/javascript" src="{{ MEDIA_URL }}combined-plugins.js"></script>
 {% endblock %}
 {% block content %}
 
 
 
-<div style="width:250px;height: 3em">
-<div style="float:left">
-{%trans "Transit information"%}
-</div>
-
+<div id="content-sub-header">
+<h2>{%trans "Transit information"%}</h2>
 {% if user.is_authenticated %}
-<ul class="object-tools">
-<li>
-	<a href="{% url gogogo.views.db.add model_kind %}">{% trans "Add" %} </a>
-</li>
-</ul>
+<a href="{% url gogogo.views.db.add model_kind %}" class="ui-state-default ui-corner-all ui-button admin-button">{% trans "Add" %} </a>
 {% endif %}
 
 </div>
-<div id="sidetreecontrol"><a href="?#">Collapse All</a> | <a href="?#">Expand All</a></div>
+<div id="tree-control"><a href="?#">Collapse All</a> | <a href="?#">Expand All</a></div>
 
 {# I am very sorry for the one-liner started with agency_list, but this is the only way to make the :empty selector work :( #}
 <ul id="tree" class="treeview-gray">
@@ -49,7 +40,7 @@ $(function() {
 	$("#tree").treeview({
 		collapsed: true,
 		animated: "medium",
-		control:"#sidetreecontrol",
+		control:"#tree-control",
 		persist: "location"
 	});
 })
