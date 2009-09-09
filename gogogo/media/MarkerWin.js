@@ -60,7 +60,22 @@ gogogo.MarkerWin.tripListTemplete = "\
 <span class='trip'>${code}(${headsign})</span> \
 ";
 
+gogogo.MarkerWin.agencyTemplate = "\
+<table> \
+<tr><td>Name : </td><td>${name}</td></tr>\
+<tr><td>Type : </td><td>${type}</td></tr>\
+<tr><td>Icon : </td><td>${icon}</td></tr>\
+<tr><td>URL : </td><td>${url}</td></tr>\
+<tr><td>Phone : </td><td>${phone}</td></tr>\
+</table>\
+<a class='back'>Back</a> \
+<!-- \
+<a href='#'  target='_blank'>Detail View</a>\
+//--> \
+";
+
 gogogo.MarkerWin.prototype.renderGeneral = function(target) {
+    var markerWin = this;
     var t = $.template(gogogo.MarkerWin.generalTemplate);
     $(target).empty();
     $(target).append(t,{
@@ -77,7 +92,12 @@ gogogo.MarkerWin.prototype.renderGeneral = function(target) {
     var agency_name = $(target).find(".agency_name");
     this.stop.queryAgency(this.modelManager,function(agency){
        if (agency != undefined){
-           $(agency_name).append(agency.getName());
+           var a = $("<a> " + agency.getName() + " </a>");
+           $(agency_name).append(a);
+           $(a).click(function(){
+               $(target).empty();
+               markerWin.renderAgencyInfo(target,agency);
+           });
        } 
     });   
     
@@ -112,4 +132,25 @@ gogogo.MarkerWin.prototype.renderTripList = function(target) {
         }
     });
     jQuery.ajaxSettings.cache = cache;	            
+}
+
+/** Render agency page
+ * 
+ */
+gogogo.MarkerWin.prototype.renderAgencyInfo = function(target,agency){
+    var t = $.template(gogogo.MarkerWin.agencyTemplate); 
+    var markerWin = this;
+    $(target).append(t,{
+      name : agency.getName(),
+      url : agency.info.url,  
+      type : agency.info.type,
+      phone : agency.info.phone,
+    });
+    
+    markerWin.resize();    
+    
+    $(target).find(".back").click(function (){
+        $(target).empty();
+        markerWin.renderGeneral(target);
+    });
 }
