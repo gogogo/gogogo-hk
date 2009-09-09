@@ -28,7 +28,12 @@
 	margin:0 0 0.2em;
 	padding:0 6px 0 0;
 }
-
+#content h2 {
+	color:#222;
+	font-size:1.6em;
+	margin:0 0 0.2em;
+	padding:0;
+}
 #content h1, h2, h3, h4, h5 {
 	font-weight:bold;
 }

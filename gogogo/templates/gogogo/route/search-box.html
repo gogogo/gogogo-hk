@@ -1,6 +1,15 @@
 {%load i18n%}
 <div style="float:right">
 <form action="{%url gogogo.views.db.route.search%}" method="GET">
-<input type="text" name="keyword" /><input type="submit" value="{%trans "Route Search"%}"  />
+<input type="text" name="keyword" id="route-search-keyword" class="input-hint" title="{%trans "Route Search"%},{%trans "Example" %}:{%trans "East Rail Line"%},{%trans "E21"%}" />
+<button name="submit" type="submit" type=" { button | reset | submit } " class="ui-button ui-state-default ui-corner-all" value=""><span class="ui-icon ui-icon-search"></span>&nbsp;</button>
 </form>
 </div>
+<script type="text/javascript">
+$(function() {
+	if (jQuery.fn.hint) {
+		$("#route-search-keyword").hint();
+	}
+})
+
+</script>
