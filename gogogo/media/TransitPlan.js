@@ -75,12 +75,13 @@ gogogo.TransitPlan.prototype.createDiv = function(num,modelManager) {
     var transit_header_div = $("<div></div>");
     var transit_fare_div = $("<div></div>");
     var transit_list_div = $("<div class='transit_list'></div>");
-    var transit_op_div = $("<div></div>");
+    var transit_op_div = $("<div class='transit_op'></div>");
     
+    $(transit_plan_div).append(transit_op_div);
     $(transit_plan_div).append(transit_header_div);
     $(transit_plan_div).append(transit_fare_div);
     $(transit_plan_div).append(transit_list_div);
-    $(transit_plan_div).append(transit_op_div);
+    
            
     $(transit_header_div).append("<spin>" + num + ". </span>");
     
@@ -90,12 +91,29 @@ gogogo.TransitPlan.prototype.createDiv = function(num,modelManager) {
         
     $.each(id_list,function(i,id)  {
         var div = $("<div></div>");
-        $(div).append(id[0]);
+        var agency_span = $("<span></span>");
+        
         $(transit_list_div).append(div);
+        $(div).append(agency_span);
+        $(agency_span).append(id[0]);
+        
         modelManager.queryAgency(id[0],function(agency){
-            $(div).empty();
-            $(div).append(agency.getName());
-        });        
+            $(agency_span).empty();
+            $(agency_span).append(agency.getName());
+        });
+        
+        if (id[1] != undefined ){
+            var trip_span = $("<span></span>");
+            $(div).append(" ");
+            $(div).append(trip_span);
+            $(trip_span).append(id[1]);
+            
+            modelManager.queryTrip(id[1],function(trip){
+                $(trip_span).empty();
+                $(trip_span).append(trip.getName());
+            });
+        }
+        
     });
     
     return transit_plan_div;

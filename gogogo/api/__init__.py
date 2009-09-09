@@ -67,24 +67,18 @@ def trip_get(request):
         
     id = request.GET['id']
 
-    try:
-        cache_key = "gogogo__trip_get_%s" % id #Prefix of memecache key
-        cache = memcache.get(cache_key)
+    entity = getCachedEntityOr404(Trip,id_or_name = id)
+    entity = trEntity(entity,request)
+    del entity['instance']
         
-        if cache == None:
-            entity = getCachedEntityOr404(Trip,id_or_name = id)
-            entity['color'] = entity['instance'].route.color
-            
-            cache = {}
-            cache['entity'] = entity
-            
-            memcache.add(cache_key, cache, _default_cache_time)
-        
-        entity = cache['entity']
-        entity = trEntity(entity,request)
-        del entity['instance']		
-            
-        return ApiResponse(data=entity)
-    except Http404:
-        return ApiResponse(error="Trip not found")
+    if entity["route"]:
+        if isinstance(entity["route"],db.Key):
+            route = getCachedEntityOr404(Route,key = entity["route"])
+        else:
+            route = getCachedEntityOr404(Route,id_or_name = entity["route"])
+        route = trEntity(route,request)
+        entity['color'] = route["color"]
+        entity['name'] = route["long_name"]
+               
+    return ApiResponse(data=entity)
 	

@@ -189,3 +189,11 @@ gogogo.Trip.prototype.zoomAndPan = function(map){
 		}
     }
 }
+
+/** Get the name of the trip
+ * 
+ */
+
+gogogo.Trip.prototype.getName = function() {
+    return this.info.name;
+}

@@ -35,12 +35,13 @@ def createEntity(object):
 
     for prop in object.properties().values():
         datastore_value = prop.get_value_for_datastore(object)
+        entity[prop.name] = datastore_value
+        
+        if datastore_value == None:
+            continue
         if not datastore_value == []:
-            entity[prop.name] = datastore_value
-            
             if isinstance(prop,db.ReferenceProperty):
-                if datastore_value:
-                    entity[prop.name] = datastore_value.id_or_name()
+                entity[prop.name] = datastore_value.id_or_name()
             elif isinstance(prop,MLStringProperty):
                 entity[prop.name] = u'|'.join(datastore_value)
             elif isinstance(prop,KeyListProperty):

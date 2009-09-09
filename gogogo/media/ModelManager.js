@@ -11,6 +11,8 @@ gogogo.ModelManager = function(){
     
     // Agency dictionary
     this.agency_table = {}
+    
+    this.trip_table = {}
 }
 
 /** Query an object with a type from server(internal function)
@@ -67,4 +69,13 @@ gogogo.ModelManager.prototype.queryAgency = function(id,callback) {
 
 gogogo.ModelManager.prototype.queryShape = function(id,callback) {
 	return this._query(gogogo.Shape,this.shape_table,id,callback)
+}
+
+/** Query trip information from server
+ * 
+ */
+
+gogogo.ModelManager.prototype.queryTrip = function(id,callback) {
+    
+	return this._query(gogogo.Trip,this.trip_table,id,callback)
 }
