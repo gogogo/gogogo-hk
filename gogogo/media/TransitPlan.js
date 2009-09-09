@@ -24,25 +24,9 @@ gogogo.TransitPlan = function (json) {
     
     this.transits = json.transits;
     
-}
-
-/** Get a summary of the transit plan
- * 
- */
-
-gogogo.TransitPlan.prototype.getSummary = function() {
-    var summary = [];
+    /// Array of overlays created by createOverlays
+    this.overlays = undefined;
     
-    for (var i = 0 ; i < this.transits.length ;i++){
-        var transit = this.transits[i];
-        if (transit.trip == undefined ){ // Free transfer agency
-            summary.push(transit.agency);
-        } else {
-            summary.push(transit.agency + " " + transit.trip);
-        }
-    }
-    
-    return summary.join(",");
 }
 
 /** Get an array of ID for each transit
@@ -68,7 +52,8 @@ gogogo.TransitPlan.prototype.getTransitIDList = function() {
  * @param num The number of the plan
  */
 
-gogogo.TransitPlan.prototype.createDiv = function(num,modelManager) {
+gogogo.TransitPlan.prototype.createDiv = function(num,map,modelManager,stopManager) {
+    var plan = this;
     var id_list = this.getTransitIDList();        
     
     var transit_plan_div = $("<div class='transit_plan' ></div>");    
@@ -87,7 +72,18 @@ gogogo.TransitPlan.prototype.createDiv = function(num,modelManager) {
     
     $(transit_fare_div).append("$" + this.fare);
     
-    $(transit_op_div).append("<a>Detail</a>");
+    var show_on_map = $("<a>Show on map</a>");
+    
+    $(transit_op_div).append(show_on_map);
+    
+    $(show_on_map).click( function(){
+        plan.createOverlays(stopManager,function(overlays){
+            $.each(overlays,function(i,overlay){
+                map.addOverlay(overlay);
+            });
+
+        });
+    });
         
     $.each(id_list,function(i,id)  {
         var div = $("<div></div>");
@@ -117,4 +113,56 @@ gogogo.TransitPlan.prototype.createDiv = function(num,modelManager) {
     });
     
     return transit_plan_div;
+}
+
+gogogo.TransitPlan.prototype.createOverlays = function(stopManager,callback) {
+    if (this.overlays != undefined) {
+        callback(this.overlays);
+        
+        return this.overlays;
+    }
+    
+    this.overlays = [];
+    
+    var id_list = this.getTransitIDList();        
+    var total = id_list.length;
+    var removed_trip = 0
+    var count = 0;
+    var plan = this;
+
+    $.each(id_list,function(i,id)  {
+        
+        if (id[1]!=undefined) {
+                    
+            modelManager.queryTrip(id[1],function(trip){
+              if (!trip.error){
+                  trip.queryStops(stopManager,function(){
+                      var polyline = trip.createPolyline();
+                      plan.overlays.push(polyline);
+                    
+                       count++;
+                       
+                       if (count == total){
+                           callback(plan.overlays);
+                       }
+
+                  });
+              } else {
+                  // The trip ID not found.
+                  count ++;
+                  if (count == total){
+                      callback(plan.overlays);
+                  }
+              }                
+            });
+            
+        } else { // No trip info
+            count++;
+            if (count == total){
+              callback(plan.overlays);
+            }            
+        }
+        
+    });
+    
 }

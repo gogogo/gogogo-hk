@@ -443,6 +443,8 @@ class RouteLoader(Loader):
 		
 		if cache == None:
 			route_entity = getCachedEntityOr404(Route,id_or_name = self.id)
+            
+            #TODO - should get from CachedEntity
 			agency_entity = createEntity(route_entity['instance'].agency)
 			
 			trip_list = []

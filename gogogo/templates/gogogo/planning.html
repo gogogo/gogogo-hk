@@ -230,6 +230,12 @@
                             new GSize(content.width(), content.height()),
                             null, null
                         );
+                        
+                        $('#markerwin > a').click(function(e) {
+                            console.log(this);
+                           e.preventDefault(); 
+                        });
+                        
                     }
                 );
                 jQuery.ajaxSettings.cache = cache;	
@@ -237,7 +243,7 @@
             });
 
             GEvent.addListener(marker,"click",function(){
-                marker.openInfoWindowHtml('<div id="markerwin">Loading...</div>');
+                marker.openInfoWindowHtml('<object id="markerwin">Loading...</object>');
             });
             
         });
@@ -262,7 +268,7 @@
                 for (var i = 0 ; i < plan_list.length  ;  i++){
                     
                     var plan = plan_list[i];
-                    var div = plan.createDiv(i+1,modelManager);
+                    var div = plan.createDiv(i+1,map,modelManager,stopManager);
                     $(planningOutput).append(div);
 
                 }
