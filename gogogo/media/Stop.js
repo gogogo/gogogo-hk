@@ -61,3 +61,16 @@ gogogo.Stop.prototype.getLatLng  = function(){
 gogogo.Stop.prototype.getName = function(){
     return this.info.name;
 }
+
+/** Get the parent station
+ * 
+ */
+
+gogogo.Stop.prototype.getParentStation = function(manager,callback){
+    
+    if (this.info.parent_station == undefined){
+        callback();
+    } else {
+        manager.queryStop(this.info.parent_station,callback);
+    }
+}

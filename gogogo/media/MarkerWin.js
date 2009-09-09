@@ -4,11 +4,13 @@
  * @constructor 
  */
 
-gogogo.MarkerWin = function (map,stop,marker,modelManager) {
+gogogo.MarkerWin = function (map,stop,marker,modelManager,stopManager) {
     this.map = map;
     this.stop = stop;
     this.marker = marker;
     this.modelManager = modelManager;
+    this.stopManager = stopManager;
+    
     var markerWin = this;
     
     GEvent.addListener(marker,'infowindowopen',function(){
@@ -39,14 +41,22 @@ gogogo.MarkerWin = function (map,stop,marker,modelManager) {
 }
 
 gogogo.MarkerWin.generalTemplate = "\
-${stop_name} ${stop_parent} <br> \
+${stop_name} <span class='stop_parent'></span> <br> \
 ${agency_name}";
 
 gogogo.MarkerWin.prototype.renderGeneral = function(target) {
-    console.log("render");
     var t = $.template(gogogo.MarkerWin.generalTemplate);
     $(target).empty();
     $(target).append(t,{
       stop_name : this.stop.getName()
     });
+    
+    var stop_parent = $(target).find(".stop_parent");
+    this.stop.getParentStation(this.stopManager,function(station){
+        if (station != undefined){
+            $(stop_parent).append(" : " + station.getName());
+        }
+    });
+    
+    
 }
