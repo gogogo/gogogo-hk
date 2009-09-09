@@ -40,7 +40,7 @@ def createChangelog(old_object , new_object,comment):
             return None
 
         content = StringIO()
-        simplejson.dump([d],content,ensure_ascii=False,indent =1)
+        simplejson.dump([d],content,default=default,ensure_ascii=False,indent =1)
         changes = content.getvalue()
         
     changelog = Changelog(
