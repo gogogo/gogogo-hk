@@ -78,7 +78,7 @@ def index(request):
             'pathbar' : pathbar,
             'model_kind' : "agency",
            "agency_list" : agency_list,
-           "agency_type_list" : TransitTypeProperty.get_basic_type_name_list()
+           "agency_type_name_list" : TransitTypeProperty.get_basic_type_name_list()
            })		
 
 def agency(request,agency_id):

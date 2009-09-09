@@ -118,7 +118,7 @@ def submit(request,kind,id):
 	
 	return render_to_response( 
 		request,
-		'gogogo/db/report/submit.html',
+		'gogogo/db/report/form.html',
 		{ "form" : form , 
 		"message" : message
 		   })		

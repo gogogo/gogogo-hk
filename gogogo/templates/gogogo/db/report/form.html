@@ -1,0 +1,20 @@
+{% load i18n %}
+
+<h1>{% trans "Submit invalid information report" %} {{object}}</h1>
+
+<form action="{{request.path}}" method="POST">
+	<fieldset class="form">	
+	
+   {% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }} {{ field }}
+        </div>
+    {% endfor %}
+	</fieldset>
+	<div class="submit-row">
+		<input type="submit" value="Submit" /> {{message|safe}}
+	</div>
+	
+</form>
+

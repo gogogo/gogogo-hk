@@ -38,7 +38,7 @@ gogogo.Stop.prototype.updateFromJson = function(json){
 gogogo.Stop.prototype.createMarker = function(){
     if (this.marker == undefined) {
         var option = {
-            "title": this.name
+            "title": this.info.name
         };
         this.marker = new GMarker(this.latlng,option);
     }
