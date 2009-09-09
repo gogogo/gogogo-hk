@@ -228,13 +228,6 @@
             
         });
 
-		/// For temporary use
-		var directions = new GDirections(map,  document.getElementById("planningOutput"));
-		GEvent.addListener(directions,"error",function() {
-			planningOutput.empty();
-			planningOutput.append("GDirection error " + directions.getStatus().code);
-		});
-
 		$("#planButton").click(function() {
 			planner.clearWaitingActions();
 			var notEmpty = true;
@@ -253,11 +246,29 @@
 				planningOutput.empty();
 				var plan_list = planner.getTransitPlanList();
                 for (var i = 0 ; i < plan_list.length  ;  i++){
-                    var div = $("<div></div>");
-                    $(div).append(i+1);
-                    $(div).append(". ");
-                    $(div).append(plan_list[i].getSummary());
-                    $(planningOutput).append(div);
+                    var result_div = $("<div></div>");
+                    $(planningOutput).append(result_div);
+                    
+                    var plan = plan_list[i];
+                    
+                    $(result_div).append(i+1);
+                    $(result_div).append(". ");
+                    
+                    var transits = plan.getTransitIDList();
+                        
+                    $.each(transits, function(j,transit){
+                        console.log(transit);
+                        var transit_div = $("<div></div>");
+                        $(result_div).append(transit_div);
+                        
+                        var div = $("<div></div>");
+                        $(div).append(transit[0]);
+                        $(transit_div).append(div);
+                        modelManager.queryAgency(transit[0],function(agency){
+                            $(div).empty();
+                            $(div).append(agency.getName());
+                        });
+                    });
                 }
 			});
 		});
