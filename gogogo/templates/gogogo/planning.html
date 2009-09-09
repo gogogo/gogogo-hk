@@ -217,7 +217,7 @@
 		});
         
         $(stopManager).bind("markerAdded",function(e,marker,stop) {
-            var markerWin = gogogo.MarkerWin(stop,marker,modelManager);
+            var markerWin = new gogogo.MarkerWin(map,stop,marker,modelManager);
             
         });
 
