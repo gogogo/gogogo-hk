@@ -41,10 +41,6 @@ COMBINE_MEDIA = {
 	'combined-plugins.js': (
         '.site_data.js',
     ),
-	'global/ie6.js': (
-        '.site_data.js',
-		'global/ie6-warning.js'
-	),
     'combined-%(LANGUAGE_DIR)s.css': (
         'global/gogogo-hk.css',
 		'global/jquery-ui-1.7.2.custom.css',

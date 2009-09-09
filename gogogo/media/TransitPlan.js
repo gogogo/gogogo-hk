@@ -53,30 +53,32 @@ gogogo.TransitPlan.prototype.getTransitIDList = function() {
  */
 
 gogogo.TransitPlan.prototype.createDiv = function(num,map,modelManager,stopManager) {
+    var transit_plan_div = $("<div class='transit_plan' ></div>");
+    var template = "\
+    <div class='transit_op'>${transit_op}</div> \
+    <div class='index'>${index}.</div> \
+    <div class='fare'>${fare}</div> \
+    <div class='transit_list'>${transit_list}</div> \
+" ; 
+
     var plan = this;
-    var id_list = this.getTransitIDList();        
+    var id_list = this.getTransitIDList();
+    var map_link = "<a>Map</a>";
+    var transit_op = map_link;
+    var fare = "$" + this.fare;
+
+    var render= $.template(template);
+    $(transit_plan_div).append(render,{
+       "index" : num,
+       "fare" : fare,
+       "transit_op" : "<a>Map</a>"
+    });
+
+    var transit_op = $(transit_plan_div).children(".transit_op");
     
-    var transit_plan_div = $("<div class='transit_plan' ></div>");    
-    var transit_header_div = $("<div></div>");
-    var transit_fare_div = $("<div></div>");
-    var transit_list_div = $("<div class='transit_list'></div>");
-    var transit_op_div = $("<div class='transit_op'></div>");
-    
-    $(transit_plan_div).append(transit_op_div);
-    $(transit_plan_div).append(transit_header_div);
-    $(transit_plan_div).append(transit_fare_div);
-    $(transit_plan_div).append(transit_list_div);
-    
-           
-    $(transit_header_div).append("<spin>" + num + ". </span>");
-    
-    $(transit_fare_div).append("$" + this.fare);
-    
-    var show_on_map = $("<a>Show on map</a>");
-    
-    $(transit_op_div).append(show_on_map);
-    
-    $(show_on_map).click( function(){
+    var map_link = $(transit_plan_div).find("a");
+       
+    $(map_link).click( function(){
         plan.createOverlays(stopManager,function(overlays){
             $.each(overlays,function(i,overlay){
                 map.addOverlay(overlay);
@@ -84,6 +86,8 @@ gogogo.TransitPlan.prototype.createDiv = function(num,map,modelManager,stopManag
 
         });
     });
+    
+    var transit_list_div = $(transit_plan_div).children(".transit_list");
         
     $.each(id_list,function(i,id)  {
         var div = $("<div></div>");
