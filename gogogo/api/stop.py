@@ -14,6 +14,7 @@ from gogogo.geo.geohash import Geohash
 from . import ApiResponse
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404
 from gogogo.models.utils import createEntity, trEntity , latlngFromGeoPt
+from gogogo.models.loaders import StopLoader
 from gogogo.geo import LatLng , LatLngBounds
 
 import logging
@@ -174,3 +175,15 @@ def get(request):
     except Http404:
         return ApiResponse(error="Stop not found")
 	
+def list_trip(request):
+    if "id" not in request.GET:
+        return ApiResponse(error="ID missing")    
+        
+    id = request.GET['id']
+    
+    loader = StopLoader(id)
+    loader.load()
+    
+    trip_id_list = loader.get_trip_id_list()
+    
+    return ApiResponse(data=trip_id_list)

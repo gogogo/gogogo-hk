@@ -472,6 +472,50 @@ class RouteLoader(Loader):
 	def get_trip_list(self):
 		return self.trip_list
 
+class StopLoader(Loader):
+    """
+    Load stop and related objects from BigTable of memcache
+    """
+
+    def __init__(self,id):
+        self.id = id_or_name(id)
+        self.cache_key_prefix = "gogogo_stop_loader_"
+
+    def load(self):		
+        cache_key = self.get_cache_key()
+        
+        cache = memcache.get(cache_key)
+        
+        if cache == None:
+            cache = {}
+            stop = getCachedEntityOr404(Stop,id_or_name = self.id)
+            
+            cache["stop"] = stop
+            
+            if  stop['parent_station'] == None:
+                station_id = stop['id']
+            else:
+                station_id = stop['parent_station']
+            
+            if isinstance(station_id,unicode):
+                station_id = str(station_id)
+            
+            station = db.Key.from_path(Stop.kind(),station_id)
+            
+            q = Trip.all(keys_only = True).filter("stop_list = " , station)
+            cache["trip_id_list"] = [key.id_or_name() for key in q ]
+            
+            memcache.add(cache_key, cache, _default_cache_time)
+
+        self.stop = cache["stop"]
+        self.trip_id_list = cache["trip_id_list"]
+        
+    def get_stop(self):
+        return self.stop
+        
+    def get_trip_id_list(self):
+        return self.trip_id_list
+    
 
 class RouteListLoader:
     """
