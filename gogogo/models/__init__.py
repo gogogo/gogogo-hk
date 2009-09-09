@@ -309,6 +309,22 @@ class Trip(db.Model):
 		return ('gogogo.views.transit.trip',[self.route.agency.key().id_or_name(),
 			self.route.key().id_or_name(),
 			self.key().id_or_name()]) 
+
+def trip_pre_save(sender, **kwargs):
+    from gogogo.models.loaders import TripLoader,RouteLoader
+    from gogogo.models.cache import removeCache
+    instance = kwargs['instance']
+    
+    if instance.is_saved():   
+        loader = TripLoader(instance.key().id_or_name())
+        loader.remove_cache()
+
+        property = getattr(Trip,"route")
+        route = property.get_value_for_datastore(instance)        
+        loader = RouteLoader(route.id_or_name())
+        loader.remove_cache()
+
+pre_save.connect(trip_pre_save, sender=Trip)
 	
 class Cluster(db.Model):
 	
