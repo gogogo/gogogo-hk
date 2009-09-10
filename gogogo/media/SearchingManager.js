@@ -22,8 +22,12 @@
  * @constructor 
  */
 
-gogogo.SearchingManager = function (map){
+gogogo.SearchingManager = function (map,modelManager){
 	this.map = map;
+    
+    this.modelManager = modelManager;
+    if (this.modelManager == undefined)
+        this.modelManager = new gogogo.ModelManager();
 	
 	/// The min zooming for searching 
 	this.minZoom = 17;
@@ -34,7 +38,7 @@ gogogo.SearchingManager = function (map){
     /// Deprecated
 	this.lastBounds = new GLatLngBounds();
 	
-	/// Store previous queryed geohas prefix
+	/// Store the result of previous query (index by geohash prefix)
 	this.geohash_prefix_list = new Object();
 	
 	/// Store previous created GOverlay objects

@@ -5,11 +5,10 @@
  */
 
 gogogo.ClusterManager = function(map,modelManager){
-	gogogo.SearchingManager.call(this,map);	
+	gogogo.SearchingManager.call(this,map,modelManager);	
 	
 	// Cluster dictionary
-	this.clusters = Object();
-	this.modelManager = modelManager;
+	this.clusters = this.modelManager.cluster_table;
 }
 
 extend(gogogo.ClusterManager,gogogo.SearchingManager);

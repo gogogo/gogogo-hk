@@ -13,11 +13,11 @@
  * @constructor 
  */
 
-gogogo.StopManager = function (map){
-	gogogo.SearchingManager.call(this,map);	
+gogogo.StopManager = function (map,modelManager){
+	gogogo.SearchingManager.call(this,map,modelManager);	
 	
 	// Stop dictionary
-	this.stops = new Object();
+	this.stops = this.modelManager.stop_table;
 	
 	var options = { borderPadding: 50, trackMarkers: true };
 	

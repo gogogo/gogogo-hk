@@ -7,12 +7,16 @@
 gogogo.ModelManager = function(){
 	
 	// Shape dictionary
-	this.shape_table = {}
+	this.shape_table = {};
     
     // Agency dictionary
-    this.agency_table = {}
+    this.agency_table = {};
     
-    this.trip_table = {}
+    this.trip_table = {};
+    
+    this.stop_table = {};
+    
+    this.cluster_table = {};
 }
 
 /** Query an object with a type from server(internal function)

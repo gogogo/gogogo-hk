@@ -123,9 +123,9 @@
 	$(document).ready(function() {
     	layout.sizePane("west",230);
 
-		stopManager = new gogogo.StopManager(map);
-
 		modelManager = new gogogo.ModelManager();
+        
+        stopManager = new gogogo.StopManager(map,modelManager);
 
 		clusterManager = new gogogo.ClusterManager(map,modelManager);
 
