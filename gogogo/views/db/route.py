@@ -64,7 +64,7 @@ def search(request):
                 result.append(route)
                 continue
             
-    result = [createEntity(route) for route in result  ]
+    result = [trEntity(createEntity(route),request) for route in result  ]
         
     return render_to_response( 
         request,
