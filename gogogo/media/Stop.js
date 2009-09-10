@@ -62,6 +62,10 @@ gogogo.Stop.prototype.getName = function(){
     return this.info.name;
 }
 
+gogogo.Stop.prototype.getAgencyID = function (){
+    return this.info.agency;
+}
+
 /** Query the parent station. If no parent station is existed, it will
  * return the stop itself.
  * 

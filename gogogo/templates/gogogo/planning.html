@@ -253,7 +253,7 @@
                 for (var i = 0 ; i < plan_list.length  ;  i++){
                     
                     var plan = plan_list[i];
-                    var div = plan.createDiv(i+1,map,modelManager,stopManager);
+                    var div = plan.createDiv(i+1,map,modelManager,stopManager,clusterManager);
                     $(planningOutput).append(div);
 
                 }

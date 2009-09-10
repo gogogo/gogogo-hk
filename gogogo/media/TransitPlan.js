@@ -52,7 +52,7 @@ gogogo.TransitPlan.prototype.getTransitIDList = function() {
  * @param num The number of the plan
  */
 
-gogogo.TransitPlan.prototype.createDiv = function(num,map,modelManager,stopManager) {
+gogogo.TransitPlan.prototype.createDiv = function(num,map,modelManager,stopManager,clusterManager) {
     var transit_plan_div = $("<div class='transit_plan' ></div>");
     var template = "\
     <div class='transit_op'>${transit_op}</div> \
@@ -79,7 +79,7 @@ gogogo.TransitPlan.prototype.createDiv = function(num,map,modelManager,stopManag
     var map_link = $(transit_plan_div).find("a");
        
     $(map_link).click( function(){
-        plan.createOverlays(stopManager,function(overlays){
+        plan.createOverlays(stopManager,clusterManager,function(overlays){
             $.each(overlays,function(i,overlay){
                 map.addOverlay(overlay);
             });
@@ -119,7 +119,11 @@ gogogo.TransitPlan.prototype.createDiv = function(num,map,modelManager,stopManag
     return transit_plan_div;
 }
 
-gogogo.TransitPlan.prototype.createOverlays = function(stopManager,callback) {
+/** Create an array of overlays object to represent the path
+ * 
+ */
+
+gogogo.TransitPlan.prototype.createOverlays = function(stopManager,clusterManager,callback) {
     if (this.overlays != undefined) {
         callback(this.overlays);
         
@@ -128,17 +132,16 @@ gogogo.TransitPlan.prototype.createOverlays = function(stopManager,callback) {
     
     this.overlays = [];
     
-    var id_list = this.getTransitIDList();        
-    var total = id_list.length;
+    var total = this.transits.length;
     var removed_trip = 0
     var count = 0;
     var plan = this;
 
-    $.each(id_list,function(i,id)  {
+    $.each(this.transits,function(i,transit)  {
         
-        if (id[1]!=undefined) {
+        if (transit.trip !=undefined) {
                     
-            modelManager.queryTrip(id[1],function(trip){
+            modelManager.queryTrip(transit.trip,function(trip){
               if (!trip.error){
                   trip.queryStops(stopManager,function(){
                       var polyline = trip.createPolyline();
@@ -161,16 +164,26 @@ gogogo.TransitPlan.prototype.createOverlays = function(stopManager,callback) {
             });
             
         } else { // No trip info
-            modelManager.queryAgency(id[0],function(agency){
-                //createPolyline
-            
+            plan._createPseudoTripOverlays(transit.agency,modelManager,function(overlay){
+
                 count++;
                 if (count == total){
                   callback(plan.overlays);
                 }                            
-            });                    
+                
+            });
         }
         
     });
     
+}
+
+gogogo.TransitPlan.prototype._createPseudoTripOverlays = function(agency_id,modelManager,callback) {
+    modelManager.queryAgency(agency_id,function(agency){
+        
+        if (callback!=undefined) {
+            callback();
+        }
+        
+    });
 }
