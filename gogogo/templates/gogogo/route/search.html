@@ -3,18 +3,24 @@
 {% block content %}
 {%include 'gogogo/widgets/searchroutebox.html' %}
 <h2>{%trans "Route Search Result" %}</h2>
-<div id="route-search result">
+<div id="route-search-result">
 {% if result|length %}
 
-	<ol>
+	<ol class="zebra-list">
 
 	{% for route in result%}
 		<li>
-			<a href="{%url gogogo.views.transit.route route.agency route.id %}">{{route.short_name}}</a>
+			[ <span>{{route.agency.name}}</span> ] <a href="{%url gogogo.views.transit.route route.agency route.id %}">{{route.short_name}}</a><br />
+			<span>{{route.long_name}}</span>
 	    </li>
 	{%endfor%}
 
 	</ol>
+	<script type="text/javascript">
+	(function() { 
+		$('ol.zebra-list li:odd').addClass('z-alt');
+	})();
+	</script>
 {%else%}
 
 {%trans "No matching result" %}
@@ -24,3 +30,4 @@
 
 {% endblock %}
 </div>
+
