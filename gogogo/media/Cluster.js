@@ -39,7 +39,7 @@ gogogo.Cluster.prototype.findStopForAgency = function(agency,stopManager,callbac
     $.each(this.info.members,function(i,member) {
         stopManager.queryStop(member,function(stop){
             if (stop.getAgencyID() == agency.getID()) {
-                stop_list.push(callback);
+                stop_list.push(stop);
             }
             
             count++;

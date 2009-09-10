@@ -58,6 +58,40 @@ gogogo.ModelManager.prototype._query = function(model,dict,id,callback){
 	}
 }
 
+/** Query multiple items at a time
+ * 
+ */
+
+gogogo.ModelManager.prototype.queryMulti = function(list,callback){
+    var total = list.length;
+    var result = [];
+    var count = 0;
+    var manager = this;
+    
+    var op_table = {    
+        agency : [gogogo.Agency,this.agency_table],
+        shape : [gogogo.Shape,this.shape_table],
+        stop : [gogogo.Stop,this.stop_table],
+        trip : [gogogo.Trip,this.trip_table],
+        cluster : [gogogo.Cluster,this.cluster_table],
+    };
+    
+    $.each(list,function(i,query){
+        var model = query[0];
+        var id = query[1];
+        var op = op_table[model];
+        manager._query(op[0],op[1],id,function(obj){
+            result[i] = obj;
+            count++;
+            if (count ==total){
+                if (callback!=undefined){
+                    callback(result);
+                }
+            }
+        });
+    });
+}
+
 /** Query ageny information from server
  * 
  */

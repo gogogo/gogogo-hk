@@ -1,7 +1,7 @@
 /** TransitPlan
  * 
- * Transit trip planning
- *
+ * Transit trip plan. 
+ * 
  * @constructor 
  */
 
@@ -22,11 +22,16 @@ gogogo.TransitPlan = function (json) {
       ]
      */
     
-    this.transits = json.transits;
+    this.transits = [];
+    var plan = this;
+    $.each(json.transits,function(i,info){
+        var transitInfo =  new gogogo.TransitInfo(info);
+        plan.transits.push(transitInfo);
+    });
+    
     
     /// Array of overlays created by createOverlays
     this.overlays = undefined;
-    
 }
 
 /** Get an array of ID for each transit
@@ -133,57 +138,18 @@ gogogo.TransitPlan.prototype.createOverlays = function(modelManager,callback) {
     this.overlays = [];
     
     var total = this.transits.length;
-    var removed_trip = 0
     var count = 0;
     var plan = this;
 
     $.each(this.transits,function(i,transit)  {
-        
-        if (transit.trip !=undefined) {
-                    
-            modelManager.queryTrip(transit.trip,function(trip){
-              if (!trip.error){
-                  trip.queryStops(modelManager,function(){
-                      var polyline = trip.createPolyline();
-                      plan.overlays.push(polyline);
-                    
-                       count++;
-                       
-                       if (count == total){
-                           callback(plan.overlays);
-                       }
-
-                  });
-              } else {
-                  // The trip ID not found.
-                  count ++;
-                  if (count == total){
-                      callback(plan.overlays);
-                  }
-              }                
-            });
-            
-        } else { // No trip info
-            plan._createPseudoTripOverlays(transit.agency,modelManager,function(overlay){
-
-                count++;
-                if (count == total){
-                  callback(plan.overlays);
-                }                            
-                
-            });
-        }
-        
+        transit.createOverlay(modelManager,function(overlay){
+            plan.overlays[i] = overlay;
+            count++;            
+            if (count == total){
+                if (callback!=undefined)
+                    callback(plan.overlays);
+            }
+        });
     });
     
-}
-
-gogogo.TransitPlan.prototype._createPseudoTripOverlays = function(agency_id,modelManager,callback) {
-    modelManager.queryAgency(agency_id,function(agency){
-        
-        if (callback!=undefined) {
-            callback();
-        }
-        
-    });
 }

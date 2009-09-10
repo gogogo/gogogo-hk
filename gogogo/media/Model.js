@@ -31,18 +31,23 @@ gogogo.Model = function(id){
 /**
  * Update from JSON
  */
-gogogo.Model.prototype.updateFromJson = function(json){
+gogogo.Model.prototype.updateFromJson = function(json,complete){
 	var trip = this;
 	
 	for (attr in json){
 		this.info[attr] = json[attr];
 	}
+    
+    if (complete!=undefined)
+        self.complete = self.complete;
 	
 }
 
 /**
  * Query the complete information from server
  * 
+ * This function allow multiple call , such that all the callback will be involved when the data is ready.
+ *
  * @param callback The callback function to be involved after the operation. The first arg is model instance , the second arg is the response from server
  * 
  */

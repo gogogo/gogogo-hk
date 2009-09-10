@@ -66,8 +66,14 @@ gogogo.Stop.prototype.getAgencyID = function (){
     return this.info.agency;
 }
 
+gogogo.Stop.prototype.getType = function(){
+    return this.info.type;
+}
+
 /** Query the parent station. If no parent station is existed, it will
  * return the stop itself.
+ * 
+ * @param manager Either of StopManager and ModelManager is accepted
  * 
  */
 
@@ -86,12 +92,13 @@ gogogo.Stop.prototype.queryParentStation = function(manager,callback){
         manager.queryStop(this.info.parent_station,function(parent_station){
             stop.parent_station = parent_station;
             if (callback!=undefined)
-                callback(stop);
+                callback(stop.parent_station);
         });
     }
     
     return stop.parent_station;
 }
+
 
 /** Query the parent agency
  * 
