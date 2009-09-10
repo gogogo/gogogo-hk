@@ -29,6 +29,10 @@ gogogo.Agency.prototype.getName = function() {
     return this.info.name;
 }
 
+/** Query the pseudo trip from a stop to another.
+ * 
+ */
+
 gogogo.Agency.prototype.queryPseudoTrip = function(from,to,callback){
     if (this.pseudoTrips[from] == undefined ) {
         this.pseudoTrips[from] = {};
@@ -40,7 +44,7 @@ gogogo.Agency.prototype.queryPseudoTrip = function(from,to,callback){
     }
 
     var agency = this;
-  	var api = "/api/agency/path?id=" + self.id +"&form=" + from + "&to=" + to;
+  	var api = "/api/agency/path?id=" + this.id +"&from=" + from + "&to=" + to;
 	var cache = jQuery.ajaxSettings.cache;
 	jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
 
