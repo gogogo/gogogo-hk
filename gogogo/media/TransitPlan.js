@@ -229,55 +229,18 @@ gogogo.TransitPlan.prototype.createOverlays = function(modelManager,callback) {
     this.overlays = [];
     
     var total = this.transits.length;
-    var removed_trip = 0
     var count = 0;
     var plan = this;
 
     $.each(this.transits,function(i,transit)  {
-        
-        if (transit.trip !=undefined) {
-                    
-            modelManager.queryTrip(transit.trip,function(trip){
-              if (!trip.error){
-                  trip.queryStops(modelManager,function(){
-                      var polyline = trip.createPolyline();
-                      plan.overlays.push(polyline);
-                    
-                       count++;
-                       
-                       if (count == total){
-                           callback(plan.overlays);
-                       }
-
-                  });
-              } else {
-                  // The trip ID not found.
-                  count ++;
-                  if (count == total){
-                      callback(plan.overlays);
-                  }
-              }                
-            });
-            
-        } else { // No trip info
-            transit.pseudoTrip.queryStop(modelManager,function(stop_list){
-              
-              
-            });
-        } 
-        
+        transit.createOverlay(modelManager,function(overlay){
+            plan.overlays[i] = overlay;
+            count++;            
+            if (count == total){
+                if (callback!=undefined)
+                    callback(plan.overlays);
+            }
+        });
     });
     
-}
-
-gogogo.TransitPlan.prototype._createPseudoTripOverlays = function(agency_id,modelManager,callback) {
-    modelManager.queryAgency(agency_id,function(agency){
-        
-        
-        
-        if (callback!=undefined) {
-            callback();
-        }
-        
-    });
 }
