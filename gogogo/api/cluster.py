@@ -106,3 +106,17 @@ def block(request):
     result = cache['result']
     
     return ApiResponse(data=result)
+
+def get(request):
+    if "id" not in request.GET:
+        return ApiResponse(error="ID missing")
+        
+    id = request.GET['id']
+        
+    try:
+        entity = getCachedEntityOr404(Cluster,id_or_name = id)
+
+        del entity['instance']
+        return ApiResponse(data=entity)
+    except Http404:
+        return ApiResponse(error="Cluster not found")
