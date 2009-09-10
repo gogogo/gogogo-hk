@@ -86,16 +86,6 @@ gogogo.Trip.prototype.clearStops = function(){
 	this.stopObjectListCount = 0;    
 }
 
-/** Set the stop ID list
- * 
- */
-
-gogogo.Trip.prototype.setStopIDList = function(id_list) {
-    this.clearStops();
-    this.info.stop_list = id_list;
-}
-
-
 /** Get the stop ID list
  * 
  */
@@ -117,6 +107,7 @@ gogogo.Trip.prototype.getStopIDList = function(id_list) {
  */
 
 gogogo.Trip.prototype.setStopIDList = function(stop_list){
+    this.clearStops();   
     this.info.stop_list = stop_list;
 }
 
