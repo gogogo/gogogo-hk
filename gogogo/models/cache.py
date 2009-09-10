@@ -28,34 +28,34 @@ def getCacheEntityKey(model = None , key=None,key_name=None , key_string = None,
 	return "gogogo__entity__%s" % str(_get_key_string(model=model , key=key,key_name=key_name,key_string= key_string , id =id) ) 
 
 def getCachedObjectOr404(model = None,key=None,key_name=None,id = None , id_or_name = None):
-	"""
-	Get a object from cache. If it is not existed in the cache, 
-	it will query from database directly and save it in cache.
-	
-	If the object is not existed in the cache and database , it 
-	will raise Http404 exception
-	"""
-	
-	if id_or_name:
-		try:
-			id = int(id_or_name)
-		except ValueError:
-			key_name = id_or_name
+    """
+    Get a object from cache. If it is not existed in the cache, 
+    it will query from database directly and save it in cache.
 
-	cache_key = getCacheObjectKey(model = model , key=key , key_name = key_name,id = id)
+    If the object is not existed in the cache and database , it 
+    will raise Http404 exception
+    """
 
-	#print cache_key
-	object = memcache.get(cache_key)
-	
-	if object == None:
-		if key:
-			object = get_object_or_404(model,key)
-		else:
-			object = get_object_or_404(model,key_name=key_name, id = id)
-		if not memcache.add(cache_key, object, _default_cache_time):
-			logging.error("Memcache set %s failed." % cache_key)
+    if id_or_name:
+        try:
+            id = int(id_or_name)
+        except ValueError:
+            key_name = id_or_name
 
-	return object
+    cache_key = getCacheObjectKey(model = model , key=key , key_name = key_name,id = id)
+    
+    #print cache_key
+    object = memcache.get(cache_key)
+
+    if object == None:
+        if key:
+            object = get_object_or_404(model,key)
+        else:
+            object = get_object_or_404(model,key_name=key_name, id = id)
+        if not memcache.add(cache_key, object, _default_cache_time):
+            logging.error("Memcache set %s failed." % cache_key)
+
+    return object
 
 def getCachedEntityOr404(model = None,key=None,key_name=None , id = None , id_or_name = None):
 	"""

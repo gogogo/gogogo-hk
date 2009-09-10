@@ -554,13 +554,13 @@ class Transfer(db.Model):
             a = stop_a.id_or_name()
         
         b = ""        
-        stop_propery = getattr(Transfer,'stop_b')
+        stop_property = getattr(Transfer,'stop_b')
         stop_b = stop_property.get_value_for_datastore(self)
         if stop_b:
             b = stop_b.id_or_name()
 
         
-        return "%s_%s_%s" % (agency.id_or_name() , a , b)
+        return "[%s]_%s_<=> %s" % (agency.id_or_name() , a , b)
     
 
 auto_set_key_name_table = {

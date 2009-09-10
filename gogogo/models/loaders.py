@@ -247,6 +247,9 @@ class AgencyLoader(Loader):
         self.agency = cache["agency"]
         self.routes = cache["routes"]
         self.trips = cache["trips"]
+    
+    def get_agency(self):
+        return self.agency        
         
     def get_agency_entity(self):
         return self.agency

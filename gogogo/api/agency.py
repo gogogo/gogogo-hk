@@ -73,13 +73,14 @@ def path(request):
        return ApiResponse(error="%s not found" % to_stop )
     
     (backtrack,weight) = mst(graph,src)
-    
+    #logging.info(weight)
     if weight[dest.id] > graph.get_node_count():
         return ApiResponse(error="No path existed" % to_stop )
 
     stop_id = []
     current = dest
     while current.name != src.name:
+        logging.info(current.name)
         stop_id.insert(0,current.name)
         current = backtrack[current.id].src
     stop_id.insert(0,src.name)

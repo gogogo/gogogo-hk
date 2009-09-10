@@ -228,6 +228,7 @@ class FarePairAdmin(admin.ModelAdmin):
 admin.site.register(FarePair, FarePairAdmin)
 
 class TransferAdmin(admin.ModelAdmin):
+    list_filter = ('agency',)    
     form = TransferForm
     
 admin.site.register(Transfer, TransferAdmin)

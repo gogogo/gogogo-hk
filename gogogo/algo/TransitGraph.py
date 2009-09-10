@@ -320,8 +320,38 @@ class StopGraph(Graph):
                     self.add_arc(arc)
                 
                 prev_node = node
+                
+        agency = agency_loader.get_agency()
+        key = db.Key.from_path(Agency.kind(),str(agency["id"]))
+        query = Transfer.all().filter("agency = ",key)
         
-        #TODO support transfer model
+        stop_a_property = getattr(Transfer,'stop_a')
+        stop_b_property = getattr(Transfer,'stop_b')
+        
+        for transfer in query:
+            stop_a = stop_a_property.get_value_for_datastore(transfer)
+            stop_b = stop_b_property.get_value_for_datastore(transfer)
+            
+            node_a = self.search_node(stop_a.id_or_name())
+            if node_a == None:
+                node_a = Node(name = stop_a.id_or_name())
+                self.add_node(node_a)
+                
+            node_b = self.search_node(stop_b.id_or_name())
+            if node_b == None:
+                node_b = Node(name = stop_b.id_or_name())
+                self.add_node(node_b)
+                
+            arc = Arc(weight = 1)
+            arc.link(node_a,node_b)
+            self.add_arc(arc)
+            #logging.info("%s => %s" %(arc.src.name , arc.dest.name))
+            
+            arc = Arc(weight = 1)
+            arc.link(node_b,node_a)
+            self.add_arc(arc)        
+            #logging.info("%s => %s" %(arc.src.name , arc.dest.name))
+            
             
     def get_node_by_stop_id(self,stop_id):
         """
