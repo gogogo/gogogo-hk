@@ -15,6 +15,7 @@ from . import ApiResponse
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404 
 from gogogo.models.utils import createEntity, trEntity , latlngFromGeoPt
 from gogogo.algo.TransitGraph import StopGraph
+from gogogo.algo.path import mst
 import logging
 
 _default_cache_time = 3600
@@ -61,5 +62,10 @@ def path(request):
     to_stop = request.GET["to"]
     
     graph = StopGraph.create(id)
+    src = graph.get_node_by_stop_id(from_stop)
+    if src == None:
+       return ApiResponse(error="%s not found" % from_stop ) 
     
-    return ApiResponse(data=[])
+    (backtrack,weight) = mst(graph,src)
+    
+    return ApiResponse(data=[weight])

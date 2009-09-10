@@ -323,8 +323,13 @@ class StopGraph(Graph):
         
         #TODO support transfer model
             
-        
-        
+    def get_node_by_stop_id(self,stop_id):
+        """
+        Get node by the stop ID
+
+        """
+        node = self.search_node(stop_id)
+        return node
         
         
         
