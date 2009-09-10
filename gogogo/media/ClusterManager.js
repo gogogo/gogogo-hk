@@ -52,7 +52,7 @@ gogogo.ClusterManager.prototype._search = function(prefix,callback){
 				if (manager.clusters[item.id] == undefined ) {
                     
                     var cluster = new gogogo.Cluster(item.id);
-					cluster.updateFromJson(item);
+					cluster.updateFromJson(item,true);
                     
 					manager.clusters[item.id] = cluster;
 				}

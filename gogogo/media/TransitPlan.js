@@ -29,6 +29,106 @@ gogogo.TransitPlan = function (json) {
     
 }
 
+/** Process the transit plan
+ * 
+ */
+
+gogogo.TransitPlan.prototype.process = function( modelManager){
+    var plan = this;
+    $.each(this.transits,function(i,transit){
+       if (transit.trip == undefined )
+            plan._processAgency1(transit,modelManager);
+    });
+}
+
+/** Find parent stations from a stop list
+ * 
+ */
+
+gogogo.TransitPlan.prototype._findParentStations = function(stop_list,modelManager,callback){
+    var parent_table = {}
+    var total = stop_list.length;
+    var count = 0;
+    $.each(stop_list,function(i,stop){
+        
+        stop.queryParentStation(modelManager,function(parent) {
+            if (parent.getID() !=stop.getID())
+                parent_table[parent.getID()] = parent;
+            count++;
+            if (count == total)
+                callback(parent_table);
+        });
+    });
+}
+
+/** Process agency with free_transfer service , a pseudo trip will be added 
+ * to the transit
+ * 
+ * */
+gogogo.TransitPlan.prototype._processAgency1 = function(transit,modelManager){
+    
+    var query =[ ["agency" , transit.agency] , ["cluster",transit.on] , ["cluster",transit.off]  ];
+    var plan = this;    
+    
+    modelManager.queryMulti(query,function(result){
+        var agency = result[0];
+        var cluster_list = [result[1],result[2]]
+        var parent_station_list=[];
+        var count = 0;
+        
+        $.each(cluster_list,function(i,cluster){
+           cluster.findStopForAgency(agency,modelManager,function(stop_list){
+               plan._findParentStations(stop_list , modelManager,function(parent_station_table){
+                    parent_station_list[i] = parent_station_table;
+                    count ++;
+                    if (count == 2) {
+                        plan._processAgency2(transit,parent_station_list,modelManager);
+                    }
+               });
+           });
+        });
+       
+    });
+}
+
+gogogo.TransitPlan.prototype._processAgency2 = function(transit,parent_station_list,modelManager){
+    var total = parent_station_list[0].length * parent_station_list[1].length;
+    var count = 0;
+    var trip_list = [];
+    $.each(parent_station_list[0],function(from_key,from_station){
+            $.each(parent_station_list[1],function(to_key,to_station){
+                var cache = jQuery.ajaxSettings.cache;
+                jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter			
+                var api = "/api/agency/path?id=" + transit.agency + "&from=" + from_key + "&to=" + to_key;
+
+                $.getJSON(api, null , function(response) {	
+                    if (response.stat == "ok"){
+                        var trip = new gogogo.Trip();
+                        trip.setStopIDList(response.data);
+                        trip_list.append(trip);
+                    }
+                    
+                    count++;
+                    if (count == total){
+                        var min = 10000000000;
+                        var min_trip;
+                        $.each(trip_list,function(i,trip){
+                           var stop_id_list= trip_list.getStopIDList();
+                           if (stop_id_list.length < min){
+                               min = stop_id_list.length
+                               min_trip = trip;
+                           }
+                        });
+                        
+                        transit.pseudoTrip = min_trip;
+                    }
+                });            
+                jQuery.ajaxSettings.cache = cache;	                            
+                
+            });
+    });
+}
+
 /** Get an array of ID for each transit
  * 
  */
@@ -180,6 +280,8 @@ gogogo.TransitPlan.prototype.createOverlays = function(modelManager,callback) {
 
 gogogo.TransitPlan.prototype._createPseudoTripOverlays = function(agency_id,modelManager,callback) {
     modelManager.queryAgency(agency_id,function(agency){
+        
+        
         
         if (callback!=undefined) {
             callback();

@@ -247,7 +247,7 @@
             if (!notEmpty)
                 return;
 
-			planner.suggest ($("#startAddress").val() , $("#endAddress").val(),function(){
+			planner.suggest ($("#startAddress").val() , $("#endAddress").val(),modelManager,function(){
 				planningOutput.empty();
 				var plan_list = planner.getTransitPlanList();
                 for (var i = 0 ; i < plan_list.length  ;  i++){

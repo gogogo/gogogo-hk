@@ -130,7 +130,7 @@ gogogo.Planner.prototype.queryCluster = function (index,callback){
 /** Prepare required information for trip planning
  */
 
-gogogo.Planner.prototype._prepare = function(callback) {
+gogogo.Planner.prototype._prepare = function(modelManager,callback) {
 
 	var planner = this;
     var start_clusters = [];
@@ -142,7 +142,7 @@ gogogo.Planner.prototype._prepare = function(callback) {
                 start_clusters = clusters;
                 planner.queryCluster(1,function(clusters) {
                     goal_clusters = clusters;
-                    planner._plan(start_clusters,goal_clusters,callback);
+                    planner._plan(start_clusters,goal_clusters,modelManager,callback);
                 });
             });
                     
@@ -155,7 +155,7 @@ gogogo.Planner.prototype._prepare = function(callback) {
  * 
  */
 
-gogogo.Planner.prototype._plan = function (start_clusters, goal_clusters ,callback){
+gogogo.Planner.prototype._plan = function (start_clusters, goal_clusters ,modelManager,callback){
     var total = start_clusters.length * goal_clusters.length;
     
     var cache = jQuery.ajaxSettings.cache;
@@ -179,6 +179,7 @@ gogogo.Planner.prototype._plan = function (start_clusters, goal_clusters ,callba
                     for (var k = 0 ; k < plans.length;k++) {
                         var json = plans[k];
                         var plan = new gogogo.TransitPlan(json);
+                        plan.process(modelManager);
                         planner.plan_list.push(plan);
                     }
                 }
@@ -203,11 +204,11 @@ gogogo.Planner.prototype._plan = function (start_clusters, goal_clusters ,callba
  * @param start  
  */
 
-gogogo.Planner.prototype.suggest = function(start,end,callback) {
+gogogo.Planner.prototype.suggest = function(start,end,modelManager,callback) {
 	this.points[0].setAddress(start);
 	this.points[1].setAddress(end);
 	
-    this._prepare(callback);
+    this._prepare(modelManager,callback);
 
 }
 
