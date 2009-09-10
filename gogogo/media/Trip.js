@@ -104,6 +104,21 @@ gogogo.Trip.prototype.getStopIDList = function(id_list) {
     return this.info.stop_list;
 }
 
+/** Set the stop ID list
+ * 
+ * In generic , user should not call this function as the stop 
+ * list should be get from server. The only exception is , the 
+ * trip instance is pseudo which is not real. Pseudo trip is 
+ * mainly used in constructing temp polyline objects based 
+ * on stop list
+ * 
+ * @see gogogo.Agency.createPolyline()
+ * 
+ */
+
+gogogo.Trip.prototype.setStopIDList = function(stop_list){
+    this.info.stop_list = stop_list;
+}
 
 /** Get the list of gogogo.Stop object
  * 
@@ -112,6 +127,7 @@ gogogo.Trip.prototype.getStopIDList = function(id_list) {
 gogogo.Trip.prototype.getStopList = function(){
     return this.stopObjectList;
 }
+
 
 /**
  * Get polyline

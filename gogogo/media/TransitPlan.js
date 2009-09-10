@@ -161,10 +161,14 @@ gogogo.TransitPlan.prototype.createOverlays = function(stopManager,callback) {
             });
             
         } else { // No trip info
-            count++;
-            if (count == total){
-              callback(plan.overlays);
-            }            
+            modelManager.queryAgency(id[0],function(agency){
+                //createPolyline
+            
+                count++;
+                if (count == total){
+                  callback(plan.overlays);
+                }                            
+            });                    
         }
         
     });
