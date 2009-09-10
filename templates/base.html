@@ -15,9 +15,9 @@
       <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}combined-{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}.css" />
     {% endblock %}
 
-    {% block js %}
+    {% block js %}	
+		<!--[if lte IE 6]><script src="/js/ie6-warning.js"></script><script>window.onload=function(){e("/js/ie6/")}</script><![endif]-->
         <script type="text/javascript" src="{{ MEDIA_URL }}combined-{{ LANGUAGE_CODE }}.js"></script>
-		<!--[if lte IE 6]><script src="{{ MEDIA_URL }}ie6.js"></script><script>window.onload=function(){e("ie6/")}</script><![endif]-->
 		<script type="text/javascript">
 		  $(document).ready(function() {
 				$(".setlang_link").click(function(){

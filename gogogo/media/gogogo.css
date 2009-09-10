@@ -102,3 +102,15 @@ fieldset.form  {
 .object-tools a.addlink:hover { background:#5b80b2 url(admin_media/img/admin/tooltag-add_over.gif) top right no-repeat; }
 
 /* End of object tools */
+
+/* UI Component*/
+#route-search-result {
+padding-left:1em
+}
+ol.zebra-list li {
+background-color: #e5e5e5;
+padding:0.4em 0.4em;
+}
+ol.zebra-list li:nth-child(2n), ol.zebra-list li.z-alt {
+background-color: #f7f7f7;
+}
