@@ -62,17 +62,31 @@ gogogo.Stop.prototype.getName = function(){
     return this.info.name;
 }
 
-/** Query the parent station
+/** Query the parent station. If no parent station is existed, it will
+ * return the stop itself.
  * 
  */
 
 gogogo.Stop.prototype.queryParentStation = function(manager,callback){
+    if (this.parent_station != undefined){
+        return this.parent_station;
+    }
+    
+    var stop = this;
     
     if (this.info.parent_station == undefined){
-        callback();
+        this.parent_station = this;
+        if (callback!=undefined)
+            callback(this.parent_station);
     } else {
-        manager.queryStop(this.info.parent_station,callback);
+        manager.queryStop(this.info.parent_station,function(parent_station){
+            stop.parent_station = parent_station;
+            if (callback!=undefined)
+                callback(stop);
+        });
     }
+    
+    return stop.parent_station;
 }
 
 /** Query the parent agency

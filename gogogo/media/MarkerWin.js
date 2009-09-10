@@ -57,7 +57,7 @@ ${stop_name} <span class='stop_parent'></span> <br> \
 <div class='trip_list'></div>";
 
 gogogo.MarkerWin.tripListTemplete = "\
-<span class='trip'>${code}(${headsign})</span> \
+<a class='trip'>${code}(${headsign})</a> \
 ";
 
 gogogo.MarkerWin.agencyTemplate = "\
@@ -74,6 +74,14 @@ gogogo.MarkerWin.agencyTemplate = "\
 //--> \
 ";
 
+gogogo.MarkerWin.tripTemplate = "\
+<b>${name}</b>\
+<ol class='stop_list'>\
+</ol>\
+<a class='back'>Back</a> \
+"
+
+
 gogogo.MarkerWin.prototype.renderGeneral = function(target) {
     var markerWin = this;
     var t = $.template(gogogo.MarkerWin.generalTemplate);
@@ -84,7 +92,7 @@ gogogo.MarkerWin.prototype.renderGeneral = function(target) {
     
     var stop_parent = $(target).find(".stop_parent");
     this.stop.queryParentStation(this.stopManager,function(station){
-        if (station != undefined){
+        if (station != markerWin.stop){
             $(stop_parent).append(" : " + station.getName());
         }
     });
@@ -95,17 +103,16 @@ gogogo.MarkerWin.prototype.renderGeneral = function(target) {
            var a = $("<a> " + agency.getName() + " </a>");
            $(agency_name).append(a);
            $(a).click(function(){
-               $(target).empty();
                markerWin.renderAgencyInfo(target,agency);
            });
        } 
     });   
     
     var trip_list = $(target).find(".trip_list");
-    this.renderTripList(trip_list);
+    this.renderTripList(trip_list,target);
 }
 
-gogogo.MarkerWin.prototype.renderTripList = function(target) {
+gogogo.MarkerWin.prototype.renderTripList = function(target,content) {
     var markerWin = this;
     var cache = jQuery.ajaxSettings.cache;
     
@@ -125,6 +132,9 @@ gogogo.MarkerWin.prototype.renderTripList = function(target) {
                         headsign : trip.getHeadsign()    
                     });
                     
+                    $(div).click(function(){
+                        markerWin.renderTrip(content,trip);
+                    });
                 });
             });
             
@@ -138,6 +148,7 @@ gogogo.MarkerWin.prototype.renderTripList = function(target) {
  * 
  */
 gogogo.MarkerWin.prototype.renderAgencyInfo = function(target,agency){
+    $(target).empty();
     var t = $.template(gogogo.MarkerWin.agencyTemplate); 
     var markerWin = this;
     $(target).append(t,{
@@ -150,7 +161,50 @@ gogogo.MarkerWin.prototype.renderAgencyInfo = function(target,agency){
     markerWin.resize();    
     
     $(target).find(".back").click(function (){
-        $(target).empty();
         markerWin.renderGeneral(target);
     });
+}
+
+/** Render trip information
+ * 
+ */
+
+gogogo.MarkerWin.prototype.renderTrip = function(target,trip){
+    $(target).empty();
+    var t = $.template(gogogo.MarkerWin.tripTemplate); 
+    var markerWin = this;
+    
+    $(target).append(t,{
+       name : trip.getName()
+    });
+
+    markerWin.resize();
+
+    $(target).find(".back").click(function (){
+        markerWin.renderGeneral(target);
+    });
+    
+    var parent_station = this.stop.queryParentStation(); // Already called in renderGeneral
+    
+    trip.queryStops(this.stopManager , function(trip,stop_list){
+        var stop_list_div = $(target).find(".stop_list");
+        var found_current_stop = false;
+        $.each(stop_list,function(i,stop){
+            var li = $("<li>" + stop.getName() + "</li>");
+            
+            if (stop.getID() ==  parent_station.getID() || stop.getID() == markerWin.stop.getID() ){
+                li.addClass("current_stop");
+                found_current_stop = true;
+            } else if (!found_current_stop) {
+                li.addClass("before");
+            } else {
+                li.addClass("after");
+            }
+            
+            $(stop_list_div).append(li);
+        });
+        
+        markerWin.resize();
+    });
+
 }
