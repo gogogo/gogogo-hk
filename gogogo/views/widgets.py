@@ -9,6 +9,7 @@ from django.utils.encoding import StrAndUnicode, force_unicode
 from django.template import Context, loader , RequestContext
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.http import Http404
 
 from gogogo.models.cache import getCachedObjectOr404
 from gogogo.models.utils import id_or_name
@@ -54,8 +55,7 @@ class ReferenceLinkField(forms.Field):
 	A read-only field with a link to the target of reporting object
 	"""
 
-	def __init__(self,  *args, **kwargs):
-		
+	def __init__(self,  *args, **kwargs):		
 		if 'widget' not in kwargs:
 			kwargs.update( { 'widget' : ReferenceLinkWidget() })
 				
@@ -71,6 +71,67 @@ class ReferenceLinkField(forms.Field):
 		if instance is None:
 			raise db.BadValueError(self.error_messages['invalid_choice'])
 		return instance
+
+class SimpleReferenceWidget(Input):
+    
+    def __init__(self,*args,**kwargs):
+        self.___model_class = kwargs['model_class']
+        del kwargs['model_class']
+        
+        super(SimpleReferenceWidget,self).__init__(*args,**kwargs)
+    
+    def render(self, name, value, attrs=None):
+        
+        object = None
+        try:
+            object = getCachedObjectOr404(self.___model_class,key = value)
+        except Http404:
+            pass
+        
+        if isinstance(value,db.Key):
+            value = value.id_or_name()
+        
+        input = super(SimpleReferenceWidget, self).render(name, value, attrs)	
+        ret = input
+        if object:
+            ret = mark_safe(input + " <a href='%s'>%s</a>" % (object.get_absolute_url() , unicode(object) ))
+        
+        return ret
+
+class SimpleReferenceField(forms.Field):
+    """
+    A write-read field of ReferenceProperty which have a simple text box for entry 
+    the ID directly. 
+    """
+
+    def __init__(self,  *args, **kwargs):
+        
+        self.___model_class = kwargs['model_class']
+        del kwargs['model_class']
+        
+        if 'widget' not in kwargs:
+            kwargs.update( { 'widget' : SimpleReferenceWidget(model_class =self.___model_class  ) })
+        
+                
+        super(SimpleReferenceField, self).__init__(*args, **kwargs)
+    
+    def clean(self, value):
+        final_value = None
+        if self.required and not value:
+            raise forms.ValidationError(_(u'This field is required.'))
+        elif not self.required and not value:
+            return None
+                        
+        if isinstance(value,basestring):
+            id = id_or_name(value)
+            final_value = db.Key.from_path(self.___model_class.kind(),id)
+
+        try:
+            object = getCachedObjectOr404(self.___model_class,key = final_value)
+        except Http404:
+            raise forms.ValidationError(_(u'This record not found.'))            
+        
+        return final_value
 
 class LatLngInputWidget(forms.Widget):	
     def __init__(self, attrs=None):

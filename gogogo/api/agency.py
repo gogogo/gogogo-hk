@@ -61,11 +61,27 @@ def path(request):
     from_stop = request.GET["from"]
     to_stop = request.GET["to"]
     
+    #TODO , cache the result
+    
     graph = StopGraph.create(id)
     src = graph.get_node_by_stop_id(from_stop)
+    dest = graph.get_node_by_stop_id(to_stop)
     if src == None:
-       return ApiResponse(error="%s not found" % from_stop ) 
+       return ApiResponse(error="%s not found" % from_stop )
+    
+    if dest == None:
+       return ApiResponse(error="%s not found" % to_stop )
     
     (backtrack,weight) = mst(graph,src)
     
-    return ApiResponse(data=[weight])
+    if weight[dest.id] > graph.get_node_count():
+        return ApiResponse(error="No path existed" % to_stop )
+
+    stop_id = []
+    current = dest
+    while current.name != src.name:
+        stop_id.insert(0,current.name)
+        current = backtrack[current.id].src
+    stop_id.insert(0,src.name)
+    
+    return ApiResponse(data=stop_id)

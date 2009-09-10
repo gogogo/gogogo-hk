@@ -535,13 +535,32 @@ class Transfer(db.Model):
     model.
     """
     
-    agency = db.ReferenceProperty(Agency)
+    agency = db.ReferenceProperty(Agency,required = True)
     
-    from_stop = db.ReferenceProperty(Stop,collection_name="transfer_from_stop")
+    stop_a = db.ReferenceProperty(Stop,collection_name="transfer_from_stop")
     
-    to_stop = db.ReferenceProperty(Stop,collection_name="transfer_to_stop")
+    stop_b = db.ReferenceProperty(Stop,collection_name="transfer_to_stop")
     
     max_transfer_time = db.IntegerProperty(default=-1)
+    
+    def __unicode__(self):
+        agency_property = getattr(Transfer,'agency')
+        agency = agency_property.get_value_for_datastore(self)
+        
+        a = ""
+        stop_property = getattr(Transfer,'stop_a')
+        stop_a = stop_property.get_value_for_datastore(self)
+        if stop_a:
+            a = stop_a.id_or_name()
+        
+        b = ""        
+        stop_propery = getattr(Transfer,'stop_b')
+        stop_b = stop_property.get_value_for_datastore(self)
+        if stop_b:
+            b = stop_b.id_or_name()
+
+        
+        return "%s_%s_%s" % (agency.id_or_name() , a , b)
     
 
 auto_set_key_name_table = {

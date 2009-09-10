@@ -228,6 +228,6 @@ class FarePairAdmin(admin.ModelAdmin):
 admin.site.register(FarePair, FarePairAdmin)
 
 class TransferAdmin(admin.ModelAdmin):
-    pass
+    form = TransferForm
     
 admin.site.register(Transfer, TransferAdmin)
