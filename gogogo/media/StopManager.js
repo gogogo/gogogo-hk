@@ -58,7 +58,7 @@ gogogo.StopManager.prototype._search = function(prefix,callback) {
 			$.each(data.data, function(i, item){
 				if (manager.stops[item.id] == undefined ) {
 					var stop = new gogogo.Stop(item.id);
-					stop.updateFromJson(item);
+					stop.updateFromJson(item,true);
                     
                     manager.stops[item.id] = stop;                    
 				}

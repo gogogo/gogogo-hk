@@ -1,7 +1,7 @@
 /** TransitPlan
  * 
- * Transit trip planning
- *
+ * Transit trip plan. 
+ * 
  * @constructor 
  */
 
@@ -22,11 +22,16 @@ gogogo.TransitPlan = function (json) {
       ]
      */
     
-    this.transits = json.transits;
+    this.transits = [];
+    var plan = this;
+    $.each(json.transits,function(i,info){
+        var transitInfo =  new gogogo.TransitInfo(info);
+        plan.transits.push(transitInfo);
+    });
+    
     
     /// Array of overlays created by createOverlays
     this.overlays = undefined;
-    
 }
 
 /** Process the transit plan
@@ -82,7 +87,7 @@ gogogo.TransitPlan.prototype._processAgency1 = function(transit,modelManager){
                     parent_station_list[i] = parent_station_table;
                     count ++;
                     if (count == 2) {
-                        plan._processAgency2(transit,parent_station_list,modelManager);
+                        plan._processAgency2(transit,agency,parent_station_list,modelManager);
                     }
                });
            });
@@ -91,23 +96,13 @@ gogogo.TransitPlan.prototype._processAgency1 = function(transit,modelManager){
     });
 }
 
-gogogo.TransitPlan.prototype._processAgency2 = function(transit,parent_station_list,modelManager){
+gogogo.TransitPlan.prototype._processAgency2 = function(transit,agency,parent_station_list,modelManager){
     var total = parent_station_list[0].length * parent_station_list[1].length;
     var count = 0;
     var trip_list = [];
     $.each(parent_station_list[0],function(from_key,from_station){
             $.each(parent_station_list[1],function(to_key,to_station){
-                var cache = jQuery.ajaxSettings.cache;
-                jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter			
-                var api = "/api/agency/path?id=" + transit.agency + "&from=" + from_key + "&to=" + to_key;
-
-                $.getJSON(api, null , function(response) {	
-                    if (response.stat == "ok"){
-                        var trip = new gogogo.Trip();
-                        trip.setStopIDList(response.data);
-                        trip_list.append(trip);
-                    }
-                    
+                agency.queryPseudoTrip(from_key,to_key,function(){
                     count++;
                     if (count == total){
                         var min = 10000000000;
@@ -121,9 +116,10 @@ gogogo.TransitPlan.prototype._processAgency2 = function(transit,parent_station_l
                         });
                         
                         transit.pseudoTrip = min_trip;
-                    }
-                });            
-                jQuery.ajaxSettings.cache = cache;	                            
+                        console.log(min_trip);
+                    }                    
+                    
+                })
                 
             });
     });
@@ -264,15 +260,11 @@ gogogo.TransitPlan.prototype.createOverlays = function(modelManager,callback) {
             });
             
         } else { // No trip info
-            plan._createPseudoTripOverlays(transit.agency,modelManager,function(overlay){
-
-                count++;
-                if (count == total){
-                  callback(plan.overlays);
-                }                            
-                
+            transit.pseudoTrip.queryStop(modelManager,function(stop_list){
+              
+              
             });
-        }
+        } 
         
     });
     

@@ -179,7 +179,7 @@ gogogo.Planner.prototype._plan = function (start_clusters, goal_clusters ,modelM
                     for (var k = 0 ; k < plans.length;k++) {
                         var json = plans[k];
                         var plan = new gogogo.TransitPlan(json);
-                        plan.process(modelManager);
+                        //plan.process(modelManager);
                         planner.plan_list.push(plan);
                     }
                 }
