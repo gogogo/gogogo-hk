@@ -282,7 +282,7 @@ class TripLoader(Loader):
         If you only want to load a single entry of Trip , please use
         getCachedEntityOr404 instead.
         
-        @param stop_table A dict of stop entities. 
+        @param stop_table A dict of stop entities. It is used as cache to speed up the stop loading.
         """
         
         cache_key = self.get_cache_key()

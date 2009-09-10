@@ -5,7 +5,7 @@ from graphs import Graph , Node , Arc
 from gogogo.models import *
 from ragendja.dbutils import prefetch_references
 import logging
-from gogogo.models.loaders import ListLoader , FareStopLoader , TripLoader
+from gogogo.models.loaders import ListLoader , FareStopLoader , TripLoader , AgencyLoader
 from google.appengine.api import memcache
 
 # Cache for whole day
@@ -254,4 +254,78 @@ class TransitGraph(Graph):
         
         self.stop_to_cluster = entity["stop_to_cluster"]
         self.cluster_id = entity["cluster_to_node_id"]
+        
+class StopGraph(Graph):
+    """
+    A graph built by stop for an agency
+    """
+    
+    cache_key = "gogogo_stop_graph_"
+
+    def get_cache_key(id):
+        return StopGraph.cache_key + id
+        
+    get_cache_key = staticmethod(get_cache_key)
+
+    def create(id):
+        """
+        Try to load a instance from memcache, if not found,
+        it will create a new transit graph.
+        """
+        entity = memcache.get(StopGraph.get_cache_key(id))
+        
+        graph = StopGraph(id)
+        if entity == None:
+            graph.load()
+            memcache.add(StopGraph.get_cache_key(id), graph.to_entity(), _default_cache_time)
+        else:
+            graph.from_entity(entity)
+            
+        return graph
+        
+    create = staticmethod(create)
+    
+    def __init__(self,id):
+        Graph.__init__(self)
+        self.id = id
+        
+    def load(self):
+        """
+       Load from database or bigtable
+        """
+        agency_loader = AgencyLoader(self.id)
+        agency_loader.load()
+        
+        trip_id_list = agency_loader.get_trip_id_list()
+        
+        trip_loader_list = []
+        stop_table = {}
+        
+        for trip_id in trip_id_list:
+            trip_loader = TripLoader(trip_id)
+            trip_loader.load(stop_table = stop_table)
+            trip_loader_list.append(trip_loader)
+            
+            prev_node = None
+            
+            for stop in trip_loader.get_stop_list():
+                node = self.search_node(stop["id"])
+                if node == None:
+                    node = Node(name = stop["id"])
+                    self.add_node(node)
+                    
+                if prev_node:
+                    arc = Arc(weight = 1)
+                    arc.link(prev_node,node)
+                    self.add_arc(arc)
+                
+                prev_node = node
+        
+        #TODO support transfer model
+            
+        
+        
+        
+        
+        
         

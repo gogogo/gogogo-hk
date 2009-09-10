@@ -65,6 +65,9 @@ class Arc:
 
 class Node:
     def __init__(self,name = None, data = None):
+        """
+        @param name The name of the node
+        """
         self.name = name
         self.data = None
         self.arcs = []
@@ -74,6 +77,8 @@ class Node:
         self.id = None
         
     def __eq__(self,other):
+        if other == None:
+            return False
         if self.id == other.id:
             return True
         return False
@@ -176,6 +181,16 @@ class Graph:
                 ret.append(arc)
                 
         return ret
+        
+    def search_node(self,name):
+        """
+       Search node by name
+        """
+        ret = None
+        for t in self.nodes:
+            (node,out_arcs,in_arcs) = t
+            if node.name == name:
+                return node
         
     def clear_arc(self):
         """

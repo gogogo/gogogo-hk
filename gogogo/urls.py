@@ -58,6 +58,7 @@ urlpatterns = patterns(
          
 	(r'^api/agency/list$' ,'gogogo.api.agency.list'),
     (r'^api/agency/get$' ,'gogogo.api.agency.get'),
+    (r'^api/agency/path$' ,'gogogo.api.agency.path'),
 	
 	(r'^api/stop/search/(?P<lat0>[0-9]*\.[0-9]*),(?P<lng0>[0-9]*\.[0-9]*),(?P<lat1>[0-9]*\.[0-9]*),(?P<lng1>[0-9]*\.[0-9]*)$' 
 		,'gogogo.api.stop.search'),

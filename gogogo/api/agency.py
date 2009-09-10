@@ -14,6 +14,7 @@ from gogogo.geo.geohash import Geohash
 from . import ApiResponse
 from gogogo.models.cache import getCachedObjectOr404 , getCachedEntityOr404 
 from gogogo.models.utils import createEntity, trEntity , latlngFromGeoPt
+from gogogo.algo.TransitGraph import StopGraph
 import logging
 
 _default_cache_time = 3600
@@ -48,3 +49,17 @@ def list(request):
 
     return ApiResponse(data=result)
 
+def path(request):
+    """
+    Query the shape of a path from a stop to another stop using specific agency
+    """
+    if "id" not in request.GET or "from" not in request.GET or "to" not in request.GET:
+        return ApiResponse(error="Argument missing")
+        
+    id = request.GET["id"]
+    from_stop = request.GET["from"]
+    to_stop = request.GET["to"]
+    
+    graph = StopGraph.create(id)
+    
+    return ApiResponse(data=[])
