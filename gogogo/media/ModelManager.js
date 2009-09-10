@@ -83,3 +83,12 @@ gogogo.ModelManager.prototype.queryTrip = function(id,callback) {
     
 	return this._query(gogogo.Trip,this.trip_table,id,callback)
 }
+
+/** Query stop information from server
+ * 
+ */
+
+gogogo.ModelManager.prototype.queryStop = function(id,callback) {
+    
+	return this._query(gogogo.Stop,this.stop_table,id,callback)
+}

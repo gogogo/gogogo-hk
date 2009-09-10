@@ -52,7 +52,7 @@ gogogo.TransitPlan.prototype.getTransitIDList = function() {
  * @param num The number of the plan
  */
 
-gogogo.TransitPlan.prototype.createDiv = function(num,map,modelManager,stopManager,clusterManager) {
+gogogo.TransitPlan.prototype.createDiv = function(num,map,modelManager) {
     var transit_plan_div = $("<div class='transit_plan' ></div>");
     var template = "\
     <div class='transit_op'>${transit_op}</div> \
@@ -79,7 +79,7 @@ gogogo.TransitPlan.prototype.createDiv = function(num,map,modelManager,stopManag
     var map_link = $(transit_plan_div).find("a");
        
     $(map_link).click( function(){
-        plan.createOverlays(stopManager,clusterManager,function(overlays){
+        plan.createOverlays(modelManager,function(overlays){
             $.each(overlays,function(i,overlay){
                 map.addOverlay(overlay);
             });
@@ -123,7 +123,7 @@ gogogo.TransitPlan.prototype.createDiv = function(num,map,modelManager,stopManag
  * 
  */
 
-gogogo.TransitPlan.prototype.createOverlays = function(stopManager,clusterManager,callback) {
+gogogo.TransitPlan.prototype.createOverlays = function(modelManager,callback) {
     if (this.overlays != undefined) {
         callback(this.overlays);
         
@@ -143,7 +143,7 @@ gogogo.TransitPlan.prototype.createOverlays = function(stopManager,clusterManage
                     
             modelManager.queryTrip(transit.trip,function(trip){
               if (!trip.error){
-                  trip.queryStops(stopManager,function(){
+                  trip.queryStops(modelManager,function(){
                       var polyline = trip.createPolyline();
                       plan.overlays.push(polyline);
                     

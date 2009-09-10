@@ -23,6 +23,8 @@ gogogo.Trip.prototype.modelType = "trip";
 
 /**
  * Query a single stop object from StopManager
+ * 
+ * @param manager Either of StopManager or ModelManager
  */
 
 gogogo.Trip.prototype._queryStop = function(manager,index,callback){
@@ -42,6 +44,7 @@ gogogo.Trip.prototype._queryStop = function(manager,index,callback){
 
 /** Query associated stop objects from StopManager
  * 
+ * @param manager Either of StopManager or ModelManager
  * @param callback To be involved when all the objects are fetched from server. ( callback(trip,stop_list) )
  * 
  */
