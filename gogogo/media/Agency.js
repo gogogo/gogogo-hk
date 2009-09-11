@@ -96,19 +96,29 @@ gogogo.Agency.prototype.createTranitIcon = function() {
     var file;
     var icon;
     switch (this.info.type) {
+        case 0:
         case 1:
         case 2: 
             file = "gogogo/markers-transportation/subway.png"
+            break;
+        case 3: 
+            file = "gogogo/markers-transportation/dbus.png"
+            break;            
+        case 4:
+            file = "gogogo/markers-transportation/ferry.png";
+            break;
+        case 5:
+            file = "gogogo/markers-transportation/cablecar.png";
             break;
     }
     
     if (file != undefined){
         
-        icon = new GIcon();
+        icon = new GIcon(G_DEFAULT_ICON);
         icon.image = site_data.settings.MEDIA_URL + file;
-        console.info(icon.image);
         icon.iconSize = new GSize(32, 37);
-        icon.iconAnchor = new GPoint(16, 34);
+        icon.iconAnchor = new GPoint(16, 32);
+        icon.shadow = null;
     }
     return icon;
 }

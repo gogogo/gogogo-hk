@@ -58,11 +58,14 @@ gogogo.SearchingManager = function (map,modelManager){
                     if (manager.overlays[prefix] == undefined
                         && manager._createOverlays != undefined
                         ) {
-                          manager.overlays[prefix] = manager._createOverlays(result);
-                          if (manager.overlays[prefix].length > 0){
-                              $(manager).trigger("overlaysAdded",manager.overlays[prefix]);
-                          }
-                          
+                          manager._createOverlays(result,function(overlays){
+                              manager.overlays[prefix] = overlays;
+
+                              if (manager.overlays[prefix].length > 0){
+                                  $(manager).trigger("overlaysAdded",manager.overlays[prefix]);
+                              }
+
+                          });                          
                         }
                 });		
     	    });

@@ -19,9 +19,13 @@ extend(gogogo.ClusterManager,gogogo.SearchingManager);
  * 
  */
 
-gogogo.ClusterManager.prototype._createOverlays = function(items) {
+gogogo.ClusterManager.prototype._createOverlays = function(items,callback) {
 	var ret = []
 	var manager = this;
+    
+    var total = items.length;
+    var count = 0;
+    
 	$(items).each(function(i,item){		            
 		manager.modelManager.queryShape(item.getShape(),function(shape){
             if (!shape.error) {
@@ -29,10 +33,17 @@ gogogo.ClusterManager.prototype._createOverlays = function(items) {
 			manager.map.addOverlay(overlay);
 			ret.push(overlay);
             }
+            
+            count++;
+            if (count == total){
+                if (callback!=undefined)
+                    callback(ret);
+            }
+            
 		});
 	});
-	
-	return ret;
+
+
 }
 
 gogogo.ClusterManager.prototype._search = function(prefix,callback){

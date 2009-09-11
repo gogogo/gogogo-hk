@@ -27,21 +27,31 @@ gogogo.StopManager = function (map,modelManager){
 
 extend(gogogo.StopManager,gogogo.SearchingManager);
 
-gogogo.StopManager.prototype._createOverlays = function(items) {	
+gogogo.StopManager.prototype._createOverlays = function(items,callback) {	
 	var ret = []
-	var manager = this;	
+	var manager = this; 
     
+    var total = items.length;
+    var count = 0;
 	$(items).each(function(i,stop){
-        var marker = stop.createMarker();
-     
-        manager.markermanager.addMarker(marker,manager.minZoom);
+        stop.queryAgency( function() {
+            var marker = stop.createMarker();
+         
+            manager.markermanager.addMarker(marker,manager.minZoom);
+            
+            $(manager).trigger("markerAdded",[marker,stop]);
+            
+            ret.push(marker);
+            
+            count++;
+            if (count == total){
+                if (callback!=undefined)
+                    callback(ret);
+            }
         
-        $(manager).trigger("markerAdded",[marker,stop]);
-        
-        ret.push(marker);
+        })
 	});
-    
-    return ret;
+
 }
 
 gogogo.StopManager.prototype._search = function(prefix,callback) {	

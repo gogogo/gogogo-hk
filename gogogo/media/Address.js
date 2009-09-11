@@ -240,7 +240,7 @@ gogogo.Address.prototype._createMarker = function() {
     if (point == undefined)
         return null;
     
-    var icon = new GIcon();
+    var icon = new GIcon(G_DEFAULT_ICON);
     icon.image = site_data.settings.MEDIA_URL + 
         "gogogo/markers/paleblue_Marker" + this.name + ".png";
     icon.iconSize = new GSize(20, 34);

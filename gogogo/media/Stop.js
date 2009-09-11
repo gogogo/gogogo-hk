@@ -46,8 +46,9 @@ gogogo.Stop.prototype.createMarker = function(){
         agency = this.queryAgency();        
        
         if (agency){
-            console.log(agency);
-            option["icon"] = agency.createTranitIcon();
+            var icon = agency.createTranitIcon();
+            if (icon!=undefined)
+                option["icon"] = icon;
         }
         
         this.marker = new GMarker(this.latlng,option);
@@ -116,7 +117,10 @@ gogogo.Stop.prototype.queryParentStation = function(manager,callback){
 
 gogogo.Stop.prototype.queryAgency = function(callback){
     if (this.agency!=undefined){
-        callback(this.agency);
+        if (callback!=undefined)
+            callback(this.agency);
+
+        return this.agency;
     }
     
     var stop = this;
