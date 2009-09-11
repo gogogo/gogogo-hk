@@ -84,7 +84,8 @@ class SimpleReferenceWidget(Input):
         
         object = None
         try:
-            object = getCachedObjectOr404(self.___model_class,key = value)
+            if value != None:
+                object = getCachedObjectOr404(self.___model_class,key = value)
         except Http404:
             pass
         

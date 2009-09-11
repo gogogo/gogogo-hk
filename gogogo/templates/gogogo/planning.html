@@ -10,32 +10,32 @@
 	.default {
 		color: #cccccc;
 	}
-    
+
     .transit_plan {
         margin-top : 0.8em;
     }
-    
+
     .transit_plan div {
         display: inline;
         margin-right : 5px;
     }
-    
+
     .transit_plan .transit_op {
         float: right;
     }
-    
+
     #markerwin .current_stop {
         color : red;
     }
-    
+
     #markerwin .before {
         color : gray;
     }
-    
+
     #markerwin .after {
         color : blue;
     }
-    
+
 	</style>
 {% endblock %}
 
@@ -73,7 +73,7 @@
 			$(f).val('');
 		}
 	}
-	
+
     /// Check is the address input field empty
 	function checkEmpty(index) {
 		input = addressList[index];
@@ -88,22 +88,22 @@
 		}
 		return false;
 	}
-    
+
     /// Bind events from the marker used in local search
     function bindLocalSearchMarker(link,marker,index,result) {
         $(link).click(function(){
             var address = planner.getAddress(index);
             _empty(addressList[index]);
-            
+
             address.setAddress(result.addressLines.join(","));
 			address.setLocation(new GLatLng(result.lat,result.lng));
             marker.closeInfoWindow();
         });
     }
-    
+
     function extendLocalSearchMarker(marker,html,result){
         GEvent.addListener(marker,"click",function(){
-            map.setZoom(17);           
+            map.setZoom(17);
         });
 
         $(html).empty();
@@ -113,7 +113,7 @@
         var endLink = $("<a></a>");
         $(endLink).append("{%trans 'Set as endpoint address' %}");
         bindLocalSearchMarker(endLink,marker,1,result);
-        
+
         $(html).append(startLink);
         $(html).append(" ");
         $(html).append(endLink);
@@ -124,32 +124,32 @@
     	layout.sizePane("west",230);
 
 		modelManager = new gogogo.ModelManager();
-        
+
         stopManager = new gogogo.StopManager(map,modelManager);
 
 		clusterManager = new gogogo.ClusterManager(map,modelManager);
 
         var options = {
             resultList : google.maps.LocalSearch.RESULT_LIST_INLINE,
-            searchFormHint : "Example Searches: Mong Kok",
+            searchFormHint : "e.g.: Mong Kok",
             suppressZoomToBounds : true,
             onGenerateMarkerHtmlCallback : extendLocalSearchMarker,
         };
-        
+
         map.addControl(new google.maps.LocalSearch(options),
         new GControlPosition(G_ANCHOR_BOTTOM_RIGHT, new GSize(10,20)));
 
 
 		planningOutput = $("#planningOutput");
         planner = new gogogo.Planner(map,planningOutput,clusterManager);
-        
+
         $(planner).bind("noClusterFound",function (e,address) {
               planningOutput.empty();
-              
+
               planningOutput.append("No stations was found near to : " +address.getAddress() );
         });
-		
-		var panButtonList = ["#planStartAddress" , "#planEndAddress"];
+
+		var panButtonList = ["#panStartAddress" , "#panEndAddress"];
 
 		/// Set the focus to start or end address input
 		function setFocus(index) {
@@ -177,13 +177,30 @@
 			$(address).bind("addressChanged" , function(e) {
 				$(input).val(e.target.getAddress() );
 			});
-			
+
 			$(address).bind("unknown" , function(e) {
 				setFocus(i);
 				planningOutput.empty();
 				planningOutput.append("Address unknown : " + address.getAddress() );
 			});
-		
+
+			$(input).blur(function(){
+				_default(input);
+			});
+
+			$(input).focus(function(){
+				_empty(input);
+			});
+
+			$(input).keydown(function(event){
+				if (13 == event.keyCode) {
+					// pressing enter, carry button click
+					planner.clearWaitingActions();
+					panTo(i);
+				}
+			});
+
+			_default(input);
 		});
 
 		$.each(panButtonList,function(i,btn){
@@ -197,7 +214,7 @@
 			var output = planningOutput;
 			output.empty();
 			output.append("<div>" + suggest_prompt + "</div>");
-			
+
 			target.createClarifyMarkers();
 
 			$(placemarks).each(  function(i,place){
@@ -227,10 +244,10 @@
 			clarify(response.Placemark,address);
 
 		});
-        
+
         $(stopManager).bind("markerAdded",function(e,marker,stop) {
             var markerWin = new gogogo.MarkerWin(map,stop,marker,modelManager,stopManager);
-            
+
         });
 
 		$("#planButton").click(function() {
@@ -243,7 +260,7 @@
 					return false;
                 }
 			});
-            
+
             if (!notEmpty)
                 return;
 
@@ -251,7 +268,7 @@
 				planningOutput.empty();
 				var plan_list = planner.getTransitPlanList();
                 for (var i = 0 ; i < plan_list.length  ;  i++){
-                    
+
                     var plan = plan_list[i];
                     var div = plan.createDiv(i+1,map,modelManager);
                     $(planningOutput).append(div);
@@ -259,25 +276,7 @@
                 }
 			});
 		});
-
-		$('#startAddress').blur(function(){
-			_default('#startAddress');
-		});
-		$('#endAddress').blur(function(){
-			_default('#endAddress');
-		});
-
-		$('#startAddress').focus(function(){
-			_empty('#startAddress');
-		});
-		$('#endAddress').focus(function(){
-			_empty('#endAddress');
-		});
-
-		_default('#startAddress');
-		_default('#endAddress');
 	});
-
 
 	</script>
 {% endblock %}
@@ -287,6 +286,7 @@
 
 <div>
 	<input id="startAddress" type="text" name="start" style="width:150px;margin-right:2px"/>
+
 	<button id="planStartAddress" class="ui-button ui-icon-button ui-state-default ui-corner-all" value=""><span class="ui-icon ui-icon-search">&nbsp;</span>&nbsp;</button>
 	<!--<button id="planStartAddress">{%trans "Go"%}</button>-->
 	<br />
@@ -295,6 +295,7 @@
 	<!--<button id="planEndAddress">{%trans "Go"%}</button>-->
 	<br />
 	<button id="planButton" class="ui-state-default ui-corner-all ui-button">{%trans "Plan"%}</button>
+
 </div>
 
 <div id="planningOutput">
