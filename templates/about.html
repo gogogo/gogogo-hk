@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block title %}Gogogo{% endblock %}
 
 {% block content %}
@@ -23,5 +24,24 @@ The Gogogo Project aims to provide a comprehensive and easy-to-use transit plann
 <p>
 The Gogogo Project is currently building the service and maintaining the transit database with team members collaborating using open source methods. If you are interested join us! Apart from software developers, we also need contributors who can look after the community-maintained transit database
 
+<h3>{% trans "Team Member list" %}</h3>
+
+<h5>{% trans "Developers" %}:</h5>
+<ul>
+<li><a href="http://benlaux.blogspot.com">Ben Lau</a> , PIC</li>
+<li>Abel , Passerby</li>
+<li><a href="http://www.google.com/search?hl=en&q=mrkschan">mrkschan</a> , GaoGaiGar fans</li>
+<li><a href="http://sammy.hk">Sammy Fung</a>, Developer</li>
+<li>Si, Developer </li>
+<li><a href="http://vincicat.blogspot.com">Vinci</a>, Developer </li>
+
+<li>Hilary , Developer   </li>
+</ul>
+
+<h5>{% trans "Contributors" %}:</h5>
+<ul>
+<li>Henry Law , community memeber</li>
+<li>ShawTim</li>
+</ul>
 
 {% endblock %}
