@@ -128,7 +128,12 @@
         stopManager = new gogogo.StopManager(map,modelManager);
 
 		clusterManager = new gogogo.ClusterManager(map,modelManager);
-
+        
+        clusterManager.setAutoCreateOverlay(false);
+        {% if user.is_staff %}
+        clusterManager.setAutoCreateOverlay(true);
+        {% endif %}
+        
         var options = {
             resultList : google.maps.LocalSearch.RESULT_LIST_INLINE,
             searchFormHint : "e.g.: Mong Kok",
@@ -149,7 +154,7 @@
               planningOutput.append("No stations was found near to : " +address.getAddress() );
         });
 
-		var panButtonList = ["#panStartAddress" , "#panEndAddress"];
+		var panButtonList = ["#planStartAddress" , "#planEndAddress"];
 
 		/// Set the focus to start or end address input
 		function setFocus(index) {
@@ -282,7 +287,7 @@
 {% endblock %}
 
 {% block left_column %}
-<b>The page is under constructing. To view stop on map ,  zoom to level 15 or above.  </b><p></p>
+<b>The page is still under constructing.</b><p></p>
 
 <div>
 	<input id="startAddress" type="text" name="start" style="width:150px;margin-right:2px"/>
