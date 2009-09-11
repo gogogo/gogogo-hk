@@ -19,7 +19,7 @@ urlpatterns = patterns(
 	#############################################################
 	# Database frontend (for advanced viewing and editing)
 	#############################################################
-	(r'^db/shape/browse/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.db.shape.browse'),
+	(r'^db/shape/browse/(?P<id>[0-9a-zA-Z_-]*)$' ,'gogogo.views.db.shape.browse'),
 	
     (r'^db/agency/list$', 'gogogo.views.db.agency.list'),
 	(r'^db/agency/browse/(?P<id>[0-9a-zA-Z_]*)$' ,'gogogo.views.db.agency.browse'),

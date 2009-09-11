@@ -26,8 +26,9 @@ gogogo.SearchingManager = function (map,modelManager){
 	this.map = map;
     
     this.modelManager = modelManager;
+    
     if (this.modelManager == undefined)
-        this.modelManager = new gogogo.ModelManager();
+        this.modelManager = gogogo.modelManager;
 	
 	/// The min zooming for searching 
 	this.minZoom = 17;

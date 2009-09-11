@@ -9,10 +9,10 @@ from gogogo.models.loaders import ListLoader , FareStopLoader , TripLoader , Age
 from google.appengine.api import memcache
 
 # Cache for whole day
-#_default_cache_time = 3600 * 24
+_default_cache_time = 3600 * 24
 
 # Cache for 5 minutes only , for testing purpose
-_default_cache_time = 300
+#_default_cache_time = 300
 
 class TransitArc(Arc):
     def __init__(self , **kwargs):

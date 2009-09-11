@@ -560,7 +560,7 @@ class Transfer(db.Model):
             b = stop_b.id_or_name()
 
         
-        return "[%s]_%s_<=> %s" % (agency.id_or_name() , a , b)
+        return "[%s] %s_<=> %s" % (agency.id_or_name() , a , b)
     
 
 auto_set_key_name_table = {

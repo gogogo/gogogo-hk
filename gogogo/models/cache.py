@@ -5,7 +5,7 @@ import logging
 
 from utils import createEntity
 
-_default_cache_time = 3600
+_default_cache_time = 3600 * 4
 
 def _get_key_string(model,key=None,key_name=None , key_string = None , id = None):
 	if key:

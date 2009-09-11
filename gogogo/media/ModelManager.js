@@ -19,6 +19,12 @@ gogogo.ModelManager = function(){
     this.cluster_table = {};
 }
 
+/** A global model manager for all page
+ * 
+ */
+
+gogogo.modelManager = new gogogo.ModelManager();
+
 /** Query an object with a type from server(internal function)
  * 
  * @param model The constructor function of the object type.
