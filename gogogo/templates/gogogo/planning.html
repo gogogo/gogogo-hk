@@ -287,11 +287,14 @@
 
 <div>
 	<input id="startAddress" type="text" name="start" style="width:150px;margin-right:2px"/>
-	<button id="planStartAddress">{%trans "Go"%}</button>
+	<button id="planStartAddress" class="ui-button ui-icon-button ui-state-default ui-corner-all" value=""><span class="ui-icon ui-icon-search">&nbsp;</span>&nbsp;</button>
+	<!--<button id="planStartAddress">{%trans "Go"%}</button>-->
+	<br />
 	<input id="endAddress" type="text" name="end" style="width:150px;margin-right:2px;margin-top:5px;margin-bottom:5px" />
-	<button id="planEndAddress">{%trans "Go"%}</button>
-
-	<button id="planButton">{%trans "Plan"%}</button>
+	<button id="planEndAddress" class="ui-button ui-icon-button ui-state-default ui-corner-all" value=""><span class="ui-icon ui-icon-search">&nbsp;</span>&nbsp;</button>
+	<!--<button id="planEndAddress">{%trans "Go"%}</button>-->
+	<br />
+	<button id="planButton" class="ui-state-default ui-corner-all ui-button">{%trans "Plan"%}</button>
 </div>
 
 <div id="planningOutput">

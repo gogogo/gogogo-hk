@@ -2,20 +2,25 @@
 	outline: 0 !important;
 }
 .ui-button {
-	padding: .4em 1em .4em 20px;
+	padding: 0.1em 0.5em;
 	text-decoration: none;
 	position: relative;
+}
+span.ui-icon {
+	text-indent:0;
 }
 .ui-button span.ui-icon {
 	margin: 0 5px 0 0;
 	position: absolute;
 	/*left: .2em;*/
-	top: 50%;
-	margin-top: -8px;
+	/*top: 50%;*/
+	/*margin-top: -8px;*/
 	zoom: 1;
+	display:block;
 }
-button.ui-button {
+button.ui-icon-button {
 	padding:0 0.8em 0 0;
+	min-width:24px;
 }
 button.ui-button span.ui-icon-label {
 	padding-left:20px;
