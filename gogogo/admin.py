@@ -223,7 +223,8 @@ class FareStopAdmin(admin.ModelAdmin):
 admin.site.register(FareStop, FareStopAdmin)
 
 class FarePairAdmin(admin.ModelAdmin):
-    pass
+    search_fields = ('fare',)
+    
     
 admin.site.register(FarePair, FarePairAdmin)
 

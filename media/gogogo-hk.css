@@ -19,8 +19,15 @@
 }
 
 #header span.setlang_link {
-	color:#59b4d4;
+    color:#ddd;
+    text-shadow:0 -1px 0 #999;
+    text-decoration:none;
 }
+
+#header span.setlang_link:hover {
+	color:#fff;
+}
+
 #header span.usr-highlight {
 	border: 1px solid #666;
 	margin:0.4em;

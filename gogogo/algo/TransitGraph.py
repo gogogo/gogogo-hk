@@ -198,7 +198,6 @@ class TransitGraph(Graph):
                     a = self.get_node_by_stop(pair["from_stop"])
                     b = self.get_node_by_stop(pair["to_stop"])
                     
-                    #TODO , don't save entity in graph , reduce the memory usage
                     arc = TransitArc(agency = agency.key().id_or_name() ,weight = pair["fare"] )
                     arc.link(a,b)
                     self.add_arc(arc)
