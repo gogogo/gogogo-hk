@@ -121,7 +121,8 @@ gogogo.MarkerWin.prototype.renderTripList = function(target,content) {
     
     $.getJSON(api, null , function(response) {	
         if (response.stat == "ok"){
-            
+            var total = response.data.length;
+            var count = 0;
             $.each(response.data,function(i,trip_id) {
                 var div = $("<span></span>");   
                 $(target).append(div);
@@ -135,6 +136,11 @@ gogogo.MarkerWin.prototype.renderTripList = function(target,content) {
                     $(div).click(function(){
                         markerWin.renderTrip(content,trip);
                     });
+                    
+                    count++;
+                    if (count == total){
+                        markerWin.resize();
+                    }
                 });
             });
             
