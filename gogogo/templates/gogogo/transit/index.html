@@ -16,7 +16,9 @@
 <div id="content-sub-header">
 <h2>{%trans "Transit information"%}</h2>
 {% if user.is_authenticated %}
+<div class="user-tool">
 <a href="{% url gogogo.views.db.add model_kind %}" class="ui-state-default ui-corner-all ui-button admin-button">{% trans "Add" %} </a>
+</div>
 {% endif %}
 
 </div>

@@ -3,13 +3,25 @@
 {% block css %}
 {{block.super}}
 <style type="text/css">
-#agency-info {}
+#agency-info {
+{% ifequal showMap 'False' %}width:100%{%endifequal%}
+}
 #agency-map  {}
 </style>
 {% endblock %}
-{% block content %}
 
-<div id="agency-info" class="span-6 {% ifequal showMap 'False' %}last{%endifequal%}">
+{% block left_column %}
+<div id="agency-info" >
+<h4>{%trans "Agency information" %}</h4>
+
+<div class="user-tool">
+    {% if user.is_authenticated %}
+		<a href="{%url gogogo.views.db.add route_kind%}?parent={{agency.id}}" class="ui-state-default ui-corner-all ui-button admin-button">{% trans "Add route" %}</a>
+    {%endif%}
+    <a id ="reportButton" href="#" class="ui-state-default ui-corner-all ui-button admin-button">Report</a>
+	<a href="{% url gogogo.views.db.edit agency_kind,agency.id%}" class="ui-state-default ui-corner-all ui-button admin-button">Edit</a>
+</div>
+
 <table>
     <tr>
         <td>{%trans "Name"%}: </td>
@@ -34,15 +46,6 @@
     </tr>   
 </table>
 
-<div style="height: 1em; margin-bottom:1em">
-    <ul class="object-tools" >
-    {% if user.is_authenticated %}
-    	<li><a href="{%url gogogo.views.db.add route_kind%}?parent={{agency.id}}">{% trans "Add route" %}</a></li>
-    {%endif%}
-    	<li><a id ="reportButton" href="#">Report</a></li>
-    <li><a href="{% url gogogo.views.db.edit agency_kind,agency.id%}" >Edit</a>
-    </ul>
-</div>
 
 <p></p>
 
@@ -59,17 +62,18 @@
 {% endif %}
 
 </div><!-- End of agency_info -->
+{% endblock %}
 
 {% if showMap %}
-
-<div id="agency-map" class="span-18 last" >
+{% block right_column %}
+<div id="agency-map">
 	<script type="text/javascript">
 		var map;
 		var stopManager;
 		
 		$(document).ready(function(){
 			
-			height = $('#agency_info').height();
+			height = $('#agency-info').height();
 		
 			$('#map').height(Math.max(height,400));
 			
@@ -114,8 +118,6 @@
 	</script>
 	<div id="map" class="info-map" style="width:100%;height:100%"></div>
 </div>
-
+{% endblock %}
 {% endif %}
 
-
-{% endblock %}

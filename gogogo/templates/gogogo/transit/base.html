@@ -1,8 +1,28 @@
 {% extends 'gogogo/base.html' %}
 {# 'gogogo/transit/base.html' #}
 
-{% block title %} {{ page_title }} {% endblock %}
-
+{% block title %} {{ page_title }} {% endblock %}{% block css %}
+{{block.super}}
+	<style type="text/css">
+	body {min-width:1006px; width:100%; margin: 0 auto;}
+	h4 {margin-bottom:0.25em;}
+	.ui-row-1, .ui-row-2 {width:100%;}
+	.ui-left-column {width:27%; min-width:260px; float:left; margin-right:1%;}
+	.ui-right-column {width:70%; min-width:710px; float:left;}
+	.ui-left-column table td {vertical-align: top}
+	</style>
+{% endblock %}
 {% block content-header %}
 {%include 'gogogo/transit/content_header.html'%}
 {% endblock %}
+{% block content %}
+	  <!-- if everything okay -->
+	  <div class="ui-row-1">
+		<div class="ui-left-column">{% block left_column %}{% endblock %}</div>
+		<div class="ui-right-column">{% block right_column %}{% endblock %}</div>
+	  </div>
+	  <div class="ui-row-2">
+		{% block content_extra %}{% endblock %}
+	  </div>
+{% endblock %}
+

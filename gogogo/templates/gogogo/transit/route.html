@@ -51,35 +51,33 @@
 	</script>
 {% endblock %}
 
-{% block content %}
-<div id="general_info" class="colborder span-8">
+
+{% block left_column %}
+<h4>{% trans "Route Information" %}</h4>
 {% if user.is_staff %}
-<div class="objects-tool">
-		<ul class="object-tools" >
+<div class="staff-tool">
     	{% if user.is_authenticated %}
-    	<li><a href="{%url gogogo.views.db.add trip_kind%}?parent={{route.id}}">{% trans "Add trip" %}</a></li>
+    	<a href="{%url gogogo.views.db.add trip_kind%}?parent={{route.id}}"  class="ui-state-default ui-corner-all ui-button admin-button">{% trans "Add trip" %}</a></li>
     	{%endif%}
-		<li><a href="{%url gogogo.views.db.report.submit route_kind,route.id%}" >Report</a></li>
-    	<li><a href="{%url gogogo.views.db.edit route_kind,route.id %}" >Edit</a></li>
-    	</ul>
+		<a href="{%url gogogo.views.db.report.submit route_kind,route.id%}"  class="ui-state-default ui-corner-all ui-button admin-button">Report</a>
+    	<a href="{%url gogogo.views.db.edit route_kind,route.id %}"  class="ui-state-default ui-corner-all ui-button admin-button">Edit</a>
 </div>
-<p>
 {%endif%}
 <table>
     <tr>
-    	<td>Short Name: </td>
+    	<td>{%trans "Short Name" %}: </td>
     	<td>{{route.short_name}}</td>
     </tr>
 	<tr>
-		<td>Name:</td>
+		<td>{%trans "Name" %}:</td>
     	<td>{{route.long_name}}</a></td>  
 	</tr>
     <tr>
-        <td>Agency: </td>
+        <td>{%trans "Agency" %}: </td>
         <td><a href="{%url gogogo.views.transit.agency agency.id%}">{{agency.name}}</a></td>
     </tr>
-    <tr><td>Type:</td><td>{{route.type}}</td></tr>
-    <tr><td>URL:</td><td>{% if route.url %}<a href="{{route.url}}">Link</a>{%endif%}</td></tr>
+    <tr><td>{%trans "Type" %}:</td><td>{{route.type}}</td></tr>
+    <tr><td>{%trans "URL" %}:</td><td>{% if route.url %}<a href="{{route.url}}">{%trans "Link" %}</a>{%endif%}</td></tr>
     <tr>
         <td>{%trans "Trip"%}: </td>
         <td>{%for trip in trip_list %}
@@ -92,18 +90,20 @@
     </tr>
 
 </table>
-</div>
+{% endblock %}
 
-<div class="span-16 last">
+{% block right_column %}
 	<div id="map" style="width:100%;height:100%"></div>
-</div>
+{% endblock %}
 
+
+{% block content_extra %}
 <hr class="space"/>
-
+<h4>Route Description</h4>
 <div class="span-24 last">
 {% if route.desc %}
 	{{route.desc|linebreaks}}
 {% endif %}
 </div>
-
 {% endblock %}
+

@@ -23,30 +23,28 @@
 {% endblock %}
 
 {% block left_column %}
-
-<div style="height: 1em; margin-bottom:1em">
-    <ul class="object-tools" >
+<h4>{%trans "Stop Information" %}</h4>
+<div class="user-tool">
     {% if user.is_authenticated %}
-    	<li><a href="{%url gogogo.views.db.add stop_kind%}">{% trans "Add" %}</a></li>
+    	<a href="{%url gogogo.views.db.add stop_kind%}" class="ui-state-default ui-corner-all ui-button admin-button">{% trans "Add" %}</a>
     {%endif%}
-    <li><a href="{%url gogogo.views.db.report.submit stop_kind,stop.id%}" >Report</a></li>
-    <li><a href="{% url gogogo.views.db.edit stop_kind,stop.id%}" >Edit</a>
-    </ul>
+    <a href="{%url gogogo.views.db.report.submit stop_kind,stop.id%}" class="ui-state-default ui-corner-all ui-button admin-button">Report</a>
+    <a href="{% url gogogo.views.db.edit stop_kind,stop.id%}" class="ui-state-default ui-corner-all ui-button admin-button">Edit</a>
 </div>
 
 <table>
     <tr>
-    	<td>Name: </td>
+    	<td>{%trans "Name" %}: </td>
     	<td>{{stop.name}}</td>
     </tr>
 	<tr>
-		<td>URL:</td>
+		<td>{%trans "URL" %}: </td>
     	<td><a href="{{stop.url}}">{{stop.url}}</a></td>  
 	</tr>
-	<tr><td>Code:</td><td>{{stop.code}}</td></tr>
-	<tr><td>LatLng:</td><td>{{stop.latlng}}</td></tr>
-	<tr><td>Location Type :</td><td>{{stop.location_type}}</td></tr>
-	<tr><td>Parent Station :</td><td>{%if parent %}
+	<tr><td>{%trans "Code" %}: </td><td>{{stop.code}}</td></tr>
+	<tr><td>{%trans "LatLng" %}: </td><td>{{stop.latlng}}</td></tr>
+	<tr><td>{%trans "Location Type" %}: </td><td>{{stop.location_type}}</td></tr>
+	<tr><td>{%trans "Parent Station" %}: </td><td>{%if parent %}
 		<a href="{%url gogogo.views.transit.stop parent.id %}">{{parent.name}}</a>{% endif %}</td></tr>
    <tr>
    		<td colspan="2">{{stop.desc}}</td>
