@@ -87,3 +87,28 @@ gogogo.Agency.prototype.createPolyline = function(from,to,stopManager,callback){
     });
     
 }
+
+/** Create an icon according to its transit type
+ * 
+ */
+
+gogogo.Agency.prototype.createTranitIcon = function() {
+    var file;
+    var icon;
+    switch (this.info.type) {
+        case 1:
+        case 2: 
+            file = "gogogo/markers-transportation/subway.png"
+            break;
+    }
+    
+    if (file != undefined){
+        
+        icon = new GIcon();
+        icon.image = site_data.settings.MEDIA_URL + file;
+        console.info(icon.image);
+        icon.iconSize = new GSize(32, 37);
+        icon.iconAnchor = new GPoint(16, 34);
+    }
+    return icon;
+}

@@ -98,7 +98,7 @@ gogogo.MarkerWin.prototype.renderGeneral = function(target) {
     });
     
     var agency_name = $(target).find(".agency_name");
-    this.stop.queryAgency(this.modelManager,function(agency){
+    this.stop.queryAgency(function(agency){
        if (agency != undefined){
            var a = $("<a> " + agency.getName() + " </a>");
            $(agency_name).append(a);

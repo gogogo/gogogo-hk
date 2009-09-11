@@ -9,7 +9,9 @@ gogogo.Stop = function(id){
     gogogo.Model.call(this,id);
 
     this.marker = undefined;
-
+    
+    /// Reference of agency model
+    this.agency = undefined;
 }
 
 extend(gogogo.Stop , gogogo.Model)
@@ -40,6 +42,14 @@ gogogo.Stop.prototype.createMarker = function(){
         var option = {
             "title": this.info.name
         };
+
+        agency = this.queryAgency();        
+       
+        if (agency){
+            console.log(agency);
+            option["icon"] = agency.createTranitIcon();
+        }
+        
         this.marker = new GMarker(this.latlng,option);
     }
 
@@ -104,11 +114,25 @@ gogogo.Stop.prototype.queryParentStation = function(manager,callback){
  * 
  */
 
-gogogo.Stop.prototype.queryAgency = function(manager,callback){
+gogogo.Stop.prototype.queryAgency = function(callback){
+    if (this.agency!=undefined){
+        callback(this.agency);
+    }
+    
+    var stop = this;
     
     if (this.info.agency == undefined){
-        callback();
+        if (callback!=undefined)
+            callback();
     } else {
-        manager.queryAgency(this.info.agency,callback);
+        gogogo.modelManager.queryAgency(this.info.agency,function(agency){
+             stop.agency = agency;
+             
+             if (callback!= undefined){
+                 callback(agency);
+             }   
+        });
     }
+    
+    return this.agency;
 }

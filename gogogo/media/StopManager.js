@@ -60,6 +60,8 @@ gogogo.StopManager.prototype._search = function(prefix,callback) {
 					var stop = new gogogo.Stop(item.id);
 					stop.updateFromJson(item,true);
                     
+                    stop.queryAgency();
+                    
                     manager.stops[item.id] = stop;                    
 				}
 				list.push(manager.stops[item.id]);
