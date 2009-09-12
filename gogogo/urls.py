@@ -65,6 +65,7 @@ urlpatterns = patterns(
     (r'^api/stop/block$','gogogo.api.stop.block'),		
 	(r'^api/stop/markerwin/(?P<id>[0-9a-zA-Z_]*)$' , 'gogogo.api.stop.markerwin'),
 	(r'^api/stop/get$' ,'gogogo.api.stop.get'),		
+    (r'^api/stop/mget$' ,'gogogo.api.stop.mget'),		
     (r'^api/stop/list_trip$' ,'gogogo.api.stop.list_trip'),
 	(r'^api/shape/get$' ,'gogogo.api.shape.get'),		
 

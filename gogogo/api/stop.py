@@ -187,3 +187,28 @@ def list_trip(request):
     trip_id_list = loader.get_trip_id_list()
     
     return ApiResponse(data=trip_id_list)
+
+def mget(request):
+    """
+    Get multiple stop in an ajax call
+    """
+    if "input" not in request.GET:
+        return ApiResponse(error="input")
+        
+    input = request.GET['input']
+
+    items = input.split(",")
+
+    result = []
+
+    for id in items:    
+        try:
+            entity = getCachedEntityOr404(Stop,id_or_name = id)
+            entity = trEntity(entity,request)
+            del entity['instance']
+            result.append(entity)
+
+        except Http404:
+            pass
+
+    return ApiResponse(data=result)
