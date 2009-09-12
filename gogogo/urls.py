@@ -69,7 +69,8 @@ urlpatterns = patterns(
     (r'^api/stop/list_trip$' ,'gogogo.api.stop.list_trip'),
 	(r'^api/shape/get$' ,'gogogo.api.shape.get'),		
 
-	(r'^api/trip/get$' ,'gogogo.api.trip_get'),
+	(r'^api/trip/get$' ,'gogogo.api.trip.get'),
+    (r'^api/trip/mget$' ,'gogogo.api.trip.mget'),
 	
 	(r'^api/cluster/search/(?P<lat0>[0-9]+\.*[0-9]*),(?P<lng0>[0-9]+\.*[0-9]*),(?P<lat1>[0-9]+\.*[0-9]*),(?P<lng1>[0-9]+\.*[0-9]*)$' 
 		,'gogogo.api.cluster.search'),		

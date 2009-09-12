@@ -191,7 +191,7 @@ def list_trip(request):
 
 def mget(request):
     """
-    Get multiple stop in an ajax call
+    Get multiple entities in an ajax call
     """
     if "ids" not in request.GET:
         return ApiResponse(error="ids")

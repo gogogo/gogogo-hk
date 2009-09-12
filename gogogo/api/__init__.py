@@ -61,24 +61,4 @@ class ApiResponse(HttpResponse):
 		
 		return text.getvalue()
 
-def trip_get(request):
-    if "id" not in request.GET:
-        return ApiResponse(error="ID missing")
-        
-    id = request.GET['id']
-
-    entity = getCachedEntityOr404(Trip,id_or_name = id)
-    entity = trEntity(entity,request)
-    del entity['instance']
-        
-    if entity["route"]:
-        if isinstance(entity["route"],db.Key):
-            route = getCachedEntityOr404(Route,key = entity["route"])
-        else:
-            route = getCachedEntityOr404(Route,id_or_name = entity["route"])
-        route = trEntity(route,request)
-        entity['color'] = route["color"]
-        entity['name'] = route["long_name"]
-               
-    return ApiResponse(data=entity)
 	
