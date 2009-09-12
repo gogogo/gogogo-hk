@@ -37,14 +37,15 @@ gogogo.modelManager = new gogogo.ModelManager();
  */
 
 gogogo.ModelManager.prototype._query = function(model,dict,id,callback){
-	object = dict[id];
+	var object = dict[id];
 	
-	if (object != undefined) {
-		if (object.complete == false) // The information of the object is not completed
-			object = undefined;
+	if (object == undefined) {
+        object = new model(id);
+        dict[id] = object;
 	}
-		
-	if (object != undefined) {
+        
+	if (object.complete) {
+        
 		if (callback!=undefined)
 			callback(object)
 			
@@ -52,14 +53,7 @@ gogogo.ModelManager.prototype._query = function(model,dict,id,callback){
 			
 	} else {
 		
-		if (dict[id] == undefined) {
-			dict[id] = new model(id);
-		}
-		
-		object = dict[id];
 		object.query(callback);
-		
-		return undefined;
 		
 	}
 }

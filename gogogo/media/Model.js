@@ -73,8 +73,7 @@ gogogo.Model.prototype.query = function(callback) {
 	$.getJSON(api, null , function(response) {	
 		if (response.stat == "ok"){
 			model.error = false;
-			model.updateFromJson(response.data);
-			model.complete = true;
+			model.updateFromJson(response.data,true);
 		} else {
             model.error = true;
             model.complete = true;
