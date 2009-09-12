@@ -87,10 +87,8 @@
             var trip_id_list_received = 0;
             var bounds = new GLatLngBounds();
 
-            for (var i in trip_id_list){
-            	var trip = new gogogo.Trip(trip_id_list[i]);
-				
-            	trip.query(function(trip){
+            gogogo.modelManager.queryTripList(trip_id_list,function(trip_list){
+				$.each(trip_list,function(i,trip){
 					trip.queryStops(stopManager,function(trip) {
                         var line = trip.createPolyline();
                         map.addOverlay(line);
@@ -105,8 +103,11 @@
                             map.setCenter(center,zoom);                        
                         }                       
                     });
-				});
-			}
+                
+                });
+                
+            });
+			
             
             var report = new gogogo.Report("#reportButton", 
                 "{%url gogogo.views.db.report.submit agency_kind,agency.id%}");

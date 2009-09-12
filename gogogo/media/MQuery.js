@@ -22,7 +22,7 @@ gogogo.MQuery.prototype.push = function(id){
  */
 
 gogogo.MQuery.prototype.concat = function(list){
-    this.id_list.concat(list);
+    this.id_list = this.id_list.concat(list);
 }
 
 /** Query
@@ -50,11 +50,11 @@ gogogo.MQuery.prototype.query = function(dict,callback){
     $.each(this.id_list,function(i,id){
         var object = dict[id];
         if (object==undefined){
-            object = mquery.model(id);
+            object = new mquery.model(id);
             dict[id] = object;
         }
         
-        if (!object.complete ){
+        if (!object.complete && !object.querying){
             ids.push(id);
             object.querying = true;
         }
@@ -63,8 +63,9 @@ gogogo.MQuery.prototype.query = function(dict,callback){
     if (ids.length == 0) {
         done();
     } else {
+        var model = new mquery.model();
         
-        var api = "/api/" + mquery.model.modelType + "/mget?ids=" + ids.join(",");
+        var api = "/api/" + model.modelType + "/mget?ids=" + ids.join(",");
         var cache = jQuery.ajaxSettings.cache;
         jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
         
@@ -73,6 +74,7 @@ gogogo.MQuery.prototype.query = function(dict,callback){
                 $.each(response.data,function(i,item) {
                     var object = dict[item.id];
                     object.updateFromJson(item,true);                    
+                    object.querying = false;
                 });
             }
             

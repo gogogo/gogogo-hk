@@ -58,6 +58,16 @@ gogogo.ModelManager.prototype._query = function(model,dict,id,callback){
 	}
 }
 
+/** Query multi-models by using mget in the same time
+ * 
+ */
+
+gogogo.ModelManager.prototype._queryList = function(model,dict,ids,callback){
+    mquery = new gogogo.MQuery(model);
+    mquery.concat(ids);
+    mquery.query(dict,callback);    
+}
+
 /** Query multiple items at a time
  * 
  */
@@ -116,6 +126,14 @@ gogogo.ModelManager.prototype.queryShape = function(id,callback) {
 gogogo.ModelManager.prototype.queryTrip = function(id,callback) {
     
 	return this._query(gogogo.Trip,this.trip_table,id,callback)
+}
+
+/** Query multiple trip information from server
+ * 
+ */
+
+gogogo.ModelManager.prototype.queryTripList = function(ids,callback) {
+	return this._queryList(gogogo.Trip,this.trip_table,ids,callback);
 }
 
 /** Query stop information from server
