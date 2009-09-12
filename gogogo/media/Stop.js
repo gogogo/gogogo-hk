@@ -24,9 +24,9 @@ gogogo.Stop.prototype.modelType = "stop";
  * Update from JSON
  */
 
-gogogo.Stop.prototype.updateFromJson = function(json){
+gogogo.Stop.prototype.updateFromJson = function(json,complete){
 
-    gogogo.Model.prototype.updateFromJson.call(this,json);
+    gogogo.Model.prototype.updateFromJson.call(this,json,complete);
 
     if (json.latlng != undefined) {
         this.latlng = new GLatLng(json.latlng[0], json.latlng[1]);

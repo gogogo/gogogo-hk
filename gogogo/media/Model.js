@@ -39,7 +39,7 @@ gogogo.Model.prototype.updateFromJson = function(json,complete){
 	}
     
     if (complete!=undefined)
-        self.complete = self.complete;
+        this.complete = complete;
 	
 }
 

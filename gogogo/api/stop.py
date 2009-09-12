@@ -171,6 +171,7 @@ def get(request):
         entity = getCachedEntityOr404(Stop,id_or_name = id)
         entity = trEntity(entity,request)
         del entity['instance']
+        del entity['geohash']
         return ApiResponse(data=entity)
     except Http404:
         return ApiResponse(error="Stop not found")
@@ -205,6 +206,7 @@ def mget(request):
         try:
             entity = getCachedEntityOr404(Stop,id_or_name = id)
             entity = trEntity(entity,request)
+            del entity['geohash']
             del entity['instance']
             result.append(entity)
 
