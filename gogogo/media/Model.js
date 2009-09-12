@@ -5,9 +5,6 @@
  * 
  * @constructor 
  * 
- * Signals:
- * 
- * 	complete - The query is completed.
  */
 
 gogogo.Model = function(id){

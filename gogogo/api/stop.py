@@ -193,12 +193,12 @@ def mget(request):
     """
     Get multiple stop in an ajax call
     """
-    if "input" not in request.GET:
-        return ApiResponse(error="input")
+    if "ids" not in request.GET:
+        return ApiResponse(error="ids")
         
-    input = request.GET['input']
+    ids = request.GET['ids']
 
-    items = input.split(",")
+    items = ids.split(",")
 
     result = []
 
