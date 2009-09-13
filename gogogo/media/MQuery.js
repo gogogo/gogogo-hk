@@ -63,25 +63,51 @@ gogogo.MQuery.prototype.query = function(dict,callback){
     if (ids.length == 0) {
         done();
     } else {
-        var model = new mquery.model();
+        var total = ids.length;
+        var count = 0;
         
-        var api = "/api/" + model.modelType + "/mget?ids=" + ids.join(",");
-        var cache = jQuery.ajaxSettings.cache;
-        jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
-        
-        $.getJSON(api, null , function(response) {	
-            if (response.stat == "ok"){
-                $.each(response.data,function(i,item) {
-                    var object = dict[item.id];
-                    object.updateFromJson(item,true);                    
-                    object.querying = false;
-                });
+        this._query(ids,dict,function(num){
+            count+=num;
+            if (count == total){
+                done();
             }
-            
-            done();
         });
-        jQuery.ajaxSettings.cache = cache;	        
-        
+                
     }
     
 }
+
+/** For recursive query 
+ * 
+ */
+
+gogogo.MQuery.prototype._query = function(ids,dict,callback){
+    var ids_string = ids.join(",");
+    if (ids_string.length > 1800 ) {
+        var m = ids.length / 2;
+        this._query(ids.slice(0,m) , dict, callback );
+        this._query(ids.slice(m) , dict , callback);
+        return;
+    }
+    
+    var model = new mquery.model();
+                   
+    var api = "/api/" + model.modelType + "/mget?ids=" + ids_string;
+    var cache = jQuery.ajaxSettings.cache;
+    jQuery.ajaxSettings.cache = true; // Prevent the "_" parameter
+    
+    $.getJSON(api, null , function(response) {	
+        if (response.stat == "ok"){
+            $.each(response.data,function(i,item) {
+                var object = dict[item.id];
+                object.updateFromJson(item,true);                    
+                object.querying = false;
+            });
+        }
+        
+        callback(ids.length);
+        
+    });
+    jQuery.ajaxSettings.cache = cache;	            
+}
+
