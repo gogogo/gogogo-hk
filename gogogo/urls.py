@@ -49,9 +49,6 @@ urlpatterns = patterns(
 	(r'^devtools/StopMaps.html$', 'django.views.generic.simple.direct_to_template',
         {'template': 'gogogo/devtools/StopMaps.html'}),
     
-    (r'^js/(?P<path>.*)$', 'django.views.static.serve',
-         {'document_root': os.path.abspath(os.path.dirname(__file__) + '/js') }  ),
-    
     ################################################     
     # API     
     ################################################
