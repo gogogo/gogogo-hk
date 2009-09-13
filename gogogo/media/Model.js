@@ -93,3 +93,20 @@ gogogo.Model.prototype.query = function(callback) {
 gogogo.Model.prototype.getID = function(){
     return this.id;
 }
+
+/** Block the query function
+ * 
+ */
+
+gogogo.Model.prototype.block = function(){
+    this.querying = true;
+}
+
+/** Unblock the query function
+ * 
+ */
+
+gogogo.Model.prototype.unblock = function(){
+    this.querying = false;
+    $(this).trigger("query-finished");
+}

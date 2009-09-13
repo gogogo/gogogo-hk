@@ -144,3 +144,11 @@ gogogo.ModelManager.prototype.queryStop = function(id,callback) {
     
 	return this._query(gogogo.Stop,this.stop_table,id,callback)
 }
+
+/** Query multiple stop information from server
+ * 
+ */
+
+gogogo.ModelManager.prototype.queryStopList = function(ids,callback) {
+	return this._queryList(gogogo.Stop,this.stop_table,ids,callback);
+}

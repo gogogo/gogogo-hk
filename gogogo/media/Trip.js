@@ -11,40 +11,17 @@ gogogo.Trip = function(id){
 	this.polyline = undefined;
     
     // Stop Object storage
-	this.stopObjectList = [];
-    
-    // No. of stop objects stored
-	this.stopObjectListCount = 0;
+	this.stopObjectList;
+   
 }
 
 $.extend(gogogo.Trip,gogogo.Model);
 
 gogogo.Trip.prototype.modelType = "trip";
 
-/**
- * Query a single stop object from StopManager
- * 
- * @param manager Either of StopManager or ModelManager
- */
-
-gogogo.Trip.prototype._queryStop = function(manager,index,callback){
-	var trip = this;	
-	manager.queryStop(this.info.stop_list[index],
-		function(stop) {					
-			trip.stopObjectList[index] = stop;
-			trip.stopObjectListCount++;
-			if (trip.isStopObjectListComplete()) {
-				$(trip).trigger("stopObjectListComplete");
-				if (callback !=undefined){
-					callback(trip,trip.stopObjectList);
-				}
-			}
-		});	
-};
-
 /** Query associated stop objects from StopManager
  * 
- * @param manager Either of StopManager or ModelManager
+ * @param manager Deprecated
  * @param callback To be involved when all the objects are fetched from server. ( callback(trip,stop_list) )
  * 
  */
@@ -54,27 +31,23 @@ gogogo.Trip.prototype.queryStops = function (manager,callback) {
 	if (this.info.stop_list == undefined) {
 		return ;
 	}
-
-	this.stopObjectListCount = 0;
-	
-	for (var i = 0 ; i < this.info.stop_list.length ;i++) {
-		this._queryStop(manager,i,callback);
-	}
-}
-
-/** Check is all the stop objects received.
- * 
- */
-gogogo.Trip.prototype.isStopObjectListComplete = function () {
-
-	var ret;
-	if (this.stopObjectListCount == this.info.stop_list.length){		
-		ret =true;
-	} else {
-		ret = false;
-	}
-
-	return ret;
+    
+    if (this.stopObjectList!=undefined){
+        if (callback!=undefined){
+            callback(this,this.stopObjectList);
+        }
+        return;
+    }
+    
+    var trip = this;
+    
+    gogogo.modelManager.queryStopList( this.info.stop_list,function(stopObjectList){
+        trip.stopObjectList = stopObjectList;
+        $(trip).trigger("stopObjectListComplete");
+        if (callback!=undefined){
+            callback(trip,trip.stopObjectList)
+        }
+    });	
 }
 
 /** Clear all the stop stored
@@ -135,7 +108,7 @@ gogogo.Trip.prototype.createPolyline = function(options) {
 	if (this.polyline != undefined)
 		return this.polyline;
 		
-	if (!this.isStopObjectListComplete())
+	if (this.stopObjectList == undefined)
 		return undefined;
 
 	var pts = [];

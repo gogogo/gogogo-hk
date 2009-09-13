@@ -34,6 +34,8 @@ gogogo.MQuery.prototype.concat = function(list){
 gogogo.MQuery.prototype.query = function(dict,callback){
     var mquery = this;
     var ids = [];
+    var total = this.id_list.length;
+    var count = 0;
     
     var done = function() {
         if (callback) {
@@ -47,6 +49,15 @@ gogogo.MQuery.prototype.query = function(dict,callback){
         }
     }
     
+    var counter = function(num){
+        count+=num;
+        if (count == total){
+            done();
+        }
+    }
+    
+    counter(0);
+    
     $.each(this.id_list,function(i,id){
         var object = dict[id];
         if (object==undefined){
@@ -54,23 +65,25 @@ gogogo.MQuery.prototype.query = function(dict,callback){
             dict[id] = object;
         }
         
-        if (!object.complete && !object.querying){
-            ids.push(id);
-            object.querying = true;
+        if (!object.complete){
+            if( !object.querying) {
+                ids.push(id);
+                object.block();
+            } else {
+                object.query(function(){
+                    counter(1);
+                });
+            }
+        } else {
+            counter(1);
         }
     });
     
     if (ids.length == 0) {
-        done();
+        counter(0);
     } else {
-        var total = ids.length;
-        var count = 0;
-        
         this._query(ids,dict,function(num){
-            count+=num;
-            if (count == total){
-                done();
-            }
+            counter(num);
         });
                 
     }
@@ -100,8 +113,8 @@ gogogo.MQuery.prototype._query = function(ids,dict,callback){
         if (response.stat == "ok"){
             $.each(response.data,function(i,item) {
                 var object = dict[item.id];
-                object.updateFromJson(item,true);                    
-                object.querying = false;
+                object.updateFromJson(item,true);
+                object.unblock();
             });
         }
         
