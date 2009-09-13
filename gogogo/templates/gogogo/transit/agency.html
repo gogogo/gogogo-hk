@@ -84,10 +84,12 @@
 			
 			var trip_id_list = "{{ trip_id_list|join:"," }}";
 			trip_id_list = trip_id_list.split(",");
-            var trip_id_list_received = 0;
             var bounds = new GLatLngBounds();
 
             gogogo.modelManager.queryTripList(trip_id_list,function(trip_list){
+                var total = trip_list.length;
+                var count = 0;
+                
 				$.each(trip_list,function(i,trip){
 					trip.queryStops(stopManager,function(trip) {
                         var line = trip.createPolyline();
@@ -96,14 +98,14 @@
                         bounds.extend(b.getSouthWest());
                         bounds.extend(b.getNorthEast());
                         
-                        trip_id_list_received++;
-                        if (trip_id_list_received == trip_id_list.length) {
+                        count++;
+                        if (count == total && !bounds.isEmpty() ){
                             var center = bounds.getCenter();
                             var zoom = map.getBoundsZoomLevel(bounds);
                             map.setCenter(center,zoom);                        
-                        }                       
+                        }
+                        
                     });
-                
                 });
                 
             });

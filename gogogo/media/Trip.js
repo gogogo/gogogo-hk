@@ -138,15 +138,14 @@ gogogo.Trip.prototype.removePolyline = function() {
 
 gogogo.Trip.prototype.getBounds = function(){
     var bounds = new GLatLngBounds();    
-    if (this.stopObjectListCount > 0){
-        
-        
+    if (this.stopObjectList !=undefined) {
         for (var i =0 ; i < this.stopObjectList.length; i++){
             var stop = this.stopObjectList[i];
             if (!stop.error)
                 bounds.extend(stop.getLatLng());
         }
     }
+
     
     return bounds;
 }
