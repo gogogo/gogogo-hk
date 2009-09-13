@@ -1,2 +1,3 @@
 /settings_private.py
 *.pyc
+/common/.google_appengine
