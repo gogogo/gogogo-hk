@@ -9,6 +9,10 @@ handlers:
 - url: /media
   static_dir: _generated_media
 
+# Static: gogogo
+- url: /static
+  static_dir: gogogo/static
+
 # Static: Gaebar
 - url: /gaebar/static
   static_dir: gaebar/static
