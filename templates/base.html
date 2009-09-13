@@ -35,6 +35,7 @@
       <div id="header">
         <div class="menu">
         	<div class="left_menu" >
+          		<a href="/" class="link_button">{% trans "Home"%}</a> |
           		<a href="/planning" class="link_button">{% trans "Planning"%}</a> |
           		<a href="{%url gogogo.views.transit.index %}" class="link_button">{%trans "Transit information" %}</a> |
           		{% if user.is_authenticated %}
