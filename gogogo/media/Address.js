@@ -61,6 +61,10 @@ gogogo.Address.prototype.getLocation = function(){
 	return this.location;
 }
 
+/** Set the geo location of the address
+ * 
+ */
+
 gogogo.Address.prototype.setLocation = function(pt) {
 	this.location = pt;
     
@@ -72,6 +76,24 @@ gogogo.Address.prototype.setLocation = function(pt) {
     }
     
 	$(this).trigger("locationChanged");
+}
+
+/** Set the geo location of the address, then it will call geocoder
+ * to find out the text address of the location.
+ * 
+ */
+
+gogogo.Address.prototype.setLocationAndUpdateAddress = function(latlng) {
+    var address = this;
+    
+    gogogo.Address.geocoder.getLocations(latlng, function(response) {
+        if (response.Status.code == 200 ){
+            address.setAddress(response.Placemark[0].address);
+        } else {
+            address.setAddress(latlng.lat() + ","  + latlng.lng());
+        }
+        address.setLocation(latlng);
+    });
 }
 
 /** Return TRUE if the input address is a latlng pair
@@ -256,16 +278,7 @@ gogogo.Address.prototype._createMarker = function() {
     var address = this;
     
     GEvent.addListener(marker, "dragend", function(latlng){
-        
-        gogogo.Address.geocoder.getLocations(latlng, function(response) {
-            if (response.Status.code == 200 ){
-                address.setAddress(response.Placemark[0].address);
-            } else {
-                address.setAddress(latlng.lat() + ","  + latlng.lng());
-            }
-            address.setLocation(latlng);
-        });
-        
+        address.setLocationAndUpdateAddress(latlng);
     });
     
     return marker; 
