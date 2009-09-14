@@ -29,12 +29,21 @@
         border:1px solid #8888FF;
     }
     
-    .contextmenu a {
+    .contextmenu div {
+        padding-left : 5px;
+        padding-right : 5px;
+    }
+    
+    .contextmenu a{
         font-family:Arial, sans-serif;
         text-decoration:none;
         color:#4444ff;
         font-size:small; 
         cursor : pointer;      
+    }
+    
+    .contextmenu div:hover {
+        background:#eee;
     }
     
     .contextmenu ul{
@@ -153,7 +162,7 @@
             $(contextmenu).hide();
         }
         
-        var template = "<ul><li class='start'></li><li class='end'></li></ul>";       
+        var template = "<div class='start'></div><div class='end'></div>";
 
         $(contextmenu).addClass("contextmenu");
         $(contextmenu).append(template);
