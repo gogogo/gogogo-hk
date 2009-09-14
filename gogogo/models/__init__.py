@@ -523,6 +523,9 @@ class FareStop(db.Model):
         return unicode(self.key().id_or_name())
 
 class FarePair(db.Model):
+    """
+    Deprecated data model
+    """
     owner = db.ReferenceProperty(FareStop,collection_name="pair_set")
 
     # Start stop

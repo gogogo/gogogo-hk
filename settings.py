@@ -164,7 +164,6 @@ GAE_BACKUP_MODELS = (
         'gogogo_shape','gogogo_cluster',
         'gogogo_faretrip',
         'gogogo_farestop',
-        'gogogo_farepair',
         'gogogo_transfer'
         ),
      ),

@@ -24,6 +24,23 @@
         float: right;
     }
 
+   .contextmenu {
+        background:#ffffff;
+        border:1px solid #8888FF;
+    }
+    
+    .contextmenu a {
+        font-family:Arial, sans-serif;
+        text-decoration:none;
+        color:#4444ff;
+        font-size:small; 
+        cursor : pointer;      
+    }
+    
+    .contextmenu ul{
+        list-style-type : none
+    }
+
     #markerwin .current_stop {
         color : red;
     }
@@ -51,6 +68,8 @@
 	var end_addr_default   = {%trans "'To:'"%};
 	var empty_prompt       = {%trans "'Please input the address.'"%};
 	var suggest_prompt     = {%trans "'Do you mean?'"%};
+    var set_as_start_address  = "{%trans 'Go from here' %}";
+    var set_as_end_address = "{%trans 'Go to here' %}"
 
 	var addressList = ["#startAddress" , "#endAddress"];
 	var planningOutput;
@@ -108,10 +127,10 @@
 
         $(html).empty();
         var startLink = $("<a></a>");
-        $(startLink).append("{%trans 'Set as startpoint address' %}");
+        $(startLink).append(set_as_start_address);
         bindLocalSearchMarker(startLink,marker,0,result);
         var endLink = $("<a></a>");
-        $(endLink).append("{%trans 'Set as endpoint address' %}");
+        $(endLink).append(set_as_end_address);
         bindLocalSearchMarker(endLink,marker,1,result);
 
         $(html).append(startLink);
@@ -119,9 +138,73 @@
         $(html).append(endLink);
         return html
     }
+    
+    function bindContextMenu(map) {
+        var contextmenu = document.createElement("div");
+        
+        /// The latlng point of last popup action
+        var latlng;
+        
+        var setAddress = function(index) {
+            var address = planner.getAddress(index);
+            _empty(addressList[index]);
+
+			address.setLocationAndUpdateAddress(latlng);
+            $(contextmenu).hide();
+        }
+        
+        var template = "<ul><li class='start'></li><li class='end'></li></ul>";       
+
+        $(contextmenu).addClass("contextmenu");
+        $(contextmenu).append(template);
+        $(contextmenu).hide();
+                        
+        var startLink = $("<a></a>");
+        $(startLink).append(set_as_start_address);
+        $(startLink).click(function(){
+           setAddress(0); 
+        });
+        
+        var endLink = $("<a></a>");
+        $(endLink).append(set_as_end_address);
+        $(endLink).click(function(){
+           setAddress(1); 
+        });
+        
+        $( $(contextmenu).find(".start") ).append(startLink);
+        $( $(contextmenu).find(".end") ).append(endLink);
+
+
+        map.getContainer().appendChild(contextmenu);
+
+        GEvent.addListener(map,"singlerightclick",function(pixel,tile) {
+            clickedPixel = pixel;
+            var x=pixel.x;
+            var y=pixel.y;
+            latlng = map.fromContainerPixelToLatLng(pixel);
+            
+            if (x > map.getSize().width - 120) { x = map.getSize().width - 120 }
+            if (y > map.getSize().height - 100) { y = map.getSize().height - 100 }
+            var pos = new GControlPosition(G_ANCHOR_TOP_LEFT, new GSize(x,y));  
+            pos.apply(contextmenu);
+            //contextmenu.style.visibility = "visible";
+            $(contextmenu).show();
+        });
+        
+        GEvent.addListener(map, "move", function() {
+		    $(contextmenu).hide();
+        });
+        
+	    GEvent.addListener(map, "click", function(overlay,point) {
+		    $(contextmenu).hide();
+	    });
+        
+    }
 
 	$(document).ready(function() {
     	layout.sizePane("west",230);
+        
+        bindContextMenu(map);
 
 		modelManager = gogogo.modelManager;
 

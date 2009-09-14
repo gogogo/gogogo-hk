@@ -85,7 +85,7 @@ gogogo.Address.prototype.setLocation = function(pt) {
 
 gogogo.Address.prototype.setLocationAndUpdateAddress = function(latlng) {
     var address = this;
-    
+    this.initGeocoder();
     gogogo.Address.geocoder.getLocations(latlng, function(response) {
         if (response.Status.code == 200 ){
             address.setAddress(response.Placemark[0].address);
@@ -121,16 +121,7 @@ gogogo.Address.prototype.parseLatLngAddress = function (ret) {
  * @param callback The callback to be involved. 
  */
 gogogo.Address.prototype.queryLocation = function(callback) {
-    if (gogogo.Address.geocoder == undefined ) {
-        gogogo.Address.geocoder = new GClientGeocoder();
-        gogogo.Address.geocoder.setBaseCountryCode(gogogo.COUNTRY_CODE);        
-        
-        var sw = new GLatLng(gogogo.BOUNDARY_BOX[0],gogogo.BOUNDARY_BOX[1]);
-        var ne = new GLatLng(gogogo.BOUNDARY_BOX[2],gogogo.BOUNDARY_BOX[3]);
-        var bounds = new GLatLngBounds(sw,ne);
-        
-        gogogo.Address.geocoder.setViewport(bounds);        
-    }
+    this.initGeocoder();
 
 	var address = this;
     
@@ -282,4 +273,18 @@ gogogo.Address.prototype._createMarker = function() {
     });
     
     return marker; 
+}
+
+gogogo.Address.prototype.initGeocoder = function() {
+    if (gogogo.Address.geocoder == undefined ) {
+        gogogo.Address.geocoder = new GClientGeocoder();
+        gogogo.Address.geocoder.setBaseCountryCode(gogogo.COUNTRY_CODE);        
+        
+        var sw = new GLatLng(gogogo.BOUNDARY_BOX[0],gogogo.BOUNDARY_BOX[1]);
+        var ne = new GLatLng(gogogo.BOUNDARY_BOX[2],gogogo.BOUNDARY_BOX[3]);
+        var bounds = new GLatLngBounds(sw,ne);
+        
+        gogogo.Address.geocoder.setViewport(bounds);        
+    }
+    
 }
