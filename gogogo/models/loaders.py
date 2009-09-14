@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from ragendja.dbutils import get_object
 from gogogo.geo.geohash import Geohash
 from django.http import Http404
+from django.utils import simplejson
 
 from utils import createEntity , entityToText , id_or_name
 from cache import getCachedEntityOr404 , getCachedObjectOr404, removeCache
@@ -116,6 +117,7 @@ class FareStopLoader(Loader):
     def __init__(self,id):
         self.id = id_or_name(id)
         self.cache_key_prefix = "gogogo_farestop_loader_"
+        self.pair_list = None
         
     def load(self):
         """
@@ -133,35 +135,19 @@ class FareStopLoader(Loader):
             
             entity = getCachedEntityOr404(FareStop,id_or_name = self.id)
             cache['farestop'] = entity
-            farestop = entity['instance']
-            key = farestop.key()
-            
-            limit = 1000
-            FarePair.all()
-            
-            entities = FarePair.all().filter("owner =",key).fetch(limit)
-            pair_list = []
-            
-            while entities:
-                for pair in entities:
-                    entity = createEntity(pair)
-                    del entity['instance']
-                    pair_list.append(entity)
-            
-                entities = FarePair.all().filter('__key__ >', entities[-1].key()).filter("owner  =",key).fetch(limit)
-                
-            cache['pair_list'] = pair_list
-            
             
             memcache.add(cache_key, cache, _default_cache_time)
     
         self.farestop = cache['farestop']
-        self.pair_list = cache['pair_list']
         
     def get_farestop(self):
         return self.farestop
         
     def get_pair_list(self):
+        if self.pair_list == None:
+            mapping = simplejson.loads(self.farestop['fares'])
+            self.pair_list = [pair for pair in mapping]
+        
         return self.pair_list
         
     def load_for_agency(agency):

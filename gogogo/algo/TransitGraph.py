@@ -194,13 +194,16 @@ class TransitGraph(Graph):
                 
                 pair_list = farestop_loader.get_pair_list()
                 
-                for pair in pair_list:        
-                    a = self.get_node_by_stop(pair["from_stop"])
-                    b = self.get_node_by_stop(pair["to_stop"])
-                    
-                    arc = TransitArc(agency = agency.key().id_or_name() ,weight = pair["fare"] )
-                    arc.link(a,b)
-                    self.add_arc(arc)
+                for pair in pair_list:
+                    try:        
+                        a = self.get_node_by_stop(pair["from"])
+                        b = self.get_node_by_stop(pair["to"])
+                        
+                        arc = TransitArc(agency = agency.key().id_or_name() ,weight = pair["fare"] )
+                        arc.link(a,b)
+                        self.add_arc(arc)
+                    except KeyError,e:
+                        logging.error(str(e) + "not found")
         
         # Process trip not in agency with free_transfer service
         for loader in trip_loader_list:
