@@ -506,6 +506,16 @@ class FareStop(db.Model):
     
     # TRUE if it is the default fare type used in shortest path calculation
     default = db.BooleanProperty(default = False)
+    
+    # The fares between each stop/station in JSON format (Replacement of FarePair)
+    #
+    # It should be an array of objects with fields:
+    # [
+    #  {"from" : ... , "to": .. , "fare" : ...},
+    #   .....
+    # ]
+    #
+    fares = db.TextProperty()
            
     def __unicode__(self):
         if not self.is_saved():
