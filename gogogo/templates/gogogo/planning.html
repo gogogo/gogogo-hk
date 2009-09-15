@@ -29,6 +29,10 @@
         border:1px solid #8888FF;
     }
     
+    .contextmenu hr {
+        margin: 0 0 0 0 ;
+    }
+    
     .contextmenu div {
         padding-left : 5px;
         padding-right : 5px;
@@ -77,8 +81,10 @@
 	var end_addr_default   = {%trans "'To:'"%};
 	var empty_prompt       = {%trans "'Please input the address.'"%};
 	var suggest_prompt     = {%trans "'Do you mean?'"%};
-    var set_as_start_address  = "{%trans 'Go from here' %}";
-    var set_as_end_address = "{%trans 'Go to here' %}"
+    var SET_AS_START_ADDRESS  = "{%trans 'Go from here' %}";
+    var SET_AS_END_ADDRESS = "{%trans 'Go to here' %}"
+    var ZOOM_IN_DEFAULT = "{%trans 'Zoom to street'%}";
+    var ZOOM_OUT_DEFAULT = "{%trans 'Zoom default'%}";
 
 	var addressList = ["#startAddress" , "#endAddress"];
 	var planningOutput;
@@ -136,10 +142,10 @@
 
         $(html).empty();
         var startLink = $("<a></a>");
-        $(startLink).append(set_as_start_address);
+        $(startLink).append(SET_AS_START_ADDRESS);
         bindLocalSearchMarker(startLink,marker,0,result);
         var endLink = $("<a></a>");
-        $(endLink).append(set_as_end_address);
+        $(endLink).append(SET_AS_END_ADDRESS);
         bindLocalSearchMarker(endLink,marker,1,result);
 
         $(html).append(startLink);
@@ -162,26 +168,42 @@
             $(contextmenu).hide();
         }
         
-        var template = "<div class='start'></div><div class='end'></div>";
+        var template = "<div class='start'></div><div class='end'></div><hr/><div class='zoomIn'></div><div class='zoomDefault'></div>";
 
         $(contextmenu).addClass("contextmenu");
         $(contextmenu).append(template);
         $(contextmenu).hide();
                         
         var startLink = $("<a></a>");
-        $(startLink).append(set_as_start_address);
+        $(startLink).append(SET_AS_START_ADDRESS);
         $(startLink).click(function(){
            setAddress(0); 
         });
         
         var endLink = $("<a></a>");
-        $(endLink).append(set_as_end_address);
+        $(endLink).append(SET_AS_END_ADDRESS);
         $(endLink).click(function(){
            setAddress(1); 
         });
         
+        var zoomInLink = $("<a></a>");
+        $(zoomInLink).append(ZOOM_IN_DEFAULT);
+        $(zoomInLink).click(function(){
+           map.setCenter(latlng,17);	
+           $(contextmenu).hide();
+        });
+
+        var zoomDefaultLink = $("<a></a>");
+        $(zoomDefaultLink).append(ZOOM_OUT_DEFAULT);
+        $(zoomDefaultLink).click(function(){
+            gogogo.mapZoomDefault(map);
+           $(contextmenu).hide();
+        });
+        
         $( $(contextmenu).find(".start") ).append(startLink);
         $( $(contextmenu).find(".end") ).append(endLink);
+        $( $(contextmenu).find(".zoomIn") ).append(zoomInLink);
+        $( $(contextmenu).find(".zoomDefault") ).append(zoomDefaultLink);
 
 
         map.getContainer().appendChild(contextmenu);
@@ -397,7 +419,7 @@
 	<button id="planEndAddress" class="ui-button ui-icon-button ui-state-default ui-corner-all" value=""><span class="ui-icon ui-icon-search">&nbsp;</span>&nbsp;</button>
 	<!--<button id="planEndAddress">{%trans "Go"%}</button>-->
 	<br />
-	<button id="planButton" class="ui-state-default ui-corner-all ui-button">{%trans "Plan"%}</button>
+	<button id="planButton" class="ui-state-default ui-corner-all ui-button">{%trans "GOGOGO!"%}</button>
 
 </div>
 

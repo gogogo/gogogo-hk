@@ -28,3 +28,9 @@ gogogo.mapSetup = function(map){
 	map.setCenter(new GLatLng(gogogo.DEFAULT_LOCATION[0],gogogo.DEFAULT_LOCATION[1])
 		, gogogo.DEFAULT_ZOOM);	
 }
+
+gogogo.mapZoomDefault = function(map){
+    
+    map.setCenter(new GLatLng(gogogo.DEFAULT_LOCATION[0],gogogo.DEFAULT_LOCATION[1])
+		, gogogo.DEFAULT_ZOOM);	    
+}

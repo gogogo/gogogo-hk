@@ -574,7 +574,18 @@ class Transfer(db.Model):
 
         
         return "[%s] %s_<=> %s" % (agency.id_or_name() , a , b)
+
+class TransitPath(db.Model): 
+    """
+    Store the n-shortest path/route between 2 cluster
+    """
     
+    from_cluster = db.ReferenceProperty(Cluster,collection_name="transit_path_from")
+    
+    to_cluster = db.ReferenceProperty(Cluster,collection_name="transit_path_to")
+    
+    # The n-shortest path saved in JSON format
+    path_list = db.TextProperty()
 
 auto_set_key_name_table = {
     Agency.kind() : ("name",),
