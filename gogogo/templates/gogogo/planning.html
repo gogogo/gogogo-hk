@@ -65,7 +65,24 @@
     #markerwin .after {
         color : blue;
     }
-
+	.map-heading-container {
+        background: #0B3E6F; 
+        /*084B78;*/
+        
+        padding: 0.1em 10px 0.2em;
+        margin-left:-10px;
+	}
+    #content div.map-heading-container h2, div.map-heading-container h3 {
+        color: #fff;
+    }
+    div.map-heading-container h2 span.planning {
+        background: transparent url({{ MEDIA_URL }}gogogo/images/plan.png) no-repeat scroll right center;
+        padding-right:24px;
+    }
+    div.map-heading-container h3 {
+        font-size:1em;
+        margin-bottom:0.2em;
+    }
 	</style>
 {% endblock %}
 
@@ -401,6 +418,10 @@
 {% endblock %}
 
 {% block left_column %}
+<div class="map-heading-container">
+<h2><span class='planning'>{%trans "Planning" %}</span></h2>
+<h3>{%trans "Get Transit Directions from <em>A</em> to <em>B</em>" %}</h3>
+</div>
 <div class="ui-state-highlight ui-corner-all" style="padding: 0.3em 0.7em; margin-top: 10px;margin-bottom:2em;">
 <p style="margin:0;">
 	<span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em; display:block;width:20px"></span>

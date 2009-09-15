@@ -1,21 +1,21 @@
 /* CSS for www.gogogo.hk. The CSS file for gogogo module is gogogo/media/gogogo.css */
 
 #header {
-	height:20px;
-	padding-left:5px;
-	padding-right:5px;
-	padding-top:2px;
-	padding-bottom:5px;
-	background:transparent url(fdr-bg.png);
-	color:#e5e5e5;
+    height:20px;
+    padding-left:5px;
+    padding-right:5px;
+    padding-top:2px;
+    padding-bottom:5px;
+    background:transparent url(fdr-bg.png);
+    color:#e5e5e5;
 }
 #header a {
-	color:#ddd;
-	text-shadow:0 -1px 0 #999;
-	text-decoration:none;
+    color:#ddd;
+    text-shadow:0 -1px 0 #999;
+    text-decoration:none;
 }
 #header a:hover {
-	color:#fff;
+    color:#fff;
 }
 
 #header span.setlang_link {
@@ -25,69 +25,69 @@
 }
 
 #header span.setlang_link:hover {
-	color:#fff;
+    color:#fff;
 }
 
 #header span.usr-highlight {
-	border: 1px solid #666;
-	margin:0.4em;
-	padding: 0 0.4em;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	border-radius:5px;
+    border: 1px solid #666;
+    margin:0.4em;
+    padding: 0 0.4em;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius:5px;
 }
 .left_menu {
-	float : left;
+    float : left;
 }
 
 .right_menu {
-	position : absolute ;
-	right : 5px;
+    position : absolute ;
+    right : 5px;
 }
 
 #content {
-	padding-top:5px;
-	padding-left: 5px;
-	padding-right: 5px;
+    padding-top:5px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 #content h1 {
-	color:#666666;
-	font-size:18px;
-	margin:0 0 0.2em;
-	padding:0 6px 0 0;
+    color:#666666;
+    font-size:18px;
+    margin:0 0 0.2em;
+    padding:0 6px 0 0;
 }
 #content h2 {
-	color:#222;
-	font-size:1.6em;
-	margin:0 0 0.2em;
-	padding:0;
+    color:#222;
+    font-size:1.6em;
+    margin:0 0 0.2em;
+    padding:0;
 }
 #content h1, h2, h3, h4, h5 {
-	font-weight:bold;
+    font-weight:bold;
 }
 
 #content-header {
-	padding-bottom:20px;
-	padding-right:5px;
+    padding-bottom:20px;
+    padding-right:5px;
 }
 
 #footer {
-	padding-top:20px;
-	padding-left: 5px;
-	padding-right: 5px;
-	clear: both;
+    padding-top:20px;
+    padding-left: 5px;
+    padding-right: 5px;
+    clear: both;
 }
 
 .setlang_link { 
-	text-decoration: underline ;
-	cursor : pointer;
+    text-decoration: underline ;
+    cursor : pointer;
 }
 
 .link_button {
-	color: #0000EE;
+    color: #0000EE;
 }
 
 a.link_button:visited {
-	color: #0000EE;
+    color: #0000EE;
 }
 
