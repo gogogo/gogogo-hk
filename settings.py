@@ -48,7 +48,7 @@ COMBINE_MEDIA = {
     ),
     'combined-plugins.css': (
     ),
-	
+
 }
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -69,6 +69,7 @@ MIDDLEWARE_CLASSES = (
     'ragendja.auth.middleware.GoogleAuthenticationMiddleware',
     # Hybrid Django/Google authentication
     #'ragendja.auth.middleware.HybridAuthenticationMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'ragendja.sites.dynamicsite.DynamicSiteIDMiddleware',
@@ -81,6 +82,7 @@ AUTH_USER_MODULE = 'ragendja.auth.google_models'
 AUTH_ADMIN_MODULE = 'ragendja.auth.google_admin'
 # Hybrid Django/Google authentication
 #AUTH_USER_MODULE = 'ragendja.auth.hybrid_models'
+AUTH_ADMIN_USER_AS_SUPERUSER = False
 
 GLOBALTAGS = (
     'ragendja.templatetags.ragendjatags',
@@ -94,7 +96,7 @@ LOGIN_REDIRECT_URL = '/'
 INSTALLED_APPS = [
     #This will add jquery to your COMBINE_MEDIA['combined-%(LANGUAGE_CODE)s.js'] automatically
     'jquery',
-    
+
     # Add blueprint CSS (http://blueprintcss.org/)
     'blueprintcss',
 
@@ -111,7 +113,7 @@ INSTALLED_APPS = [
     'mediautils',
     'gogogo',
 
-           
+
 ]
 
 # List apps which should be left out from app settings and urlsauto loading
@@ -133,14 +135,14 @@ DEFAULT_CHARSET="utf-8"
 GAEBAR_LOCAL_URL = 'http://localhost:8000'
 
 GAEBAR_SERVERS = {
-  u'Deployment': u'http://test.gogogo.hk', 
-  u'Staging': u'http://gogogo-staging.appspot.com', 
+  u'Deployment': u'http://test.gogogo.hk',
+  u'Staging': u'http://gogogo-staging.appspot.com',
   u'Local Test': u'http://localhost:8080',
 }
 
 GAEBAR_MODELS = (
      (
-          'gogogo.models', 
+          'gogogo.models',
           (u'Agency',u'Stop',u'Route',u'Trip',u'Changelog',u'Cluster'),
      ),
 )
@@ -159,7 +161,7 @@ GAE_BACKUP_MODELS = (
         ('auth_user',)
     ),
      (
-         'gogogo.models', 
+         'gogogo.models',
         ('gogogo_agency','gogogo_stop','gogogo_route','gogogo_trip','gogogo_changelog',
         'gogogo_shape','gogogo_cluster',
         'gogogo_faretrip',
@@ -175,7 +177,7 @@ GAE_BACKUP_MODELS = (
 
 GOOGLE_MAPS_KEY = settings_private.GOOGLE_MAPS_KEY
 
-#Default location 
+#Default location
 GOGOGO_DEFAULT_LOCATION=[22.3, 114.167]
 GOGOGO_DEFAULT_ZOOM=10
 GOGOGO_BOUNDARY_BOX = [22.21,113.88,22.5,114.44]
