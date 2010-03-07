@@ -35,7 +35,8 @@ settings.add_app_media('combined-%(LANGUAGE_CODE)s.js',
 settings.add_app_media('combined-plugins.js',
 	'gogogo/jquery.treeview.min.js',
 	'gogogo/jquery.hint.js',
-	'gogogo/jquery.button.js'
+	'gogogo/jquery.button.js',
+	'gogogo/jquery.timeentry.js',
 )
 settings.add_app_media('combined-%(LANGUAGE_CODE)s-gogogo.js',
     
