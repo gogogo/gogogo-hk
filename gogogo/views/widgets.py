@@ -216,3 +216,48 @@ class StopListField(forms.Field):
             key = db.Key.from_path(Stop.kind(),id_or_name(val))
             final_values.append(key)
         return final_values
+
+class ArrivalListEditor(forms.Widget):
+    """
+    Arrival list editor
+    """
+
+    def render(self, name, value, attrs=None):
+        if value is None: value = ''
+        
+        final_attrs = self.build_attrs(attrs, name=name)
+        if value != '':
+            final_attrs['value'] = force_unicode(self._gen_value(value))
+        
+        t = loader.get_template('gogogo/widgets/arrivallisteditor.html')	
+        c = Context({
+            'final_attrs': mark_safe(flatatt(final_attrs)),
+            'value' : value,
+            'id' : final_attrs['id'],
+        })
+            
+        return mark_safe( t.render(c) )
+    
+    def _gen_value(self,value):
+        ret = []
+        for v in value:
+            if isinstance(v,basestring):                
+                ret.append(v)
+            else:
+                ret.append(str(v.id_or_name()))
+        return ",".join(ret)
+
+
+class ArrivalListField(forms.Field):
+
+    def __init__(self,  *args, **kwargs):
+        
+        if 'widget' not in kwargs:
+            kwargs.update( { 'widget' : ArrivalListEditor() })
+                
+        super(ArrivalListField, self).__init__(*args, **kwargs)
+
+    def clean(self, value):
+        # TODO: implement data cleaning
+        return value
+

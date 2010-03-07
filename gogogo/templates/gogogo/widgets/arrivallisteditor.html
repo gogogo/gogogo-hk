@@ -1,0 +1,24 @@
+<div>
+	<input id="s_from" class="service_range" type="text" />
+	<input id="s_to"   class="service_range" type="text" />
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('.service_range').timeEntry({
+			show24Hours: true,
+			beforeShow: fix_range
+		});
+	});
+
+	function fix_range(input) {
+		return {
+			minTime: (input.id == 's_to'
+				 ? $('#s_from').timeEntry('getTime')
+				 : null),
+			maxTime: (input.id == 's_from'
+				 ? $('#s_to').timeEntry('getTime')
+				 : null)
+		};
+	}
+</script>
